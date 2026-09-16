@@ -13,7 +13,12 @@ from openpyxl import load_workbook
 # 설정
 # =========================================================
 
-INPUT_FILE = "boards_missing.xlsx"
+INPUT_FILE = "missing_structure_analysis.xlsx"
+
+df = pd.read_excel(INPUT_FILE)
+
+print(df.head())
+print("전체 행:", len(df))
 OUTPUT_FILE = "missing_structure_analysis.xlsx"
 
 CONCURRENCY = 10
