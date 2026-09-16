@@ -3,33 +3,50 @@ name: Analyze Missing Institutions
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   analyze-missing:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 저장소 가져오기
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Python 설치
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 3. 필요한 라이브러리 설치
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. 미발견 기관 분석
+      - name: Check input files
+        run: |
+          echo "=== Repository files ==="
+          ls -lah
+          echo "=== Excel files ==="
+          find . -maxdepth 2 -type f \( -name "*.xlsx" -o -name "*.xls" \) -print
+
       - name: Run analyze_missing.py
         run: |
           python analyze_missing.py
 
-      # 5. 분석 결과 저장
+      - name: Check analysis result
+        run: |
+          echo "=== Analysis result ==="
+          if [ -f missing_structure_analysis.xlsx ]; then
+            ls -lh missing_structure_analysis.xlsx
+            echo "분석 파일 생성 성공"
+          else
+            echo "분석 파일이 생성되지 않았습니다."
+            echo "analyze_missing.py 실행 결과를 확인해야 합니다."
+            exit 1
+          fi
+
       - name: Save analysis result
         run: |
           git config user.name "github-actions[bot]"
@@ -37,6 +54,9 @@ jobs:
 
           git add missing_structure_analysis.xlsx
 
-          git diff --cached --quiet || git commit -m "Analyze missing institutions"
-
-          git push
+          if git diff --cached --quiet; then
+            echo "변경사항이 없습니다."
+          else
+            git commit -m "Analyze missing institutions"
+            git push
+          fi
