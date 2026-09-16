@@ -327,7 +327,7 @@ for _, row in df.iterrows():
     iframe = str(row.get("iframe 사용", "")).lower()
     js = str(row.get("JS 의존도", "")).lower()
     board = str(row.get("공지사항 후보", "")).lower()
-    post = str(row.get("게시물 상세 URL 발견", "")).lower())
+    post = str(row.get("게시물 상세 URL 발견", "")).lower()
     reason = str(row.get("추정 원인", "")).lower()
 
     # --------------------------------------------------------
