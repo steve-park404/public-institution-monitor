@@ -21,6 +21,26 @@ SEEN_FILE = "seen_posts.json"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
+# ------------------------------------------------------------
+# 게시판 강제 재탐색
+#
+# GitHub Actions에서
+# FORCE_DISCOVER_BOARDS=true
+# 로 설정하면 boards.xlsx가 있어도 재탐색한다.
+# ------------------------------------------------------------
+
+FORCE_DISCOVER_BOARDS = (
+    os.getenv(
+        "FORCE_DISCOVER_BOARDS",
+        "false"
+    ).lower()
+    in ("true", "1", "yes")
+)
+
+# ------------------------------------------------------------
+# 실제 모니터링 키워드
+# ------------------------------------------------------------
+
 KEYWORDS = [
     "설문조사",
     "시민참여",
@@ -28,7 +48,10 @@ KEYWORDS = [
     "공모전",
 ]
 
-# 게시판으로 판단할 때 사용하는 단어
+# ============================================================
+# 게시판 관련 단어
+# ============================================================
+
 BOARD_WORDS = [
     "공지사항",
     "공지",
@@ -46,6 +69,8 @@ BOARD_WORDS = [
     "설문",
     "고시공고",
     "고시·공고",
+    "고시",
+    "공고",
     "입찰",
     "뉴스",
     "보도자료",
@@ -53,56 +78,79 @@ BOARD_WORDS = [
     "소식지",
     "행사",
     "이벤트",
+    "채용",
+    "교육",
 ]
 
-# URL에서 게시판 성격을 판단할 때 사용하는 단어
-BOARD_URL_WORDS = [
-    "bbs",
+SITE_MAP_WORDS = [
+    "사이트맵",
+    "사이트 맵",
+    "전체메뉴",
+    "전체 메뉴",
+    "메뉴",
+    "홈페이지맵",
+    "이용안내",
+]
+
+BOARD_URL_PATTERNS = [
     "board",
+    "bbs",
     "notice",
     "news",
-    "list",
     "community",
     "particip",
+    "participation",
     "event",
     "survey",
-    "data",
+    "list",
     "pds",
+    "data",
     "contents",
+    "content",
     "menu",
+    "article",
+    "program",
 ]
 
-# 상세 게시물 URL에서 자주 발견되는 패턴
-DETAIL_URL_WORDS = [
+DETAIL_PATTERNS = [
     "view",
     "detail",
     "read",
-    "article",
-    "articleNo",
-    "nttid",
+    "articleview",
+    "articleView",
     "nttId",
+    "nttid",
+    "bbsNo",
     "bbsno",
+    "boardNo",
     "boardno",
-    "seq=",
-    "idx=",
-    "no=",
+    "seq",
+    "idx",
     "wr_id",
-    "uid=",
     "postid",
     "newsid",
 ]
 
-# 탐색 깊이
-MAX_DEPTH = 2
+# ============================================================
+# 탐색 설정
+# ============================================================
+
+MAX_DEPTH = 3
 
 # 기관별 최종 게시판 최대 개수
-MAX_BOARDS_PER_ORG = 8
+MAX_BOARDS_PER_ORG = 10
 
-# 한 페이지에서 추출할 링크 최대 개수
-MAX_LINKS_PER_PAGE = 150
+# 기관별 최대 페이지 탐색
+MAX_PAGES_PER_ORG = 30
 
-# HTTP
-REQUEST_TIMEOUT = 20
+# 한 페이지에서 가져올 링크 최대 수
+MAX_LINKS_PER_PAGE = 250
+
+# 동시에 탐색할 기관 수
+CONCURRENCY = 12
+
+# HTTP timeout
+REQUEST_TIMEOUT = 18
 
 HEADERS = {
     "User-Agent": (
@@ -115,11 +163,10 @@ HEADERS = {
 
 
 # ============================================================
-# 공통 함수
+# URL 함수
 # ============================================================
 
 def normalize_url(url):
-    """URL을 비교하기 쉽게 정규화한다."""
     if not url:
         return ""
 
@@ -128,28 +175,39 @@ def normalize_url(url):
     if not url:
         return ""
 
-    if not re.match(r"^https?://", url, re.I):
+    if not re.match(
+        r"^https?://",
+        url,
+        re.I,
+    ):
         url = "https://" + url
 
     url = urldefrag(url)[0]
 
     parsed = urlparse(url)
 
-    # 기본 포트 제거
     netloc = parsed.netloc.lower()
 
-    if netloc.endswith(":80") and parsed.scheme == "http":
+    if (
+        netloc.endswith(":80")
+        and parsed.scheme == "http"
+    ):
         netloc = netloc[:-3]
 
-    if netloc.endswith(":443") and parsed.scheme == "https":
+    if (
+        netloc.endswith(":443")
+        and parsed.scheme == "https"
+    ):
         netloc = netloc[:-4]
 
     path = parsed.path or "/"
 
-    # 중복 슬래시 제거
-    path = re.sub(r"/+", "/", path)
+    path = re.sub(
+        r"/+",
+        "/",
+        path,
+    )
 
-    # query는 대부분 유지
     return parsed._replace(
         netloc=netloc,
         path=path,
@@ -157,45 +215,72 @@ def normalize_url(url):
 
 
 def same_domain(url1, url2):
-    """동일 도메인인지 확인."""
     try:
         a = urlparse(url1).netloc.lower()
         b = urlparse(url2).netloc.lower()
 
-        # www 제거
-        a = re.sub(r"^www\.", "", a)
-        b = re.sub(r"^www\.", "", b)
+        a = re.sub(
+            r"^www\.",
+            "",
+            a,
+        )
+
+        b = re.sub(
+            r"^www\.",
+            "",
+            b,
+        )
 
         return a == b
+
     except Exception:
         return False
 
 
-def is_http_url(url):
-    return bool(url and url.lower().startswith(("http://", "https://")))
+def is_http(url):
+    return bool(
+        url
+        and url.lower().startswith(
+            (
+                "http://",
+                "https://",
+            )
+        )
+    )
 
 
 def clean_text(text):
     if not text:
         return ""
 
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
+    return re.sub(
+        r"\s+",
+        " ",
+        str(text),
+    ).strip()
 
 
-def is_probably_detail_url(url):
-    """게시판이 아니라 개별 게시물일 가능성이 높은 URL인지 판단."""
+# ============================================================
+# 상세 페이지 여부
+# ============================================================
+
+def is_detail_url(url):
     lower = url.lower()
 
-    # 명확한 상세 URL 패턴
-    for word in DETAIL_URL_WORDS:
-        if word.lower() in lower:
+    parsed = urlparse(url)
+
+    # URL path에 상세 패턴
+    for pattern in DETAIL_PATTERNS:
+
+        if pattern.lower() in lower:
             return True
 
-    # query parameter가 지나치게 많은 경우
+    # query parameter 검사
     try:
-        parsed = urlparse(url)
-        query = parse_qs(parsed.query)
+
+        params = parse_qs(
+            parsed.query
+        )
 
         detail_keys = [
             "seq",
@@ -203,70 +288,265 @@ def is_probably_detail_url(url):
             "no",
             "nttid",
             "article",
-            "articleNo",
+            "articleno",
             "bbsno",
             "boardno",
             "wr_id",
             "uid",
             "postid",
             "newsid",
+            "key",
         ]
 
-        if any(k.lower() in [x.lower() for x in query.keys()]
-               for k in detail_keys):
-            return True
+        for key in params.keys():
+
+            if key.lower() in [
+                x.lower()
+                for x in detail_keys
+            ]:
+
+                # key는 예외적으로
+                # contents.do?key=123 형태가
+                # 게시판 메뉴일 수도 있으므로
+                # URL 전체를 보고 추가 판단
+                if (
+                    key.lower() == "key"
+                    and (
+                        "contents.do"
+                        in parsed.path.lower()
+                        or "menu.do"
+                        in parsed.path.lower()
+                    )
+                ):
+                    continue
+
+                return True
+
     except Exception:
         pass
 
     return False
 
 
-def keyword_in_text(text):
-    """키워드가 제목/본문에 포함되는지."""
-    if not text:
-        return []
+# ============================================================
+# 게시판 후보 점수
+# ============================================================
 
-    found = []
+def score_candidate(
+    url,
+    text="",
+    html=None,
+):
+    score = 0
+    reasons = []
 
-    for keyword in KEYWORDS:
-        if keyword.lower() in text.lower():
-            found.append(keyword)
+    lower_url = url.lower()
+    lower_text = text.lower()
 
-    return found
+    # --------------------------------------------------------
+    # 메뉴명
+    # --------------------------------------------------------
+
+    for word in BOARD_WORDS:
+
+        if word.lower() in lower_text:
+
+            score += 5
+            reasons.append(
+                f"메뉴:{word}"
+            )
+
+    # --------------------------------------------------------
+    # URL
+    # --------------------------------------------------------
+
+    for pattern in BOARD_URL_PATTERNS:
+
+        if pattern.lower() in lower_url:
+
+            score += 2
+            reasons.append(
+                f"url:{pattern}"
+            )
+
+    # --------------------------------------------------------
+    # 사이트맵
+    # --------------------------------------------------------
+
+    for word in SITE_MAP_WORDS:
+
+        if word.lower() in lower_text:
+
+            score += 2
+            reasons.append(
+                f"메뉴탐색:{word}"
+            )
+
+    # --------------------------------------------------------
+    # 상세 URL 감점
+    # --------------------------------------------------------
+
+    if is_detail_url(url):
+
+        score -= 10
+        reasons.append(
+            "상세페이지가능성"
+        )
+
+    # --------------------------------------------------------
+    # HTML 검사
+    # --------------------------------------------------------
+
+    if html:
+
+        soup = BeautifulSoup(
+            html,
+            "html.parser",
+        )
+
+        visible_text = clean_text(
+            soup.get_text(
+                " ",
+                strip=True,
+            )
+        ).lower()
+
+        # 게시판에서 흔한 단어
+        structure_words = [
+            "번호",
+            "제목",
+            "등록일",
+            "작성일",
+            "조회수",
+            "작성자",
+            "첨부파일",
+            "목록",
+        ]
+
+        hits = sum(
+            1
+            for word in structure_words
+            if word in visible_text
+        )
+
+        if hits >= 1:
+
+            score += 3
+            reasons.append(
+                "게시판용어"
+            )
+
+        if hits >= 3:
+
+            score += 5
+            reasons.append(
+                "게시판구조"
+            )
+
+        if hits >= 5:
+
+            score += 5
+            reasons.append(
+                "게시판구조강함"
+            )
+
+        # table
+        tables = soup.find_all(
+            "table"
+        )
+
+        if tables:
+
+            score += 2
+            reasons.append(
+                "table"
+            )
+
+        # 목록 형태의 링크가 여러 개 있는지
+        links = soup.find_all(
+            "a",
+            href=True,
+        )
+
+        detail_like = 0
+
+        for a in links:
+
+            href = a.get(
+                "href",
+                "",
+            ).lower()
+
+            if any(
+                x.lower() in href
+                for x in DETAIL_PATTERNS
+            ):
+
+                detail_like += 1
+
+        if detail_like >= 2:
+
+            score += 3
+            reasons.append(
+                "게시글링크"
+            )
+
+        if detail_like >= 5:
+
+            score += 4
+            reasons.append(
+                "게시글링크다수"
+            )
+
+    return score, reasons
 
 
 # ============================================================
-# HTML 가져오기
+# HTML fetch
 # ============================================================
 
-async def fetch(session, url):
+async def fetch(
+    session,
+    url,
+):
     try:
+
         async with session.get(
             url,
-            timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT),
             allow_redirects=True,
             ssl=False,
+            timeout=aiohttp.ClientTimeout(
+                total=REQUEST_TIMEOUT
+            ),
         ) as response:
 
             if response.status >= 400:
                 return None, None
 
-            content_type = response.headers.get("Content-Type", "")
+            content_type = response.headers.get(
+                "Content-Type",
+                "",
+            ).lower()
 
-            if (
-                "text/html" not in content_type
-                and "application/xhtml" not in content_type
-                and content_type
+            # HTML이 아닌 파일은 제외
+            if content_type and not any(
+                x in content_type
+                for x in [
+                    "text/html",
+                    "application/xhtml",
+                ]
             ):
+
                 return None, None
 
-            text = await response.text(
+            html = await response.text(
                 errors="ignore"
             )
 
-            final_url = str(response.url)
-
-            return final_url, text
+            return (
+                str(response.url),
+                html,
+            )
 
     except Exception:
         return None, None
@@ -276,294 +556,301 @@ async def fetch(session, url):
 # 링크 추출
 # ============================================================
 
-def extract_links(base_url, html):
-    """HTML에서 내부 링크와 링크 텍스트를 추출."""
-    soup = BeautifulSoup(html, "html.parser")
+def extract_links(
+    base_url,
+    html,
+):
+    soup = BeautifulSoup(
+        html,
+        "html.parser",
+    )
 
     results = []
     seen = set()
 
-    for tag in soup.find_all("a", href=True):
+    # --------------------------------------------------------
+    # 일반 <a>
+    # --------------------------------------------------------
 
-        href = tag.get("href", "").strip()
+    for a in soup.find_all(
+        "a",
+        href=True,
+    ):
+
+        href = a.get(
+            "href",
+            "",
+        ).strip()
 
         if not href:
             continue
 
-        # javascript / mailto / tel 제외
         if href.lower().startswith(
-            ("javascript:", "mailto:", "tel:", "#")
+            (
+                "javascript:",
+                "mailto:",
+                "tel:",
+                "#",
+            )
         ):
             continue
 
-        full_url = normalize_url(urljoin(base_url, href))
-
-        if not is_http_url(full_url):
-            continue
-
-        if not same_domain(base_url, full_url):
-            continue
-
-        # 이미지/파일 등 제외
-        lower = full_url.lower()
-
-        excluded_extensions = [
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".gif",
-            ".svg",
-            ".pdf",
-            ".hwp",
-            ".hwpx",
-            ".xlsx",
-            ".xls",
-            ".zip",
-            ".doc",
-            ".docx",
-            ".ppt",
-            ".pptx",
-        ]
-
-        if any(lower.endswith(ext) for ext in excluded_extensions):
-            continue
-
-        if full_url in seen:
-            continue
-
-        seen.add(full_url)
-
-        text = clean_text(
-            tag.get_text(" ", strip=True)
+        url = normalize_url(
+            urljoin(
+                base_url,
+                href,
+            )
         )
 
-        # 부모 메뉴 텍스트도 일부 활용
+        if not is_http(url):
+            continue
+
+        if not same_domain(
+            base_url,
+            url,
+        ):
+            continue
+
+        lower = url.lower()
+
+        # 파일 제외
+        if lower.endswith(
+            (
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".gif",
+                ".svg",
+                ".pdf",
+                ".hwp",
+                ".hwpx",
+                ".xls",
+                ".xlsx",
+                ".zip",
+                ".doc",
+                ".docx",
+                ".ppt",
+                ".pptx",
+                ".mp4",
+                ".mp3",
+            )
+        ):
+            continue
+
+        if url in seen:
+            continue
+
+        seen.add(url)
+
+        text = clean_text(
+            a.get_text(
+                " ",
+                strip=True,
+            )
+        )
+
+        # 상위 요소 텍스트
         parent_text = ""
 
-        parent = tag.parent
+        parent = a.parent
 
         if parent:
+
             parent_text = clean_text(
-                parent.get_text(" ", strip=True)
+                parent.get_text(
+                    " ",
+                    strip=True,
+                )
             )
 
-        combined_text = clean_text(
+        combined = clean_text(
             f"{text} {parent_text}"
         )
 
         results.append(
             {
-                "url": full_url,
-                "text": combined_text[:300],
+                "url": url,
+                "text": combined[:500],
             }
         )
 
         if len(results) >= MAX_LINKS_PER_PAGE:
             break
 
+    # --------------------------------------------------------
+    # iframe / frame
+    # --------------------------------------------------------
+
+    for frame in soup.find_all(
+        [
+            "iframe",
+            "frame",
+        ],
+        src=True,
+    ):
+
+        src = frame.get(
+            "src",
+            "",
+        ).strip()
+
+        if not src:
+            continue
+
+        url = normalize_url(
+            urljoin(
+                base_url,
+                src,
+            )
+        )
+
+        if not is_http(url):
+            continue
+
+        if not same_domain(
+            base_url,
+            url,
+        ):
+            continue
+
+        if url in seen:
+            continue
+
+        seen.add(url)
+
+        results.append(
+            {
+                "url": url,
+                "text": "iframe 게시판",
+            }
+        )
+
     return results
 
 
 # ============================================================
-# 게시판 후보 점수 계산
+# 기관 1곳 탐색
 # ============================================================
 
-def score_board_candidate(url, link_text, html=None):
-    """
-    URL / 메뉴명 / 실제 HTML 구조를 종합해서
-    게시판일 가능성을 점수화한다.
-    """
-
-    score = 0
-    reasons = []
-
-    url_lower = url.lower()
-    text_lower = link_text.lower()
-
-    # --------------------------------------------------------
-    # 1. 메뉴명
-    # --------------------------------------------------------
-
-    for word in BOARD_WORDS:
-        if word.lower() in text_lower:
-            score += 6
-            reasons.append(f"메뉴:{word}")
-
-    # --------------------------------------------------------
-    # 2. URL
-    # --------------------------------------------------------
-
-    for word in BOARD_URL_WORDS:
-        if word.lower() in url_lower:
-            score += 3
-            reasons.append(f"url:{word}")
-
-    # --------------------------------------------------------
-    # 3. 상세 게시물 URL이면 감점
-    # --------------------------------------------------------
-
-    if is_probably_detail_url(url):
-        score -= 12
-        reasons.append("상세URL")
-
-    # --------------------------------------------------------
-    # 4. HTML 구조
-    # --------------------------------------------------------
-
-    if html:
-        soup = BeautifulSoup(html, "html.parser")
-
-        page_text = clean_text(
-            soup.get_text(" ", strip=True)
-        ).lower()
-
-        # 게시판에서 흔히 나타나는 단어
-        board_structure_words = [
-            "번호",
-            "제목",
-            "등록일",
-            "조회수",
-            "작성일",
-            "첨부파일",
-            "작성자",
-            "목록",
-        ]
-
-        structure_hits = 0
-
-        for word in board_structure_words:
-            if word.lower() in page_text:
-                structure_hits += 1
-
-        if structure_hits >= 2:
-            score += 8
-            reasons.append("게시판구조")
-
-        if structure_hits >= 4:
-            score += 5
-            reasons.append("게시판구조강함")
-
-        # table 존재
-        tables = soup.find_all("table")
-
-        if tables:
-            score += 3
-            reasons.append("table")
-
-        # 게시글처럼 보이는 링크 숫자
-        detail_links = 0
-
-        for a in soup.find_all("a", href=True):
-            href = a.get("href", "").lower()
-
-            if any(
-                word.lower() in href
-                for word in DETAIL_URL_WORDS
-            ):
-                detail_links += 1
-
-        if detail_links >= 3:
-            score += 5
-            reasons.append("게시글링크")
-
-        if detail_links >= 8:
-            score += 4
-            reasons.append("게시글링크다수")
-
-        # 번호/제목이 실제 표에 같이 있는 경우
-        for table in tables:
-            table_text = clean_text(
-                table.get_text(" ", strip=True)
-            ).lower()
-
-            if "번호" in table_text and "제목" in table_text:
-                score += 7
-                reasons.append("번호+제목표")
-
-                break
-
-    return score, reasons
-
-
-# ============================================================
-# 기관별 게시판 탐색
-# ============================================================
-
-async def discover(session, org_name, homepage):
-    """
-    홈페이지에서 게시판 후보를 탐색한다.
-
-    BFS 방식:
-        홈페이지
-          ↓
-        메뉴/사이트맵
-          ↓
-        게시판 후보
-          ↓
-        실제 HTML 검증
-    """
-
-    homepage = normalize_url(homepage)
+async def discover_one(
+    session,
+    institution,
+):
+    org_name = institution["기관명"]
+    homepage = normalize_url(
+        institution["URL"]
+    )
 
     if not homepage:
-        return [], "홈페이지 URL 없음"
 
+        return {
+            "institution": institution,
+            "boards": [],
+            "reason": "홈페이지 URL 없음",
+        }
+
+    # queue:
+    # url, depth, source_text
     queue = [
-        (homepage, 0, "")
+        (
+            homepage,
+            0,
+            "홈페이지",
+        )
     ]
 
     visited = set()
-
     candidates = {}
 
-    while queue:
+    pages = 0
 
-        current_url, depth, source_text = queue.pop(0)
+    homepage_failed = False
 
-        current_url = normalize_url(current_url)
+    while (
+        queue
+        and pages < MAX_PAGES_PER_ORG
+    ):
+
+        current_url, depth, source_text = (
+            queue.pop(0)
+        )
+
+        current_url = normalize_url(
+            current_url
+        )
 
         if current_url in visited:
             continue
 
-        visited.add(current_url)
-
         if depth > MAX_DEPTH:
             continue
 
-        final_url, html = await fetch(
-            session,
+        visited.add(
             current_url
         )
 
+        final_url, html = await fetch(
+            session,
+            current_url,
+        )
+
         if not html:
+
+            if (
+                depth == 0
+                and current_url == homepage
+            ):
+                homepage_failed = True
+
             continue
 
+        pages += 1
+
         # ----------------------------------------------------
-        # 현재 페이지 자체가 게시판인지 검사
+        # 현재 페이지 자체 평가
         # ----------------------------------------------------
 
-        score, reasons = score_board_candidate(
+        score, reasons = score_candidate(
             final_url,
             source_text,
             html,
         )
 
-        if score >= 12 and not is_probably_detail_url(final_url):
+        # 홈페이지 자체는 게시판으로 저장하지 않음
+        if (
+            depth > 0
+            and score >= 5
+            and not is_detail_url(final_url)
+        ):
 
-            key = normalize_url(final_url)
+            key = normalize_url(
+                final_url
+            )
 
-            if key not in candidates or score > candidates[key]["score"]:
+            existing = candidates.get(
+                key
+            )
+
+            if (
+                existing is None
+                or score > existing["score"]
+            ):
 
                 candidates[key] = {
                     "기관명": org_name,
-                    "게시판명": source_text or "게시판",
+                    "게시판명": (
+                        source_text
+                        or "게시판"
+                    ),
                     "게시판URL": final_url,
                     "점수": score,
-                    "판별근거": ", ".join(reasons),
+                    "판별근거": ", ".join(
+                        reasons
+                    ),
                 }
 
         # ----------------------------------------------------
-        # 링크 탐색
+        # 링크 추출
         # ----------------------------------------------------
 
         links = extract_links(
@@ -571,91 +858,138 @@ async def discover(session, org_name, homepage):
             html,
         )
 
-        # 점수가 높은 링크를 먼저 탐색
-        scored_links = []
+        next_links = []
 
         for item in links:
 
             link_url = item["url"]
             link_text = item["text"]
 
-            link_score, link_reasons = score_board_candidate(
-                link_url,
-                link_text,
-            )
-
-            scored_links.append(
-                (
-                    link_score,
+            link_score, link_reasons = (
+                score_candidate(
                     link_url,
                     link_text,
                 )
             )
 
-            # ------------------------------------------------
-            # 게시판 후보 등록
-            # ------------------------------------------------
+            # -----------------------------------------------
+            # 후보 저장
+            # -----------------------------------------------
 
+            # 게시판 가능성이 조금만 있어도 후보로 저장
             if (
-                link_score >= 8
-                and not is_probably_detail_url(link_url)
+                link_score >= 4
+                and not is_detail_url(
+                    link_url
+                )
             ):
 
-                key = normalize_url(link_url)
+                key = normalize_url(
+                    link_url
+                )
+
+                existing = candidates.get(
+                    key
+                )
+
+                candidate = {
+                    "기관명": org_name,
+                    "게시판명": (
+                        link_text
+                        or "게시판"
+                    ),
+                    "게시판URL": link_url,
+                    "점수": link_score,
+                    "판별근거": ", ".join(
+                        link_reasons
+                    ),
+                }
 
                 if (
-                    key not in candidates
-                    or link_score > candidates[key]["score"]
+                    existing is None
+                    or link_score > existing["score"]
                 ):
 
-                    candidates[key] = {
-                        "기관명": org_name,
-                        "게시판명": link_text or "게시판",
-                        "게시판URL": link_url,
-                        "점수": link_score,
-                        "판별근거": ", ".join(link_reasons),
-                    }
+                    candidates[key] = candidate
+
+            # -----------------------------------------------
+            # 다음 단계 탐색 후보
+            # -----------------------------------------------
+
+            # 게시판 상세페이지는 탐색하지 않음
+            if is_detail_url(
+                link_url
+            ):
+                continue
+
+            # 이미 방문
+            if link_url in visited:
+                continue
+
+            # 메뉴명이 의미있는 경우
+            menu_match = any(
+                word.lower()
+                in link_text.lower()
+                for word in (
+                    BOARD_WORDS
+                    + SITE_MAP_WORDS
+                )
+            )
+
+            # URL이 의미있는 경우
+            url_match = any(
+                word.lower()
+                in link_url.lower()
+                for word in BOARD_URL_PATTERNS
+            )
+
+            if (
+                menu_match
+                or url_match
+                or depth < 1
+            ):
+
+                next_links.append(
+                    (
+                        link_score,
+                        link_url,
+                        link_text,
+                    )
+                )
 
         # ----------------------------------------------------
-        # 다음 탐색 페이지 선정
+        # 다음 탐색 우선순위
         # ----------------------------------------------------
 
-        scored_links.sort(
+        next_links.sort(
             key=lambda x: x[0],
             reverse=True,
         )
 
         added = 0
 
-        for link_score, link_url, link_text in scored_links:
+        for (
+            link_score,
+            link_url,
+            link_text,
+        ) in next_links:
 
             if link_url in visited:
                 continue
 
-            # 게시판 후보는 굳이 깊게 들어갈 필요 없음
-            if link_score >= 8:
-                continue
-
-            # 메뉴/사이트맵 성격의 링크만 추가
-            if (
-                link_score >= 3
-                or any(
-                    word.lower() in link_text.lower()
-                    for word in BOARD_WORDS
+            queue.append(
+                (
+                    link_url,
+                    depth + 1,
+                    link_text,
                 )
-            ):
+            )
 
-                queue.append(
-                    (
-                        link_url,
-                        depth + 1,
-                        link_text,
-                    )
-                )
+            added += 1
 
-                added += 1
-
-            if added >= 25:
+            # 한 페이지에서 너무 많은 메뉴로
+            # 확장되지 않도록 제한
+            if added >= 20:
                 break
 
     # --------------------------------------------------------
@@ -672,9 +1006,13 @@ async def discover(session, org_name, homepage):
         reverse=True,
     )
 
-    # 같은 기관의 비슷한 URL 제거
+    # --------------------------------------------------------
+    # URL path 기준 중복 제거
+    # --------------------------------------------------------
+
     final = []
-    seen_paths = set()
+
+    seen_keys = set()
 
     for item in candidate_list:
 
@@ -682,35 +1020,325 @@ async def discover(session, org_name, homepage):
 
         parsed = urlparse(url)
 
-        path_key = (
+        key = (
             parsed.netloc.lower(),
             parsed.path.lower(),
+            parsed.query.lower(),
         )
 
-        if path_key in seen_paths:
+        if key in seen_keys:
             continue
 
-        seen_paths.add(path_key)
+        seen_keys.add(key)
 
-        final.append(item)
+        final.append(
+            item
+        )
 
-        if len(final) >= MAX_BOARDS_PER_ORG:
+        if (
+            len(final)
+            >= MAX_BOARDS_PER_ORG
+        ):
             break
 
-    if final:
-        return final, "게시판 발견"
+    # --------------------------------------------------------
+    # 결과
+    # --------------------------------------------------------
 
-    return [], "게시판 후보 미발견"
+    if final:
+
+        return {
+            "institution": institution,
+            "boards": final,
+            "reason": (
+                f"{len(final)}개 후보 발견"
+            ),
+        }
+
+    if homepage_failed:
+
+        return {
+            "institution": institution,
+            "boards": [],
+            "reason": "홈페이지 접속 실패",
+        }
+
+    if pages == 0:
+
+        return {
+            "institution": institution,
+            "boards": [],
+            "reason": "HTML 페이지 확보 실패",
+        }
+
+    return {
+        "institution": institution,
+        "boards": [],
+        "reason": (
+            f"게시판 후보 없음 "
+            f"(탐색 {pages}페이지)"
+        ),
+    }
 
 
 # ============================================================
-# Excel 읽기
+# 전체 기관 병렬 탐색
+# ============================================================
+
+async def discover_all():
+    institutions = load_institutions()
+
+    total = len(
+        institutions
+    )
+
+    print()
+    print("=" * 75)
+    print("3차 게시판 탐색 시작")
+    print("=" * 75)
+    print(
+        f"전체 기관 : {total}개"
+    )
+    print(
+        f"동시 탐색 : {CONCURRENCY}개"
+    )
+    print(
+        f"기관당 최대 페이지 : "
+        f"{MAX_PAGES_PER_ORG}"
+    )
+    print("=" * 75)
+    print()
+
+    connector = aiohttp.TCPConnector(
+        limit=CONCURRENCY * 2,
+        ssl=False,
+    )
+
+    timeout = aiohttp.ClientTimeout(
+        total=REQUEST_TIMEOUT
+    )
+
+    semaphore = asyncio.Semaphore(
+        CONCURRENCY
+    )
+
+    async with aiohttp.ClientSession(
+        connector=connector,
+        timeout=timeout,
+        headers=HEADERS,
+    ) as session:
+
+        async def worker(
+            index,
+            institution,
+        ):
+
+            async with semaphore:
+
+                result = await discover_one(
+                    session,
+                    institution,
+                )
+
+                boards = result[
+                    "boards"
+                ]
+
+                print(
+                    f"[{index:03d}/{total}] "
+                    f"{institution['기관명']} "
+                    f"→ "
+                    f"{len(boards)}개 "
+                    f"({result['reason']})"
+                )
+
+                return result
+
+        tasks = [
+            asyncio.create_task(
+                worker(
+                    index,
+                    institution,
+                )
+            )
+            for index, institution
+            in enumerate(
+                institutions,
+                start=1,
+            )
+        ]
+
+        results = await asyncio.gather(
+            *tasks
+        )
+
+    # ========================================================
+    # 결과 정리
+    # ========================================================
+
+    board_rows = []
+    missing_rows = []
+
+    found_orgs = set()
+
+    for result in results:
+
+        institution = result[
+            "institution"
+        ]
+
+        boards = result[
+            "boards"
+        ]
+
+        if boards:
+
+            found_orgs.add(
+                institution["기관명"]
+            )
+
+            for board in boards:
+
+                board["기관유형"] = (
+                    institution[
+                        "기관유형"
+                    ]
+                )
+
+                board["홈페이지"] = (
+                    institution["URL"]
+                )
+
+                board_rows.append(
+                    board
+                )
+
+        else:
+
+            missing_rows.append(
+                {
+                    **institution,
+                    "상태": "미발견",
+                    "비고": result[
+                        "reason"
+                    ],
+                }
+            )
+
+    # 저장
+    save_boards(
+        board_rows
+    )
+
+    save_missing(
+        missing_rows
+    )
+
+    # ========================================================
+    # 통계
+    # ========================================================
+
+    found_count = len(
+        found_orgs
+    )
+
+    missing_count = (
+        total - found_count
+    )
+
+    coverage = (
+        found_count
+        / total
+        * 100
+        if total
+        else 0
+    )
+
+    print()
+    print("=" * 75)
+    print("3차 게시판 탐색 완료")
+    print("=" * 75)
+
+    print(
+        f"전체 기관          : "
+        f"{total}개"
+    )
+
+    print(
+        f"게시판 발견 기관    : "
+        f"{found_count}개"
+    )
+
+    print(
+        f"게시판 미발견 기관  : "
+        f"{missing_count}개"
+    )
+
+    print(
+        f"기관 발견률         : "
+        f"{coverage:.1f}%"
+    )
+
+    print(
+        f"최종 게시판 수      : "
+        f"{len(board_rows)}개"
+    )
+
+    print()
+    print(
+        f"생성 파일 : "
+        f"{BOARDS_FILE}"
+    )
+
+    print(
+        f"생성 파일 : "
+        f"{MISSING_FILE}"
+    )
+
+    print("=" * 75)
+
+    # ========================================================
+    # 미발견 기관 요약
+    # ========================================================
+
+    if missing_rows:
+
+        print()
+        print("=" * 75)
+        print(
+            "게시판 미발견 기관 목록"
+        )
+        print("=" * 75)
+
+        for row in missing_rows:
+
+            print(
+                f"- {row['기관명']}"
+                f" | {row['비고']}"
+            )
+
+        print("=" * 75)
+
+    print()
+    print(
+        "※ 이번 실행은 게시판 탐색만 수행했습니다."
+    )
+    print(
+        "※ Telegram 알림은 발송하지 않았습니다."
+    )
+
+
+# ============================================================
+# Excel
 # ============================================================
 
 def load_institutions():
-    if not os.path.exists(URL_FILE):
+
+    if not os.path.exists(
+        URL_FILE
+    ):
         raise FileNotFoundError(
-            f"{URL_FILE} 파일을 찾을 수 없습니다."
+            f"{URL_FILE} 파일이 없습니다."
         )
 
     wb = load_workbook(
@@ -722,35 +1350,49 @@ def load_institutions():
     ws = wb.active
 
     rows = list(
-        ws.iter_rows(values_only=True)
+        ws.iter_rows(
+            values_only=True
+        )
     )
+
+    wb.close()
 
     if not rows:
         return []
 
     headers = [
-        str(x).strip() if x is not None else ""
+        str(x).strip()
+        if x is not None
+        else ""
         for x in rows[0]
     ]
 
     header_map = {
-        header: idx
-        for idx, header in enumerate(headers)
+        header: index
+        for index, header
+        in enumerate(headers)
     }
 
-    # 예상 컬럼
-    org_idx = header_map.get("기관명")
-    url_idx = header_map.get("URL")
-    type_idx = header_map.get("기관유형")
+    org_idx = header_map.get(
+        "기관명"
+    )
+
+    url_idx = header_map.get(
+        "URL"
+    )
+
+    type_idx = header_map.get(
+        "기관유형"
+    )
 
     if org_idx is None:
         raise ValueError(
-            "url_완성.xlsx에 '기관명' 컬럼이 없습니다."
+            "기관명 컬럼이 없습니다."
         )
 
     if url_idx is None:
         raise ValueError(
-            "url_완성.xlsx에 'URL' 컬럼이 없습니다."
+            "URL 컬럼이 없습니다."
         )
 
     institutions = []
@@ -761,16 +1403,26 @@ def load_institutions():
             continue
 
         org_name = (
-            str(row[org_idx]).strip()
-            if org_idx < len(row)
-            and row[org_idx] is not None
+            str(
+                row[org_idx]
+            ).strip()
+            if (
+                org_idx < len(row)
+                and row[org_idx]
+                is not None
+            )
             else ""
         )
 
         homepage = (
-            str(row[url_idx]).strip()
-            if url_idx < len(row)
-            and row[url_idx] is not None
+            str(
+                row[url_idx]
+            ).strip()
+            if (
+                url_idx < len(row)
+                and row[url_idx]
+                is not None
+            )
             else ""
         )
 
@@ -779,8 +1431,10 @@ def load_institutions():
         if (
             type_idx is not None
             and type_idx < len(row)
-            and row[type_idx] is not None
+            and row[type_idx]
+            is not None
         ):
+
             org_type = str(
                 row[type_idx]
             ).strip()
@@ -796,17 +1450,13 @@ def load_institutions():
             }
         )
 
-    wb.close()
-
     return institutions
 
 
-# ============================================================
-# boards.xlsx 저장
-# ============================================================
-
 def save_boards(rows):
+
     wb = Workbook()
+
     ws = wb.active
 
     ws.title = "게시판"
@@ -821,64 +1471,112 @@ def save_boards(rows):
         "판별근거",
     ]
 
-    ws.append(headers)
+    ws.append(
+        headers
+    )
 
     for row in rows:
 
         ws.append(
             [
-                row.get("기관명", ""),
-                row.get("기관유형", ""),
-                row.get("홈페이지", ""),
-                row.get("게시판명", ""),
-                row.get("게시판URL", ""),
-                row.get("점수", ""),
-                row.get("판별근거", ""),
+                row.get(
+                    "기관명",
+                    "",
+                ),
+                row.get(
+                    "기관유형",
+                    "",
+                ),
+                row.get(
+                    "홈페이지",
+                    "",
+                ),
+                row.get(
+                    "게시판명",
+                    "",
+                ),
+                row.get(
+                    "게시판URL",
+                    "",
+                ),
+                row.get(
+                    "점수",
+                    "",
+                ),
+                row.get(
+                    "판별근거",
+                    "",
+                ),
             ]
         )
 
-    # 열 너비
     widths = {
         "A": 30,
         "B": 20,
-        "C": 50,
-        "D": 30,
-        "E": 80,
+        "C": 55,
+        "D": 35,
+        "E": 90,
         "F": 10,
-        "G": 50,
+        "G": 60,
     }
 
     for col, width in widths.items():
-        ws.column_dimensions[col].width = width
 
-    wb.save(BOARDS_FILE)
+        ws.column_dimensions[
+            col
+        ].width = width
+
+    ws.freeze_panes = "A2"
+
+    wb.save(
+        BOARDS_FILE
+    )
 
 
 def save_missing(rows):
+
     wb = Workbook()
+
     ws = wb.active
 
-    ws.title = "게시판 미발견"
+    ws.title = "미발견"
 
     headers = [
         "기관명",
         "기관유형",
-        "홈페이지",
+        "URL",
         "상태",
         "비고",
     ]
 
-    ws.append(headers)
+    ws.append(
+        headers
+    )
 
     for row in rows:
 
         ws.append(
             [
-                row.get("기관명", ""),
-                row.get("기관유형", ""),
-                row.get("URL", ""),
-                row.get("상태", ""),
-                row.get("비고", ""),
+                row.get(
+                    "기관명",
+                    "",
+                ),
+                row.get(
+                    "기관유형",
+                    "",
+                ),
+                row.get(
+                    "URL",
+                    "",
+                ),
+                row.get(
+                    "상태",
+                    "",
+                ),
+                row.get(
+                    "비고",
+                    "",
+                ),
             ]
         )
 
@@ -886,200 +1584,32 @@ def save_missing(rows):
         "A": 30,
         "B": 20,
         "C": 60,
-        "D": 20,
-        "E": 50,
+        "D": 15,
+        "E": 60,
     }
 
     for col, width in widths.items():
-        ws.column_dimensions[col].width = width
 
-    wb.save(MISSING_FILE)
+        ws.column_dimensions[
+            col
+        ].width = width
 
+    ws.freeze_panes = "A2"
 
-# ============================================================
-# 게시판 전체 탐색
-# ============================================================
-
-async def discover_all():
-    institutions = load_institutions()
-
-    total = len(institutions)
-
-    print("=" * 70)
-    print("게시판 전체 탐색 시작")
-    print(f"대상 기관 수 : {total}")
-    print("=" * 70)
-
-    if total == 0:
-        print("처리할 기관이 없습니다.")
-        return
-
-    connector = aiohttp.TCPConnector(
-        limit=15,
-        ssl=False,
-    )
-
-    timeout = aiohttp.ClientTimeout(
-        total=REQUEST_TIMEOUT
-    )
-
-    all_rows = []
-    missing_rows = []
-
-    found_orgs = set()
-
-    async with aiohttp.ClientSession(
-        connector=connector,
-        timeout=timeout,
-        headers=HEADERS,
-    ) as session:
-
-        for index, institution in enumerate(
-            institutions,
-            start=1,
-        ):
-
-            org_name = institution["기관명"]
-            homepage = institution["URL"]
-            org_type = institution["기관유형"]
-
-            print(
-                f"[{index}/{total}] "
-                f"{org_name}"
-            )
-
-            if not homepage:
-                missing_rows.append(
-                    {
-                        **institution,
-                        "상태": "누락",
-                        "비고": "홈페이지 URL 없음",
-                    }
-                )
-
-                print(
-                    "   → 홈페이지 URL 없음"
-                )
-
-                continue
-
-            try:
-
-                boards, status = await discover(
-                    session,
-                    org_name,
-                    homepage,
-                )
-
-            except Exception as e:
-
-                boards = []
-
-                status = (
-                    f"탐색 오류: "
-                    f"{type(e).__name__}"
-                )
-
-            if boards:
-
-                found_orgs.add(org_name)
-
-                for board in boards:
-
-                    board["기관유형"] = org_type
-                    board["홈페이지"] = homepage
-
-                    all_rows.append(board)
-
-                print(
-                    f"   → 게시판 {len(boards)}개 발견"
-                )
-
-                for board in boards[:5]:
-                    print(
-                        f"      • "
-                        f"{board['게시판명'][:35]} "
-                        f""
-                        f"[{board['점수']}]"
-                    )
-
-            else:
-
-                missing_rows.append(
-                    {
-                        **institution,
-                        "상태": "누락",
-                        "비고": status,
-                    }
-                )
-
-                print(
-                    f"   → 게시판 미발견 "
-                    f"({status})"
-                )
-
-    # --------------------------------------------------------
-    # 저장
-    # --------------------------------------------------------
-
-    save_boards(all_rows)
-    save_missing(missing_rows)
-
-    found_count = len(found_orgs)
-    missing_count = total - found_count
-
-    coverage = (
-        found_count / total * 100
-        if total
-        else 0
-    )
-
-    print()
-    print("=" * 70)
-    print("게시판 탐색 완료")
-    print("=" * 70)
-
-    print(f"전체 기관       : {total}개")
-    print(f"게시판 발견 기관 : {found_count}개")
-    print(f"게시판 누락 기관 : {missing_count}개")
-    print(f"게시판 발견률    : {coverage:.1f}%")
-    print(f"게시판 총 개수   : {len(all_rows)}개")
-
-    print()
-    print(f"생성 파일 : {BOARDS_FILE}")
-    print(f"누락 파일 : {MISSING_FILE}")
-
-    print()
-    print("-" * 70)
-    print("게시판 미발견 기관")
-    print("-" * 70)
-
-    for row in missing_rows:
-        print(
-            f"- {row['기관명']} "
-            f"| {row['비고']}"
-        )
-
-    print("=" * 70)
-
-    # 중요:
-    # 게시판 탐색 직후에는 모니터링하지 않는다.
-    # 기존 게시물을 새 글로 오인하여 Telegram이 폭주하는 것을 방지.
-    print()
-    print(
-        "게시판 탐색만 완료했습니다."
-    )
-    print(
-        "이번 실행에서는 Telegram 알림을 보내지 않습니다."
+    wb.save(
+        MISSING_FILE
     )
 
 
 # ============================================================
-# 게시판 읽기
+# 게시판 로드
 # ============================================================
 
 def load_boards():
-    if not os.path.exists(BOARDS_FILE):
+
+    if not os.path.exists(
+        BOARDS_FILE
+    ):
         return []
 
     wb = load_workbook(
@@ -1091,7 +1621,9 @@ def load_boards():
     ws = wb.active
 
     rows = list(
-        ws.iter_rows(values_only=True)
+        ws.iter_rows(
+            values_only=True
+        )
     )
 
     wb.close()
@@ -1100,7 +1632,9 @@ def load_boards():
         return []
 
     headers = [
-        str(x).strip() if x is not None else ""
+        str(x).strip()
+        if x is not None
+        else ""
         for x in rows[0]
     ]
 
@@ -1110,39 +1644,56 @@ def load_boards():
 
         item = {}
 
-        for idx, header in enumerate(headers):
+        for index, header in enumerate(
+            headers
+        ):
 
-            if idx < len(row):
+            if index < len(row):
+
                 item[header] = (
-                    str(row[idx]).strip()
-                    if row[idx] is not None
+                    str(
+                        row[index]
+                    ).strip()
+                    if row[index]
+                    is not None
                     else ""
                 )
+
             else:
+
                 item[header] = ""
 
-        if item.get("게시판URL"):
-            result.append(item)
+        if item.get(
+            "게시판URL"
+        ):
+
+            result.append(
+                item
+            )
 
     return result
 
 
 # ============================================================
-# 게시판에서 게시글 추출
+# 게시물 추출
 # ============================================================
 
-def extract_posts(board_url, html):
-    soup = BeautifulSoup(html, "html.parser")
+def extract_posts(
+    board_url,
+    html,
+):
+    soup = BeautifulSoup(
+        html,
+        "html.parser",
+    )
 
     posts = []
-
     seen = set()
 
-    # --------------------------------------------------------
-    # 방법 1 : table 안의 링크
-    # --------------------------------------------------------
-
-    tables = soup.find_all("table")
+    # table 우선
+    tables = soup.find_all(
+        "table"
+    )
 
     for table in tables:
 
@@ -1151,25 +1702,38 @@ def extract_posts(board_url, html):
             href=True,
         ):
 
-            text = clean_text(
-                a.get_text(" ", strip=True)
+            title = clean_text(
+                a.get_text(
+                    " ",
+                    strip=True,
+                )
             )
 
-            href = a.get("href", "").strip()
+            href = a.get(
+                "href",
+                "",
+            ).strip()
 
-            if not text or len(text) < 2:
+            if not title:
                 continue
 
             if href.lower().startswith(
-                ("javascript:", "#", "mailto:")
+                (
+                    "javascript:",
+                    "#",
+                    "mailto:",
+                )
             ):
                 continue
 
             url = normalize_url(
-                urljoin(board_url, href)
+                urljoin(
+                    board_url,
+                    href,
+                )
             )
 
-            if not is_http_url(url):
+            if not is_http(url):
                 continue
 
             if not same_domain(
@@ -1178,14 +1742,15 @@ def extract_posts(board_url, html):
             ):
                 continue
 
-            # 목록 자체 링크 제외
-            if url == normalize_url(board_url):
+            if (
+                url
+                == normalize_url(
+                    board_url
+                )
+            ):
                 continue
 
-            # 첨부파일 제외
-            lower = url.lower()
-
-            if lower.endswith(
+            if url.lower().endswith(
                 (
                     ".pdf",
                     ".hwp",
@@ -1199,7 +1764,10 @@ def extract_posts(board_url, html):
             ):
                 continue
 
-            key = (url, text)
+            key = (
+                url,
+                title,
+            )
 
             if key in seen:
                 continue
@@ -1208,15 +1776,12 @@ def extract_posts(board_url, html):
 
             posts.append(
                 {
-                    "title": text,
+                    "title": title,
                     "url": url,
                 }
             )
 
-    # --------------------------------------------------------
-    # 방법 2 : 일반 링크
-    # --------------------------------------------------------
-
+    # 일반 상세 링크
     if len(posts) < 3:
 
         for a in soup.find_all(
@@ -1224,20 +1789,29 @@ def extract_posts(board_url, html):
             href=True,
         ):
 
-            text = clean_text(
-                a.get_text(" ", strip=True)
+            title = clean_text(
+                a.get_text(
+                    " ",
+                    strip=True,
+                )
             )
 
-            href = a.get("href", "").strip()
+            href = a.get(
+                "href",
+                "",
+            ).strip()
 
-            if not text or len(text) < 2:
+            if not title:
                 continue
 
             url = normalize_url(
-                urljoin(board_url, href)
+                urljoin(
+                    board_url,
+                    href,
+                )
             )
 
-            if not is_http_url(url):
+            if not is_http(url):
                 continue
 
             if not same_domain(
@@ -1246,13 +1820,15 @@ def extract_posts(board_url, html):
             ):
                 continue
 
-            if url == normalize_url(board_url):
+            if not is_detail_url(
+                url
+            ):
                 continue
 
-            if not is_probably_detail_url(url):
-                continue
-
-            key = (url, text)
+            key = (
+                url,
+                title,
+            )
 
             if key in seen:
                 continue
@@ -1261,7 +1837,7 @@ def extract_posts(board_url, html):
 
             posts.append(
                 {
-                    "title": text,
+                    "title": title,
                     "url": url,
                 }
             )
@@ -1270,16 +1846,16 @@ def extract_posts(board_url, html):
 
 
 # ============================================================
-# 게시글 상세 내용
+# 게시물 상세 내용
 # ============================================================
 
 async def fetch_post_content(
     session,
-    post_url,
+    url,
 ):
     final_url, html = await fetch(
         session,
-        post_url,
+        url,
     )
 
     if not html:
@@ -1290,8 +1866,7 @@ async def fetch_post_content(
         "html.parser",
     )
 
-    # 불필요한 영역 제거
-    for tag in soup(
+    for tag in soup.find_all(
         [
             "script",
             "style",
@@ -1301,16 +1876,34 @@ async def fetch_post_content(
             "nav",
         ]
     ):
+
         tag.decompose()
 
-    text = clean_text(
+    return clean_text(
         soup.get_text(
             " ",
             strip=True,
         )
     )
 
-    return text
+
+# ============================================================
+# Keyword
+# ============================================================
+
+def find_keywords(text):
+
+    if not text:
+        return []
+
+    lower = text.lower()
+
+    return [
+        keyword
+        for keyword in KEYWORDS
+        if keyword.lower()
+        in lower
+    ]
 
 
 # ============================================================
@@ -1318,7 +1911,10 @@ async def fetch_post_content(
 # ============================================================
 
 def load_seen():
-    if not os.path.exists(SEEN_FILE):
+
+    if not os.path.exists(
+        SEEN_FILE
+    ):
         return set()
 
     try:
@@ -1329,18 +1925,27 @@ def load_seen():
             encoding="utf-8",
         ) as f:
 
-            data = json.load(f)
+            data = json.load(
+                f
+            )
 
-        if isinstance(data, list):
-            return set(data)
+        if isinstance(
+            data,
+            list,
+        ):
 
-        return set()
+            return set(
+                data
+            )
 
     except Exception:
-        return set()
+        pass
+
+    return set()
 
 
 def save_seen(seen):
+
     with open(
         SEEN_FILE,
         "w",
@@ -1348,7 +1953,9 @@ def save_seen(seen):
     ) as f:
 
         json.dump(
-            sorted(seen),
+            sorted(
+                seen
+            ),
             f,
             ensure_ascii=False,
             indent=2,
@@ -1365,13 +1972,13 @@ async def send_telegram(
 ):
     if not TELEGRAM_BOT_TOKEN:
         print(
-            "TELEGRAM_BOT_TOKEN이 없습니다."
+            "TELEGRAM_BOT_TOKEN 없음"
         )
         return False
 
     if not TELEGRAM_CHAT_ID:
         print(
-            "TELEGRAM_CHAT_ID가 없습니다."
+            "TELEGRAM_CHAT_ID 없음"
         )
         return False
 
@@ -1397,24 +2004,19 @@ async def send_telegram(
             if response.status == 200:
                 return True
 
-            text = await response.text()
-
             print(
                 "Telegram 오류:",
                 response.status,
-                text[:300],
             )
-
-            return False
 
     except Exception as e:
 
         print(
-            "Telegram 전송 오류:",
+            "Telegram 오류:",
             e,
         )
 
-        return False
+    return False
 
 
 # ============================================================
@@ -1422,28 +2024,30 @@ async def send_telegram(
 # ============================================================
 
 async def monitor():
+
     boards = load_boards()
 
     if not boards:
+
         print(
-            "boards.xlsx에 게시판 정보가 없습니다."
+            "boards.xlsx에 게시판이 없습니다."
         )
-        print(
-            "게시판 탐색을 먼저 실행해야 합니다."
-        )
+
         return
 
     seen = load_seen()
 
-    print("=" * 70)
-    print("일일 게시판 모니터링 시작")
-    print("=" * 70)
+    print()
+    print("=" * 75)
+    print("일일 게시판 모니터링")
+    print("=" * 75)
     print(
-        f"감시 게시판 수 : {len(boards)}개"
+        f"게시판 수 : {len(boards)}"
     )
     print(
-        f"키워드         : {', '.join(KEYWORDS)}"
+        f"키워드 : {', '.join(KEYWORDS)}"
     )
+    print("=" * 75)
 
     connector = aiohttp.TCPConnector(
         limit=20,
@@ -1482,9 +2086,6 @@ async def monitor():
                 "",
             )
 
-            if not board_url:
-                continue
-
             print(
                 f"[{index}/{len(boards)}] "
                 f"{org_name} / "
@@ -1497,73 +2098,77 @@ async def monitor():
             )
 
             if not html:
+
                 print(
                     "   → 접속 실패"
                 )
+
                 continue
 
             posts = extract_posts(
-                final_url or board_url,
+                final_url
+                or board_url,
                 html,
             )
 
             for post in posts:
 
-                title = post["title"]
-                post_url = post["url"]
+                title = post[
+                    "title"
+                ]
 
-                # ------------------------------------------------
-                # 제목에 키워드가 있으면 우선 처리
-                # ------------------------------------------------
+                post_url = post[
+                    "url"
+                ]
 
-                title_keywords = keyword_in_text(
-                    title
+                title_keywords = (
+                    find_keywords(
+                        title
+                    )
                 )
 
-                # ------------------------------------------------
-                # 상세 페이지
-                # ------------------------------------------------
+                content = title
 
-                content = ""
+                if not title_keywords:
 
-                if title_keywords:
-                    content = title
-
-                else:
-                    content = await fetch_post_content(
-                        session,
-                        post_url,
+                    content = (
+                        await fetch_post_content(
+                            session,
+                            post_url,
+                        )
                     )
 
-                found_keywords = keyword_in_text(
+                found = find_keywords(
                     content
                 )
 
-                if not found_keywords:
+                if not found:
                     continue
 
-                # URL을 고유 ID로 사용
                 post_id = post_url
 
                 if post_id in seen:
                     continue
 
-                # 새로운 게시물
-                seen.add(post_id)
+                seen.add(
+                    post_id
+                )
 
                 new_count += 1
 
                 message = (
-                    "🚨 공공기관 참여/공모 관련 게시물\n\n"
+                    "🚨 공공기관 "
+                    "참여/공모 관련 게시물\n\n"
                     f"기관: {org_name}\n"
                     f"게시판: {board_name}\n"
                     f"제목: {title}\n"
-                    f"키워드: {', '.join(found_keywords)}\n\n"
+                    f"키워드: "
+                    f"{', '.join(found)}\n\n"
                     f"{post_url}"
                 )
 
                 print(
-                    "   ★ 신규 발견:",
+                    "   ★ 신규:",
                     title,
                 )
 
@@ -1572,24 +2177,47 @@ async def monitor():
                     message,
                 )
 
-    save_seen(seen)
+    save_seen(
+        seen
+    )
 
     print()
-    print("=" * 70)
-    print("모니터링 완료")
-    print(f"신규 발견 : {new_count}건")
-    print(f"누적 확인 : {len(seen)}건")
-    print("=" * 70)
+    print("=" * 75)
+    print(
+        f"모니터링 완료 "
+        f"| 신규 {new_count}건"
+    )
+    print("=" * 75)
 
 
 # ============================================================
-# 최초 실행 / 일일 실행 구분
+# Main
 # ============================================================
 
 async def main():
 
     # --------------------------------------------------------
-    # boards.xlsx가 없으면 게시판 탐색
+    # 강제 재탐색
+    # --------------------------------------------------------
+
+    if FORCE_DISCOVER_BOARDS:
+
+        print()
+        print(
+            "FORCE_DISCOVER_BOARDS=true"
+        )
+
+        print(
+            "→ boards.xlsx 존재 여부와 관계없이 "
+            "게시판을 다시 탐색합니다."
+        )
+
+        await discover_all()
+
+        return
+
+    # --------------------------------------------------------
+    # boards.xlsx가 없으면 자동 탐색
     # --------------------------------------------------------
 
     if not os.path.exists(
@@ -1601,7 +2229,7 @@ async def main():
         )
 
         print(
-            "→ 게시판 전체 탐색을 시작합니다."
+            "→ 게시판 탐색을 시작합니다."
         )
 
         await discover_all()
@@ -1609,7 +2237,7 @@ async def main():
         return
 
     # --------------------------------------------------------
-    # boards.xlsx가 있으면 일일 모니터링
+    # 정상 운영
     # --------------------------------------------------------
 
     print(
@@ -1617,11 +2245,13 @@ async def main():
     )
 
     print(
-        "→ 일일 모니터링 모드로 실행합니다."
+        "→ 일일 모니터링을 시작합니다."
     )
 
     await monitor()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(
+        main()
+    )
