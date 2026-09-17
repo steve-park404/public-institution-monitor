@@ -1,34 +1,33 @@
 {
-  "run_at": "2026-09-17T21:07:40.181496+09:00",
-  "targets": 50,
-  "completed": 47,
-  "posts_checked": 346,
-  "new_matches": 0,
-  "errors": 3,
-  "timed_out": 0,
-  "first_run": true,
+  "version": "V8.6",
+  "timestamp_utc": "2026-09-17T12:37:58.310889+00:00",
+  "targets": 100,
+  "completed": 100,
+  "posts_checked": 1470,
+  "new_matches": 1078,
+  "errors": 2,
+  "timed_out": 1,
+  "first_run": false,
   "discovered_notice_boards": 0,
   "telegram": {
-    "ok": true,
-    "skipped": true
+    "ok": false,
+    "sent": 1078
   },
-  "errors_detail": [
+  "error_details": [
     {
-      "기관명": "한국고전번역원",
-      "게시판": "전체",
-      "URL": "https://www.itkc.or.kr/bbs/board.do?id=101&menuId=10062",
+      "institution": "대한법률구조공단",
+      "board": "공지사항 더보기",
+      "url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
+      "posts": 0,
+      "matches": [],
       "error": "HTTP 0"
     },
     {
-      "기관명": "한국고전번역원",
-      "게시판": "공지사항",
-      "URL": "https://www.itkc.or.kr/bbs/board.do?id=2&menuId=99",
-      "error": "HTTP 0"
-    },
-    {
-      "기관명": "한국수산자원공단",
-      "게시판": "공지사항 더보기",
-      "URL": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp",
+      "institution": "대외경제정책연구원",
+      "board": "공지사항",
+      "url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "posts": 0,
+      "matches": [],
       "error": "HTTP 0"
     }
   ]
