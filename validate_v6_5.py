@@ -20,9 +20,10 @@ HEADERS = {
     )
 }
 
-# --------------------------------------------------
+
+# =========================================================
 # URL 분류
-# --------------------------------------------------
+# =========================================================
 
 HOMEPAGE_PATHS = {
     "",
@@ -95,6 +96,7 @@ DATE_PATTERNS = [
 
 
 def normalize_url(url):
+
     if not url:
         return ""
 
@@ -107,97 +109,92 @@ def normalize_url(url):
 
 
 def same_host(a, b):
+
     try:
-        h1 = urlparse(a).netloc.lower().replace("www.", "")
-        h2 = urlparse(b).netloc.lower().replace("www.", "")
+
+        h1 = (
+            urlparse(a)
+            .netloc
+            .lower()
+            .replace("www.", "")
+        )
+
+        h2 = (
+            urlparse(b)
+            .netloc
+            .lower()
+            .replace("www.", "")
+        )
+
         return h1 == h2
+
     except Exception:
+
         return False
 
 
 def classify_url(url):
+
     try:
+
         p = urlparse(url)
+
         path = p.path.lower()
+
         query = parse_qs(p.query)
 
         if path in HOMEPAGE_PATHS:
             return "홈페이지"
 
+        query_keys = {
+            x.lower()
+            for x in DETAIL_QUERY_KEYS
+        }
+
         for key in query.keys():
-            if key.lower() in {x.lower() for x in DETAIL_QUERY_KEYS}:
+
+            if key.lower() in query_keys:
                 return "상세"
 
         for values in query.values():
+
             for value in values:
+
                 if str(value).lower() == "view":
                     return "상세"
 
         for word in DETAIL_PATH_WORDS:
+
             if word in path:
                 return "상세"
 
         for pattern in LIST_PATTERNS:
+
             if pattern in path:
                 return "목록"
 
         return "미분류"
 
     except Exception:
+
         return "오류"
 
 
 def clean_text(text):
+
     if not text:
         return ""
-    return re.sub(r"\s+", " ", text).strip()
+
+    return re.sub(
+        r"\s+",
+        " ",
+        text
+    ).strip()
 
 
-def extract_title(soup):
-    selectors = [
-        "h1",
-        "h2",
-        "h3",
-        ".subject",
-        ".title",
-        ".board-title",
-        ".view-title",
-        ".bbs-title",
-        ".tit",
-        "title",
-    ]
-
-    for selector in selectors:
-        try:
-            el = soup.select_one(selector)
-
-            if el:
-                text = clean_text(
-                    el.get_text(" ", strip=True)
-                )
-
-                if 3 <= len(text) <= 300:
-                    return text
-
-        except Exception:
-            pass
-
-    return ""
-
-
-def extract_date(text):
-    for pattern in DATE_PATTERNS:
-        m = re.search(pattern, text)
-
-        if m:
-            return m.group(0)
-
-    return ""
-
-
-# --------------------------------------------------
+# =========================================================
 # HTTP
-# --------------------------------------------------
+# =========================================================
 
 async def fetch(session, url):
 
@@ -231,23 +228,96 @@ async def fetch(session, url):
         }
 
 
-# --------------------------------------------------
-# 게시물 링크 추출
-# --------------------------------------------------
+# =========================================================
+# 제목 / 날짜
+# =========================================================
 
-def extract_post_links(base_url, soup):
+def extract_title(soup):
+
+    selectors = [
+        "h1",
+        "h2",
+        "h3",
+        ".subject",
+        ".title",
+        ".board-title",
+        ".view-title",
+        ".bbs-title",
+        ".tit",
+        "title",
+    ]
+
+    for selector in selectors:
+
+        try:
+
+            el = soup.select_one(
+                selector
+            )
+
+            if el:
+
+                text = clean_text(
+                    el.get_text(
+                        " ",
+                        strip=True
+                    )
+                )
+
+                if 3 <= len(text) <= 300:
+                    return text
+
+        except Exception:
+            pass
+
+    return ""
+
+
+def extract_date(text):
+
+    for pattern in DATE_PATTERNS:
+
+        match = re.search(
+            pattern,
+            text
+        )
+
+        if match:
+            return match.group(0)
+
+    return ""
+
+
+# =========================================================
+# 게시물 링크 추출
+# =========================================================
+
+def extract_post_links(
+    base_url,
+    soup
+):
 
     candidates = []
 
-    for a in soup.find_all("a", href=True):
+    for a in soup.find_all(
+        "a",
+        href=True
+    ):
 
-        href = a.get("href", "").strip()
+        href = a.get(
+            "href",
+            ""
+        ).strip()
 
         if not href:
             continue
 
         if href.startswith(
-            ("javascript:", "#", "mailto:")
+            (
+                "javascript:",
+                "#",
+                "mailto:"
+            )
         ):
             continue
 
@@ -262,22 +332,27 @@ def extract_post_links(base_url, soup):
         ):
             continue
 
-        kind = classify_url(absolute)
+        kind = classify_url(
+            absolute
+        )
 
         if kind == "홈페이지":
             continue
 
         text = clean_text(
-            a.get_text(" ", strip=True)
+            a.get_text(
+                " ",
+                strip=True
+            )
         )
 
         if len(text) < 2:
             continue
 
         score = 0
+
         lower = absolute.lower()
 
-        # 상세 URL 패턴
         if kind == "상세":
             score += 5
 
@@ -297,54 +372,59 @@ def extract_post_links(base_url, soup):
         ):
             score += 3
 
-        # 제목처럼 보이는 링크
         if 5 <= len(text) <= 200:
             score += 1
 
         if score >= 4:
 
             candidates.append(
-                (absolute, text, score)
+                (
+                    absolute,
+                    text,
+                    score
+                )
             )
 
-    # URL 중복 제거
     unique = {}
 
     for url, text, score in candidates:
 
         if url not in unique:
+
             unique[url] = (
                 text,
                 score
             )
 
-    result = []
-
-    for url, value in unique.items():
-
-        result.append(
-            (
-                url,
-                value[0],
-                value[1]
-            )
+    return [
+        (
+            url,
+            value[0],
+            value[1]
         )
+        for url, value
+        in unique.items()
+    ]
 
-    return result
 
-
-# --------------------------------------------------
+# =========================================================
 # 페이지네이션
-# --------------------------------------------------
+# =========================================================
 
 def detect_pagination(soup):
 
     number_count = 0
 
-    for a in soup.find_all("a", href=True):
+    for a in soup.find_all(
+        "a",
+        href=True
+    ):
 
         text = clean_text(
-            a.get_text(" ", strip=True)
+            a.get_text(
+                " ",
+                strip=True
+            )
         )
 
         if re.fullmatch(
@@ -356,28 +436,31 @@ def detect_pagination(soup):
     if number_count >= 2:
         return True
 
-    page_words = [
+    text = clean_text(
+        soup.get_text(
+            " ",
+            strip=True
+        )
+    ).lower()
+
+    for word in [
         "다음",
         "이전",
         "페이지",
         "첫 페이지",
         "마지막 페이지",
         "page",
-    ]
+    ]:
 
-    text = clean_text(
-        soup.get_text(" ", strip=True)
-    ).lower()
+        if word.lower() in text:
+            return True
 
-    return any(
-        word.lower() in text
-        for word in page_words
-    )
+    return False
 
 
-# --------------------------------------------------
-# 목록 구조 검사
-# --------------------------------------------------
+# =========================================================
+# 목록 구조
+# =========================================================
 
 def inspect_list_structure(
     list_url,
@@ -385,7 +468,10 @@ def inspect_list_structure(
 ):
 
     text = clean_text(
-        soup.get_text(" ", strip=True)
+        soup.get_text(
+            " ",
+            strip=True
+        )
     )
 
     score = 0
@@ -398,15 +484,19 @@ def inspect_list_structure(
             keyword_count += 1
 
     if keyword_count >= 4:
+
         score += 3
 
     elif keyword_count >= 2:
+
         score += 1
 
     if soup.find("table"):
         score += 2
 
-    html = str(soup).lower()
+    html = str(
+        soup
+    ).lower()
 
     if any(
         word in html
@@ -417,6 +507,7 @@ def inspect_list_structure(
             "list",
         ]
     ):
+
         score += 1
 
     post_links = extract_post_links(
@@ -425,15 +516,20 @@ def inspect_list_structure(
     )
 
     if len(post_links) >= 5:
+
         score += 3
 
     elif len(post_links) >= 3:
+
         score += 2
 
     elif len(post_links) >= 2:
+
         score += 1
 
-    pagination = detect_pagination(soup)
+    pagination = detect_pagination(
+        soup
+    )
 
     if pagination:
         score += 1
@@ -446,20 +542,22 @@ def inspect_list_structure(
     }
 
 
-# --------------------------------------------------
-# 게시물 실제 검증
-# --------------------------------------------------
+# =========================================================
+# 실제 게시물 검증
+# =========================================================
 
 async def verify_posts(
     session,
-    list_url,
     post_links
 ):
 
     checked = []
 
-    # 최대 8개 실제 게시물 검사
-    for post_url, link_text, link_score in post_links[:8]:
+    for (
+        post_url,
+        link_text,
+        link_score
+    ) in post_links[:8]:
 
         result = await fetch(
             session,
@@ -480,11 +578,14 @@ async def verify_posts(
 
         final_url = result["url"]
 
-        # 홈페이지로 튀면 제외
-        if classify_url(final_url) == "홈페이지":
+        if classify_url(
+            final_url
+        ) == "홈페이지":
             continue
 
-        title = extract_title(soup)
+        title = extract_title(
+            soup
+        )
 
         body = clean_text(
             soup.get_text(
@@ -493,7 +594,9 @@ async def verify_posts(
             )
         )
 
-        date = extract_date(body)
+        date = extract_date(
+            body
+        )
 
         if not title:
             continue
@@ -513,9 +616,9 @@ async def verify_posts(
     return checked
 
 
-# --------------------------------------------------
-# 상세페이지 → 목록 URL
-# --------------------------------------------------
+# =========================================================
+# 상세 → 목록
+# =========================================================
 
 async def recover_list_from_detail(
     session,
@@ -589,15 +692,18 @@ async def recover_list_from_detail(
             score -= 5
 
         if score > 0:
+
             candidates.append(
-                (score, absolute)
+                (
+                    score,
+                    absolute
+                )
             )
 
     candidates.sort(
         reverse=True
     )
 
-    # 후보를 실제 목록으로 검증
     for _, candidate in candidates[:10]:
 
         verified = await verify_list_url(
@@ -611,9 +717,9 @@ async def recover_list_from_detail(
     return ""
 
 
-# --------------------------------------------------
-# 홈페이지 → 게시판 찾기
-# --------------------------------------------------
+# =========================================================
+# 홈페이지 → 목록
+# =========================================================
 
 async def discover_from_homepage(
     session,
@@ -696,8 +802,12 @@ async def discover_from_homepage(
             score += 3
 
         if score >= 5:
+
             candidates.append(
-                (score, absolute)
+                (
+                    score,
+                    absolute
+                )
             )
 
     candidates.sort(
@@ -717,9 +827,9 @@ async def discover_from_homepage(
     return ""
 
 
-# --------------------------------------------------
-# 최종 목록 URL 검증
-# --------------------------------------------------
+# =========================================================
+# 목록 검증
+# =========================================================
 
 async def verify_list_url(
     session,
@@ -751,8 +861,9 @@ async def verify_list_url(
 
     final_url = result["url"]
 
-    # 최종적으로 홈페이지가 된 경우
-    if classify_url(final_url) == "홈페이지":
+    if classify_url(
+        final_url
+    ) == "홈페이지":
 
         return {
             "access": True,
@@ -780,17 +891,15 @@ async def verify_list_url(
         "post_links"
     ]
 
-    # 실제 게시물 검증
     verified_posts = await verify_posts(
         session,
-        final_url,
         post_links
     )
 
-    # 서로 다른 게시물 확인
     unique_titles = set()
 
     for post in verified_posts:
+
         unique_titles.add(
             post["title"]
         )
@@ -799,22 +908,26 @@ async def verify_list_url(
         unique_titles
     )
 
-    score = structure["score"]
+    score = structure[
+        "score"
+    ]
 
-    # 실제 게시물
     if verified_count >= 5:
+
         score += 5
 
     elif verified_count >= 3:
+
         score += 4
 
     elif verified_count >= 2:
+
         score += 2
 
     elif verified_count >= 1:
+
         score += 1
 
-    # 실제 목록 URL 판정
     list_kind = classify_url(
         final_url
     )
@@ -822,21 +935,22 @@ async def verify_list_url(
     if list_kind == "목록":
         score += 2
 
-    # 자동확정 조건
     auto_confirm = (
         list_kind == "목록"
         and len(post_links) >= 3
         and verified_count >= 3
-        and structure["keyword_count"] >= 2
+        and structure[
+            "keyword_count"
+        ] >= 2
         and score >= 10
     )
 
     if auto_confirm:
 
         reason = (
-            f"실제 목록 URL 확인 / "
+            "실제 목록 URL 확인 / "
             f"게시물 링크 {len(post_links)}개 / "
-            f"실제 게시물 {verified_count}개 확인 / "
+            f"실제 게시물 {verified_count}개 / "
             f"점수 {score}"
         )
 
@@ -845,31 +959,40 @@ async def verify_list_url(
         reasons = []
 
         if list_kind != "목록":
+
             reasons.append(
                 "목록 URL 패턴 불충분"
             )
 
         if len(post_links) < 3:
+
             reasons.append(
                 f"게시물 링크 부족({len(post_links)}개)"
             )
 
         if verified_count < 3:
+
             reasons.append(
                 f"실제 게시물 부족({verified_count}개)"
             )
 
-        if structure["keyword_count"] < 2:
+        if structure[
+            "keyword_count"
+        ] < 2:
+
             reasons.append(
                 "목록 구조 약함"
             )
 
         if score < 10:
+
             reasons.append(
                 f"점수 부족({score})"
             )
 
-        reason = ", ".join(reasons)
+        reason = ", ".join(
+            reasons
+        )
 
     return {
         "access": True,
@@ -890,9 +1013,9 @@ async def verify_list_url(
     }
 
 
-# --------------------------------------------------
-# 기관별 처리
-# --------------------------------------------------
+# =========================================================
+# 기관 처리
+# =========================================================
 
 async def process_candidate(
     session,
@@ -913,7 +1036,6 @@ async def process_candidate(
 
         try:
 
-            # 1. 목록
             if candidate_type == "목록":
 
                 result = await verify_list_url(
@@ -924,11 +1046,11 @@ async def process_candidate(
                 if result[
                     "auto_confirm"
                 ]:
+
                     final_list_url = result[
                         "final_url"
                     ]
 
-            # 2. 상세
             elif candidate_type == "상세":
 
                 list_url = await recover_list_from_detail(
@@ -946,6 +1068,7 @@ async def process_candidate(
                     if result[
                         "auto_confirm"
                     ]:
+
                         final_list_url = result[
                             "final_url"
                         ]
@@ -964,7 +1087,6 @@ async def process_candidate(
                         "final_url": "",
                     }
 
-            # 3. 홈페이지
             elif candidate_type == "홈페이지":
 
                 list_url = await discover_from_homepage(
@@ -982,6 +1104,7 @@ async def process_candidate(
                     if result[
                         "auto_confirm"
                     ]:
+
                         final_list_url = result[
                             "final_url"
                         ]
@@ -1000,7 +1123,6 @@ async def process_candidate(
                         "final_url": "",
                     }
 
-            # 4. 미분류
             else:
 
                 result = await verify_list_url(
@@ -1011,6 +1133,7 @@ async def process_candidate(
                 if result[
                     "auto_confirm"
                 ]:
+
                     final_list_url = result[
                         "final_url"
                     ]
@@ -1022,7 +1145,7 @@ async def process_candidate(
             result = {
                 "access": False,
                 "auto_confirm": False,
-                "reason": "검증 오류",
+                "reason": "검증 중 오류",
                 "score": 0,
                 "post_count": 0,
                 "verified_post_count": 0,
@@ -1032,19 +1155,23 @@ async def process_candidate(
             }
 
         if error:
+
             status = "오류"
 
         elif result[
             "auto_confirm"
         ]:
+
             status = "자동확정"
 
         elif result[
             "access"
         ]:
+
             status = "수동확인"
 
         else:
+
             status = "제외"
 
         post = result.get(
@@ -1056,18 +1183,22 @@ async def process_candidate(
             "V6.5후보URL": candidate_url,
             "V6.5후보유형": candidate_type,
             "V6.5최종목록URL": final_list_url,
-            "V6.5목록접속": result[
-                "access"
-            ],
+            "V6.5목록접속": (
+                "TRUE"
+                if result["access"]
+                else "FALSE"
+            ),
             "V6.5게시물링크수": result[
                 "post_count"
             ],
             "V6.5실제게시물수": result[
                 "verified_post_count"
             ],
-            "V6.5페이지네이션": result[
-                "pagination"
-            ],
+            "V6.5페이지네이션": (
+                "TRUE"
+                if result["pagination"]
+                else "FALSE"
+            ),
             "V6.5검증게시물URL": (
                 post["url"]
                 if post
@@ -1099,15 +1230,16 @@ async def process_candidate(
         }
 
 
-# --------------------------------------------------
+# =========================================================
 # MAIN
-# --------------------------------------------------
+# =========================================================
 
 async def main():
 
     if not os.path.exists(
         INPUT_FILE
     ):
+
         raise FileNotFoundError(
             f"입력파일 없음: {INPUT_FILE}"
         )
@@ -1116,38 +1248,34 @@ async def main():
         INPUT_FILE
     )
 
-    # V6.4 최종 후보 URL을 우선 사용
+    # -----------------------------------------------------
+    # URL 컬럼
+    # -----------------------------------------------------
+
     url_col = None
 
-    for col in df.columns:
+    if "V6.4검증_목록URL" in df.columns:
 
-        if str(col) == "V6.4검증_목록URL":
-            url_col = col
-            break
+        # V6.4가 찾아낸 목록 URL 우선
+        # 단, 빈 값이면 V6.3 후보 URL 사용
+        url_col = "V6.4검증_목록URL"
 
-    # 없으면 V6.3 후보 사용
-    if url_col is None:
+    elif "V6.3게시판URL" in df.columns:
 
-        for col in df.columns:
+        url_col = "V6.3게시판URL"
 
-            if "V6.3게시판URL" in str(col):
-                url_col = col
-                break
+    else:
 
-    if url_col is None:
         raise ValueError(
             "검증 URL 컬럼을 찾을 수 없습니다."
         )
 
-    name_col = None
+    # -----------------------------------------------------
+    # 기관명
+    # -----------------------------------------------------
 
-    for col in df.columns:
+    if "기관명" not in df.columns:
 
-        if str(col).strip() == "기관명":
-            name_col = col
-            break
-
-    if name_col is None:
         raise ValueError(
             "기관명 컬럼 없음"
         )
@@ -1159,6 +1287,19 @@ async def main():
         url = row.get(
             url_col
         )
+
+        # V6.4 목록 URL이 빈 경우
+        # V6.3 후보 URL fallback
+        if (
+            pd.isna(url)
+            or not str(url).strip()
+        ):
+
+            if "V6.3게시판URL" in df.columns:
+
+                url = row.get(
+                    "V6.3게시판URL"
+                )
 
         if pd.isna(url):
             continue
@@ -1172,7 +1313,7 @@ async def main():
 
         institution = str(
             row.get(
-                name_col,
+                "기관명",
                 ""
             )
         ).strip()
@@ -1187,9 +1328,15 @@ async def main():
     print("=" * 70)
     print("V6.5 Deep Board Validation")
     print("=" * 70)
-    print(f"입력파일 : {INPUT_FILE}")
-    print(f"URL 컬럼 : {url_col}")
-    print(f"검증 대상 : {len(candidates)}")
+    print(
+        f"입력파일 : {INPUT_FILE}"
+    )
+    print(
+        f"URL 컬럼 : {url_col}"
+    )
+    print(
+        f"검증 대상 : {len(candidates)}"
+    )
     print("=" * 70)
 
     semaphore = asyncio.Semaphore(
@@ -1225,7 +1372,30 @@ async def main():
             start=1
         ):
 
-            result = await task
+            try:
+
+                result = await task
+
+            except Exception as e:
+
+                result = {
+                    "기관명": "UNKNOWN",
+                    "V6.5후보URL": "",
+                    "V6.5후보유형": "",
+                    "V6.5최종목록URL": "",
+                    "V6.5목록접속": "FALSE",
+                    "V6.5게시물링크수": 0,
+                    "V6.5실제게시물수": 0,
+                    "V6.5페이지네이션": "FALSE",
+                    "V6.5검증게시물URL": "",
+                    "V6.5검증게시물제목": "",
+                    "V6.5검증게시물날짜": "",
+                    "V6.5검증본문길이": 0,
+                    "V6.5점수": 0,
+                    "V6.5결과": "오류",
+                    "V6.5사유": "작업 처리 오류",
+                    "V6.5오류": str(e),
+                }
 
             results.append(
                 result
@@ -1241,7 +1411,10 @@ async def main():
                 f"실제게시물 {result['V6.5실제게시물수']}"
             )
 
-    # 기관명 기준 원래 순서
+    # -----------------------------------------------------
+    # 결과 순서 정렬
+    # -----------------------------------------------------
+
     order = {
         institution: i
         for i, (institution, _)
@@ -1261,9 +1434,12 @@ async def main():
         for r in results
     }
 
-    output = df.copy()
+    # -----------------------------------------------------
+    # 결과 DataFrame
+    # -----------------------------------------------------
 
-    columns = [
+    result_columns = [
+        "기관명",
         "V6.5후보URL",
         "V6.5후보유형",
         "V6.5최종목록URL",
@@ -1281,13 +1457,85 @@ async def main():
         "V6.5오류",
     ]
 
-    for col in columns:
+    result_df = pd.DataFrame(
+        results
+    )
+
+    for col in result_columns:
+
+        if col not in result_df.columns:
+
+            result_df[col] = ""
+
+    result_df = result_df[
+        result_columns
+    ]
+
+    # -----------------------------------------------------
+    # 원본 데이터와 결합
+    # -----------------------------------------------------
+
+    output = df.copy()
+
+    new_columns = [
+        "V6.5후보URL",
+        "V6.5후보유형",
+        "V6.5최종목록URL",
+        "V6.5목록접속",
+        "V6.5게시물링크수",
+        "V6.5실제게시물수",
+        "V6.5페이지네이션",
+        "V6.5검증게시물URL",
+        "V6.5검증게시물제목",
+        "V6.5검증게시물날짜",
+        "V6.5검증본문길이",
+        "V6.5점수",
+        "V6.5결과",
+        "V6.5사유",
+        "V6.5오류",
+    ]
+
+    # 문자열 컬럼은 문자열 dtype으로 명시
+    string_columns = [
+        "V6.5후보URL",
+        "V6.5후보유형",
+        "V6.5최종목록URL",
+        "V6.5목록접속",
+        "V6.5페이지네이션",
+        "V6.5검증게시물URL",
+        "V6.5검증게시물제목",
+        "V6.5검증게시물날짜",
+        "V6.5결과",
+        "V6.5사유",
+        "V6.5오류",
+    ]
+
+    numeric_columns = [
+        "V6.5게시물링크수",
+        "V6.5실제게시물수",
+        "V6.5검증본문길이",
+        "V6.5점수",
+    ]
+
+    for col in string_columns:
+
         output[col] = ""
 
-    for idx, row in output.iterrows():
+    for col in numeric_columns:
+
+        output[col] = 0
+
+    # -----------------------------------------------------
+    # 결과 삽입
+    # -----------------------------------------------------
+
+    for idx in output.index:
 
         institution = str(
-            row[name_col]
+            output.at[
+                idx,
+                "기관명"
+            ]
         ).strip()
 
         if institution not in result_map:
@@ -1297,19 +1545,97 @@ async def main():
             institution
         ]
 
-        for col in columns:
+        for col in string_columns:
 
-            output.at[
-                idx,
-                col
-            ] = r.get(
+            value = r.get(
                 col,
                 ""
             )
 
+            if value is None:
+                value = ""
+
+            output.at[
+                idx,
+                col
+            ] = str(value)
+
+        for col in numeric_columns:
+
+            value = r.get(
+                col,
+                0
+            )
+
+            try:
+                value = int(
+                    float(value)
+                )
+
+            except Exception:
+
+                value = 0
+
+            output.at[
+                idx,
+                col
+            ] = value
+
+    # -----------------------------------------------------
+    # 최종 dtype 강제
+    # -----------------------------------------------------
+
+    for col in string_columns:
+
+        output[col] = (
+            output[col]
+            .fillna("")
+            .astype(str)
+        )
+
+    for col in numeric_columns:
+
+        output[col] = pd.to_numeric(
+            output[col],
+            errors="coerce"
+        ).fillna(0).astype(int)
+
+    # -----------------------------------------------------
+    # Excel 저장
+    # -----------------------------------------------------
+
     output.to_excel(
         OUTPUT_FILE,
-        index=False
+        index=False,
+        engine="openpyxl"
+    )
+
+    # -----------------------------------------------------
+    # 최종 통계
+    # -----------------------------------------------------
+
+    auto_count = sum(
+        x["V6.5결과"]
+        == "자동확정"
+        for x in results
+    )
+
+    manual_count = sum(
+        x["V6.5결과"]
+        == "수동확인"
+        for x in results
+    )
+
+    exclude_count = sum(
+        x["V6.5결과"]
+        == "제외"
+        for x in results
+    )
+
+    error_count = sum(
+        x["V6.5결과"]
+        == "오류"
+        for x in results
     )
 
     print()
@@ -1318,48 +1644,30 @@ async def main():
     print("=" * 70)
 
     print(
-        "자동확정 :",
-        sum(
-            x["V6.5결과"]
-            == "자동확정"
-            for x in results
-        )
+        f"자동확정 : {auto_count}"
     )
 
     print(
-        "수동확인 :",
-        sum(
-            x["V6.5결과"]
-            == "수동확인"
-            for x in results
-        )
+        f"수동확인 : {manual_count}"
     )
 
     print(
-        "제외     :",
-        sum(
-            x["V6.5결과"]
-            == "제외"
-            for x in results
-        )
+        f"제외     : {exclude_count}"
     )
 
     print(
-        "오류     :",
-        sum(
-            x["V6.5결과"]
-            == "오류"
-            for x in results
-        )
+        f"오류     : {error_count}"
     )
 
     print(
-        "결과파일 :",
-        OUTPUT_FILE
+        f"결과파일 : {OUTPUT_FILE}"
     )
 
     print("=" * 70)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+
+    asyncio.run(
+        main()
+    )
