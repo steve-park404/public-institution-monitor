@@ -1,6 +1,6 @@
 {
   "version": "8.6.6",
-  "timestamp": "2026-09-17 14:34:49",
+  "timestamp": "2026-09-17 14:41:52",
   "targets": 100,
   "completed": 100,
   "posts_checked": 386,
@@ -9,7 +9,7 @@
   "new_matches": 0,
   "errors": 1,
   "timed_out": false,
-  "elapsed_seconds": 131.9,
+  "elapsed_seconds": 134.0,
   "keywords": [
     "설문조사",
     "시민참여",
@@ -18,8 +18,8 @@
   "matches": [],
   "error_details": [
     {
-      "institution": "대한법률구조공단",
-      "board_url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
+      "institution": "대외경제정책연구원",
+      "board_url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
       "error": "HTTP 0"
     }
   ],
