@@ -1,13 +1,15 @@
 {
-  "version": "8.6.3",
-  "timestamp": "2026-09-17 14:10:34",
+  "version": "8.6.4",
+  "timestamp": "2026-09-17 14:17:43",
   "targets": 100,
   "completed": 100,
-  "posts_checked": 1409,
-  "new_matches": 47,
-  "errors": 2,
+  "posts_checked": 449,
+  "candidate_links": 589,
+  "detail_links": 589,
+  "new_matches": 8,
+  "errors": 1,
   "timed_out": false,
-  "runtime_seconds": 513.84,
+  "elapsed_seconds": 84.3,
   "keywords": [
     "설문조사",
     "시민참여",
@@ -16,440 +18,98 @@
   ],
   "matches": [
     {
-      "institution": "한국석유공사",
-      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
-      "keyword": [
-        "국민참여"
-      ],
-      "title": "기타서비스 Etc Service",
-      "url": "https://www.knoc.co.kr/member/sitemap.jsp"
-    },
-    {
-      "institution": "한국노인인력개발원",
-      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
-      "keyword": [
+      "institution": "아시아·태평양경제협력체 기후센터",
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "서브페이지 비쥬얼",
-      "url": "https://www.kordi.or.kr/content.do?cmsId=100"
-    },
-    {
-      "institution": "경제인문사회연구회",
-      "board": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[안내] 경제·인문사회연구회(NRC) 홈페이지 서비스 일시 중단 안내(8.22.(토))",
-      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001"
-    },
-    {
-      "institution": "경제인문사회연구회",
-      "board": "https://www.nrc.re.kr/menu.es?mid=a12101000000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[안내] 경제·인문사회연구회(NRC) 홈페이지 서비스 일시 중단 안내(8.22.(토))",
-      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001"
-    },
-    {
-      "institution": "한국수산자원공단",
-      "board": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp",
-      "keyword": [
-        "설문조사",
-        "공모전"
-      ],
-      "title": "2023년 2분기 FIRANOVATION 국민제안 선정 결과",
-      "url": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp?mode=list&board_no=2&pager.offset=100"
+      "title": "[기상청] 2026 어린이 지진정보서비스 포스터 공모전 안내 ...",
+      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/3322885b-7451-11f1-bdf1-87ca28b62537?lang=ko",
+      "board_url": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko"
     },
     {
       "institution": "아시아·태평양경제협력체 기후센터",
-      "board": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko",
-      "keyword": [
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "이전 [기상청] 2026 어린이 지진정보서비스 포스터 공모전 안내 다음",
-      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/3322885b-7451-11f1-bdf1-87ca28b62537?lang=ko"
+      "title": "제43회 기상기후 사진 콘텐츠 공모전 개최 알림 &nbsp;&nbsp;...",
+      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/6d90fb61-f03b-11f0-91e2-fdb424025cfb?lang=ko",
+      "board_url": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko"
     },
     {
       "institution": "아시아·태평양경제협력체 기후센터",
-      "board": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko",
-      "keyword": [
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "이전 제43회 기상기후 사진 콘텐츠 공모전 개최 알림 다음",
-      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/6d90fb61-f03b-11f0-91e2-fdb424025cfb?lang=ko"
+      "title": "「2025년 아태기후센터 기후위기 숏폼 공모전」공고 「2025년 아태기후센터 기후위기 숏폼 공모전」에 참여해주세요!&nbsp;아태기후센터(APCC)에서는 센터 설립 20주년을 맞이하여, 아시아태평양지역 내 센터의 활동에 대한 인지도...",
+      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/93f420af-3b8e-11f0-9de6-6d769c435f0a?lang=ko",
+      "board_url": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko"
     },
     {
       "institution": "아시아·태평양경제협력체 기후센터",
-      "board": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko",
-      "keyword": [
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "이전 「2025년 아태기후센터 기후위기 숏폼 공모전」수상작 발표 다음",
-      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/f60ab20e-6825-11f0-881b-9d25060d5d88?lang=ko"
+      "title": "「2025년 아태기후센터 기후위기 숏폼 공모전」수상작 발표 ›아태기후센터(APCC)에서 실시한 「2025년 아태기후센터 기후위기 숏폼 공모전」 수상작을 발표합니다.수상을 진심으로 축하드리며, 참여해주신 모든 분들께 감사드립니다.&nbsp;...",
+      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/f60ab20e-6825-11f0-881b-9d25060d5d88?lang=ko",
+      "board_url": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko"
     },
     {
-      "institution": "아시아·태평양경제협력체 기후센터",
-      "board": "https://www.apcc21.org/board/BBSMSTR_000000000016?lang=ko",
-      "keyword": [
+      "institution": "한국청소년정책연구원",
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "이전 「2025년 아태기후센터 기후위기 숏폼 공모전」공고 다음",
-      "url": "https://www.apcc21.org/board/BBSMSTR_000000000016/view/93f420af-3b8e-11f0-9de6-6d769c435f0a?lang=ko"
+      "title": "2026년 대안교육기관 교육·활동 프로그램 우수사례 공모전 개최",
+      "url": "https://www.nypi.re.kr/board/view?menuKey=D7eWzSzI7U&bbsId=BOARD00015&schType=0&schText=&boardStyle=&ctgryNo=&cntntNm=&pstOtptCnt=0&ntnNm=&pageNum=1&rowCnt=10&no1=10®No%3Ds72F5fObiN",
+      "board_url": "https://www.nypi.re.kr/board?menuKey=D7eWzSzI7U&siteId=SITE00002&bbsId=BOARD00015"
     },
     {
-      "institution": "한국체육산업개발(주)",
-      "board": "https://www.ksponco.or.kr/board.es?mid=a10301000000&bid=0046",
-      "keyword": [
-        "국민참여"
-      ],
-      "title": "이 페이지에서 제공하는 정보에 대하여 어느정도 만족하셨습니까?",
-      "url": "https://www.ksponco.or.kr/programProposal?mid=a10201060000"
-    },
-    {
-      "institution": "한국노인인력개발원",
-      "board": "https://www.kordi.or.kr/content.do?cmsId=169",
-      "keyword": [
+      "institution": "한국청소년정책연구원",
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "서브페이지 비쥬얼",
-      "url": "https://www.kordi.or.kr/content.do?cmsId=100"
+      "title": "제15회 위(Wee) 희망대상 우수사례 공모전",
+      "url": "https://www.nypi.re.kr/board/view?menuKey=D7eWzSzI7U&bbsId=BOARD00015&schType=0&schText=&boardStyle=&ctgryNo=&cntntNm=&pstOtptCnt=0&ntnNm=&pageNum=1&rowCnt=10&no1=7®No%3Dhq53PNk7qD",
+      "board_url": "https://www.nypi.re.kr/board?menuKey=D7eWzSzI7U&siteId=SITE00002&bbsId=BOARD00015"
     },
     {
       "institution": "서울요양원",
-      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews",
-      "keyword": [
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
-      "title": "국립연명의료관리기관 사전연명의료등록기관 지정 (24.5.31.)",
-      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=98&category=&pageIdx="
+      "title": "2021년 장기요양기관 평가 결과(최우수 A등급) 안내",
+      "url": "https://www.서울요양원.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=96&category=&pageIdx=",
+      "board_url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews"
     },
     {
       "institution": "서울요양원",
-      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews",
-      "keyword": [
+      "keyword": "공모전",
+      "keywords": [
         "공모전"
       ],
       "title": "[개인정보보호위원회]2023개인정보 위험 대응 공모전 홍보",
-      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=97&category=&pageIdx="
-    },
+      "url": "https://www.서울요양원.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=97&category=&pageIdx=",
+      "board_url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews"
+    }
+  ],
+  "error_details": [
     {
-      "institution": "서울요양원",
-      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[개인정보보호위원회]2023개인정보 위험 대응 공모전 홍보",
-      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=96&category=&pageIdx="
-    },
-    {
-      "institution": "서울요양원",
-      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "국립연명의료관리기관 사전연명의료등록기관 지정 (24.5.31.)",
-      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=98&category=&pageIdx="
-    },
-    {
-      "institution": "서울요양원",
-      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[개인정보보호위원회]2023개인정보 위험 대응 공모전 홍보",
-      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=97&category=&pageIdx="
-    },
-    {
-      "institution": "서울요양원",
-      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[개인정보보호위원회]2023개인정보 위험 대응 공모전 홍보",
-      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=96&category=&pageIdx="
-    },
-    {
-      "institution": "경제인문사회연구회",
-      "board": "https://www.nrc.re.kr/menu.es?mid=a12105100000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[안내] 경제·인문사회연구회(NRC) 홈페이지 서비스 일시 중단 안내(8.22.(토))",
-      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001"
-    },
-    {
-      "institution": "경제인문사회연구회",
-      "board": "https://www.nrc.re.kr/menu.es?mid=a12001300000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[안내] 경제·인문사회연구회(NRC) 홈페이지 서비스 일시 중단 안내(8.22.(토))",
-      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001"
-    },
-    {
-      "institution": "한국원산지정보원",
-      "board": "https://www.origin.or.kr/lay1/bbs/S1T11C34/F/26/list.do",
-      "keyword": [
-        "국민참여"
-      ],
-      "title": "사업안내 FTA원산지연구 FTA원산지관리 시스템 보급 FTA전문인력양성 FTA관세행정지원 YES FTA전문교육",
-      "url": "https://www.origin.or.kr/lay1/S1T14C42/contents.do"
-    },
-    {
-      "institution": "한국건강가정진흥원",
-      "board": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/list.do?rows=10&page_unit=0",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "2025년 가족친화문화컨설팅 근로자 설문조사 종합 분석 결과",
-      "url": "https://www.ffsb.kr/"
-    },
-    {
-      "institution": "한국건강가정진흥원",
-      "board": "https://www.kihf.or.kr/web/lay1/S1T1C838/sublink.do",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "2025년 가족친화문화컨설팅 근로자 설문조사 종합 분석 결과",
-      "url": "https://www.ffsb.kr/"
-    },
-    {
-      "institution": "한국건강가정진흥원",
-      "board": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "2025년 가족친화문화컨설팅 근로자 설문조사 종합 분석 결과",
-      "url": "https://www.ffsb.kr/"
-    },
-    {
-      "institution": "한국체육산업개발(주)",
-      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
-      "keyword": [
-        "국민참여"
-      ],
-      "title": "이 페이지에서 제공하는 정보에 대하여 어느정도 만족하셨습니까?",
-      "url": "https://www.ksponco.or.kr/programProposal?mid=a10201060000"
-    },
-    {
-      "institution": "(재)축산환경관리원",
-      "board": "https://www.lemi.or.kr/board.do?boardno=24&menuno=71",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "Search Search Submit",
-      "url": "https://www.lemi.or.kr/view.do?boardno=24&menuno=71&seq=6845"
-    },
-    {
-      "institution": "(재)우체국시설관리단",
-      "board": "https://www.poma.or.kr/poma/notice.do",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "우체국시설관리단(이하 “관리단”이라 함)은 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.",
-      "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964&article.offset=0&articleLimit=10"
-    },
-    {
-      "institution": "(재)한국보건의료정보원",
-      "board": "https://www.khis.kr/menu.es?mid=a10301000000",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "「HL7 International 2026년 9월 Ballot」 참여위원 공개 모집 연장 안내(~8.7.)",
-      "url": "https://www.khis.kr/kr/"
-    },
-    {
-      "institution": "국토연구원",
-      "board": "https://www.krihs.re.kr/menu.es?mid=a10604000000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "[월간 국토] 2026년 8월(통권538호)",
-      "url": "https://www.krihs.re.kr/krihsLibraryArticle/articleList.es?mid=a10103010000&pub_kind=1"
-    },
-    {
-      "institution": "농림식품기술기획평가원",
-      "board": "https://www.ipet.re.kr/Market/MarketNoticeLV.asp",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "R&D전문기관",
-      "url": "https://www.ipet.re.kr/Gov30/NoticePrvInfoCateLV.asp"
-    },
-    {
-      "institution": "국제식물검역인증원",
-      "board": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068",
-      "keyword": [
-        "국민참여",
-        "공모전"
-      ],
-      "title": "국제식물검역인증원 2025년 부패방지 의무교육 이행현황 알림",
-      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7394"
-    },
-    {
-      "institution": "국제식물검역인증원",
-      "board": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068",
-      "keyword": [
-        "국민참여",
-        "공모전"
-      ],
-      "title": "국제식물검역인증원 2025년 부패방지 의무교육 이행현황 알림",
-      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7278"
-    },
-    {
-      "institution": "국제식물검역인증원",
-      "board": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068",
-      "keyword": [
-        "국민참여",
-        "공모전"
-      ],
-      "title": "2025년 아시아매미나방 선박 검역 수수료 25% 인하 알림(2024년과 동일)",
-      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7246"
-    },
-    {
-      "institution": "국제식물검역인증원",
-      "board": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "2025년 아시아매미나방 선박 검역 수수료 25% 인하 알림(2024년과 동일)",
-      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7165"
-    },
-    {
-      "institution": "동북아역사재단",
-      "board": "https://www.nahf.or.kr/web/portal/bbs/1978/list",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "국민과 함께 한 동북아역사재단 ― 나와 함께 성장해 온 20년",
-      "url": "https://www.nahf.or.kr/web/portal/bbs/1989/102491?cp=1&pageSize=10&bcId=1989&baNotice=false&baCommSelec=false&baOpenDay=fa"
-    },
-    {
-      "institution": "선박해양플랜트연구소",
-      "board": "https://www.kriso.re.kr/menu.es?mid=a10401000000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "KRISO, WMU‧KMI와 함께 「WMU Maritime Affairs Confe..",
-      "url": "https://www.kriso.re.kr/main/"
-    },
-    {
-      "institution": "부산항만공사",
-      "board": "https://busanpa.com/index.bpa?menuCd=DOM_000000105001000000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "BPA Search 원하시는 정보를 빠르게 찾아드립니다.",
-      "url": "https://busanpa.com/board/view.bpa?boardId=BBS_0000027&menuCd=DOM_000000105001001000&paging=ok&startPage=1&dataSid=28921"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "음성-자막-수어 변환 앱(이어줌) 서비스 운영",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF010400.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "섬마을부터 우리 동네 읍·면까지! 시청자미디어재단, ‘전국 구석구석’ 찾아가는 미디어 교육 운영",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF020200.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF050307.do",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "음성-자막-수어 변환 앱(이어줌) 서비스 운영",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF010400.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF050307.do",
-      "keyword": [
-        "국민참여",
-        "공모전"
-      ],
-      "title": "2026년도 지상파방송사업 및 종합편성 방송채널사용사업 재허가·재승인 시청자 의견청취",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF020100.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF050307.do",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "섬마을부터 우리 동네 읍·면까지! 시청자미디어재단, ‘전국 구석구석’ 찾아가는 미디어 교육 운영",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF020200.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF050107.do",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "음성-자막-수어 변환 앱(이어줌) 서비스 운영",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF010400.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF050107.do",
-      "keyword": [
-        "국민참여",
-        "공모전"
-      ],
-      "title": "2026년도 지상파방송사업 및 종합편성 방송채널사용사업 재허가·재승인 시청자 의견청취",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF020100.do"
-    },
-    {
-      "institution": "시청자미디어재단",
-      "board": "https://kcmf.or.kr/KCMF/contents/KCMF050107.do",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "섬마을부터 우리 동네 읍·면까지! 시청자미디어재단, ‘전국 구석구석’ 찾아가는 미디어 교육 운영",
-      "url": "https://kcmf.or.kr/KCMF/contents/KCMF020200.do"
-    },
-    {
-      "institution": "오송첨단의료산업진흥재단",
-      "board": "https://www.kbiohealth.kr/menu.es?mid=a10301000000",
-      "keyword": [
-        "공모전"
-      ],
-      "title": "KBIOHealth는 K-의료산업 도약과 인류 건강에 기여할 수 있도록 노력하겠습니다.",
-      "url": "https://www.kbiohealth.kr/kr/"
-    },
-    {
-      "institution": "대외경제정책연구원",
-      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "디지털 전환 투자와 지역 노동시장 변화: EU Digital Europe Programme을 중심으로",
-      "url": "https://www.kiep.go.kr/gallery.es?mid=a10102020000&bid=0003"
-    },
-    {
-      "institution": "대외경제정책연구원",
-      "board": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
-      "keyword": [
-        "설문조사"
-      ],
-      "title": "디지털 전환 투자와 지역 노동시장 변화: EU Digital Europe Programme을 중심으로",
-      "url": "https://www.kiep.go.kr/gallery.es?mid=a10102020000&bid=0003"
+      "institution": "대한법률구조공단",
+      "board_url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
+      "error": "HTTP 0"
     }
   ],
   "telegram": {
     "ok": true,
-    "sent": 20,
-    "attempted": 20,
+    "sent": 8,
+    "attempted": 8,
     "errors": [],
-    "truncated": true
+    "truncated": false
   }
 }
