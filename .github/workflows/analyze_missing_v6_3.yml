@@ -1,0 +1,142 @@
+name: V6.3 Precision Discovery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+
+  discover:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ======================================================
+      # 1. GitHub 저장소 가져오기
+      # ======================================================
+
+      - name: Checkout repository
+
+        uses: actions/checkout@v4
+
+
+      # ======================================================
+      # 2. Python 설치
+      # ======================================================
+
+      - name: Setup Python
+
+        uses: actions/setup-python@v5
+
+        with:
+
+          python-version: "3.11"
+
+
+      # ======================================================
+      # 3. 필요한 패키지 설치
+      # ======================================================
+
+      - name: Install packages
+
+        run: |
+
+          python -m pip install --upgrade pip
+
+          pip install \
+            aiohttp \
+            beautifulsoup4 \
+            pandas \
+            openpyxl
+
+
+      # ======================================================
+      # 4. 입력 파일 확인
+      # ======================================================
+
+      - name: Check input file
+
+        run: |
+
+          echo "===== 입력 파일 ====="
+
+          ls -lh boards_v6.xlsx
+
+          echo ""
+
+          echo "===== Python 파일 ====="
+
+          ls -lh analyze_missing_v6_3.py
+
+
+      # ======================================================
+      # 5. V6.3 실행
+      # ======================================================
+
+      - name: Run V6.3
+
+        run: |
+
+          echo "========================================"
+
+          echo "V6.3 정밀탐색 시작"
+
+          echo "========================================"
+
+          python analyze_missing_v6_3.py
+
+
+      # ======================================================
+      # 6. 결과 파일 확인
+      # ======================================================
+
+      - name: Check result
+
+        run: |
+
+          echo "===== V6.3 결과 ====="
+
+          ls -lh boards_v6_3_analysis.xlsx
+
+
+      # ======================================================
+      # 7. Actions에서도 결과 다운로드 가능하도록 저장
+      # ======================================================
+
+      - name: Upload V6.3 result
+
+        uses: actions/upload-artifact@v4
+
+        with:
+
+          name: boards-v6-3-analysis
+
+          path: boards_v6_3_analysis.xlsx
+
+          if-no-files-found: error
+
+
+      # ======================================================
+      # 8. 결과를 GitHub 저장소에 커밋
+      # ======================================================
+
+      - name: Commit result
+
+        run: |
+
+          git config user.name \
+            "github-actions[bot]"
+
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add boards_v6_3_analysis.xlsx
+
+          git diff --cached --quiet \
+            || git commit \
+            -m "Add V6.3 precision discovery result"
+
+          git push
