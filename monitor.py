@@ -210,7 +210,7 @@ def load_targets():
             continue
         if r[idx_name] and r[idx_url]:
             out.append((str(r[idx_name]).strip(), str(r[idx_url]).strip()))
-    return out[:100]
+    return out[:200]
 
 async def fetch(session, url):
     last_err = "HTTP 0"
@@ -591,7 +591,7 @@ async def main():
         json.dump(log, f, ensure_ascii=False, indent=2)
 
     print(
-        f"[V8.7] targets={len(targets)} completed={completed} "
+        f"[V8.7.1] targets={len(targets)} completed={completed} "
         f"posts_checked={posts_checked} candidate_links={candidate_links} "
         f"detail_links={detail_links} new_matches={len(all_matches)} "
         f"errors={len(errors)} timed_out={timed_out}"
