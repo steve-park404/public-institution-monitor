@@ -1,3 +1,4 @@
+VERSION = "V8.11"
 import os, re, json, time, html, warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin, urlparse, parse_qs
@@ -33,6 +34,64 @@ session.headers.update({
     "User-Agent": UA,
     "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.5"
 })
+
+
+# =========================
+# V8.11 board discovery enhancement
+# =========================
+BOARD_TEXT_PATTERNS = [
+    "공지사항", "공지", "알림마당", "알림", "소식", "새소식",
+    "게시판", "참여", "소통", "뉴스", "자료실", "고시", "공고",
+    "입찰", "채용", "보도자료", "고객참여", "국민참여", "시민참여",
+]
+BOARD_URL_PATTERNS = [
+    "notice", "notic", "news", "board", "bbs", "community", "comm",
+    "webzine", "article", "list", "view", "contents", "sub",
+]
+NON_BOARD_URL_PATTERNS = [
+    "login", "logout", "member", "privacy", "sitemap", "search",
+    "filedownload", "download", "javascript:", "mailto:"
+]
+
+
+# V8.11 settings
+BOARD_DISCOVERY_DEPTH = 2
+BOARD_DISCOVERY_MAX_LINKS = 80
+BOARD_DISCOVERY_TIMEOUT = 12
+BOARD_DISCOVERY_MIN_SCORE = 4
+
+def _v811_norm(s):
+    try:
+        return re.sub(r"\s+", " ", str(s or "")).strip().lower()
+    except Exception:
+        return str(s or "").strip().lower()
+
+def _v811_is_candidate_link(text, href):
+    t = _v811_norm(text)
+    h = _v811_norm(href)
+    if not h or any(x in h for x in NON_BOARD_URL_PATTERNS):
+        return False
+    text_hit = any(p.lower() in t for p in BOARD_TEXT_PATTERNS)
+    url_hit = any(p in h for p in BOARD_URL_PATTERNS)
+    # Prefer links whose visible label or URL looks like a public notice board.
+    return text_hit or url_hit
+
+def _v811_score_link(text, href):
+    t = _v811_norm(text)
+    h = _v811_norm(href)
+    score = 0
+    for p in BOARD_TEXT_PATTERNS:
+        if p.lower() in t:
+            score += 8 if p in ("공지사항", "새소식", "알림마당", "게시판") else 4
+    for p in BOARD_URL_PATTERNS:
+        if p in h:
+            score += 2
+    if any(x in h for x in ("view", "article")):
+        score -= 2
+    if len(t) > 40:
+        score -= 1
+    return score
+
 
 def norm(s):
     return re.sub(r"\s+", " ", html.unescape(str(s or ""))).strip()
@@ -102,6 +161,83 @@ def board_score(u, t):
     if detail_signal(u):
         s -= 4
     return s
+
+
+def discover_board_v811(home_url, fetch_html_func):
+    """
+    V8.11: layered board discovery.
+    Returns the highest-scoring verified board URL, or None.
+    fetch_html_func(url) must return HTML text or None.
+    """
+    from bs4 import BeautifulSoup
+
+    visited = set()
+    queue = [(home_url, 0)]
+    candidates = []
+
+    while queue and len(visited) < BOARD_DISCOVERY_MAX_LINKS:
+        url, depth = queue.pop(0)
+        if not url or url in visited or depth > BOARD_DISCOVERY_DEPTH:
+            continue
+        visited.add(url)
+        try:
+            html = fetch_html_func(url)
+        except Exception:
+            html = None
+        if not html:
+            continue
+
+        soup = BeautifulSoup(html, "html.parser")
+        for a in soup.find_all("a", href=True):
+            href = a.get("href", "").strip()
+            text = a.get_text(" ", strip=True)
+            try:
+                abs_url = urljoin(url, href)
+            except Exception:
+                continue
+            if not abs_url.startswith(("http://", "https://")):
+                continue
+            if urlparse(abs_url).netloc != urlparse(home_url).netloc:
+                continue
+
+            if _v811_is_candidate_link(text, abs_url):
+                score = _v811_score_link(text, abs_url)
+                candidates.append((score, abs_url, text))
+            elif depth < BOARD_DISCOVERY_DEPTH:
+                # Follow useful-looking internal navigation pages.
+                nt = _v811_norm(text)
+                if nt and any(k.lower() in nt for k in ("알림", "소식", "참여", "게시", "고객", "정보")):
+                    queue.append((abs_url, depth + 1))
+
+    # De-duplicate and verify candidates by looking for list-like content.
+    seen_urls = set()
+    verified = []
+    for score, url, text in sorted(candidates, key=lambda x: (-x[0], x[1])):
+        if url in seen_urls or score < BOARD_DISCOVERY_MIN_SCORE:
+            continue
+        seen_urls.add(url)
+        try:
+            html = fetch_html_func(url)
+        except Exception:
+            html = None
+        if not html:
+            continue
+        soup = BeautifulSoup(html, "html.parser")
+        body_text = soup.get_text(" ", strip=True)
+        # A board/list page normally has repeated links, pagination, or notice/list terms.
+        link_count = len(soup.find_all("a", href=True))
+        list_terms = sum(body_text.count(x) for x in ("공지", "번호", "제목", "등록일", "조회", "목록", "페이지"))
+        if link_count >= 5 or list_terms >= 2:
+            verified.append((score, url, text, link_count, list_terms))
+            if len(verified) >= 5:
+                break
+
+    if not verified:
+        return None
+
+    verified.sort(key=lambda x: (-x[0], -x[4], -x[3], x[1]))
+    return verified[0][1]
+
 
 def discover_board(home):
     r = get(home)
