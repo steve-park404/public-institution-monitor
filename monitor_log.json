@@ -1,58 +1,6 @@
 {
-  "version": "8.6.6",
-  "timestamp": "2026-09-17 15:27:49",
-  "targets": 200,
-  "completed": 200,
-  "posts_checked": 687,
-  "candidate_links": 1121,
-  "detail_links": 1121,
-  "new_matches": 0,
-  "errors": 6,
-  "timed_out": false,
-  "elapsed_seconds": 379.9,
-  "keywords": [
-    "설문조사",
-    "시민참여",
-    "국민참여"
-  ],
-  "matches": [],
-  "error_details": [
-    {
-      "institution": "대한법률구조공단",
-      "board_url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
-      "error": "Cannot connect to host www.klac.or.kr:443 ssl:default [Temporary failure in name resolution]"
-    },
-    {
-      "institution": "한국석유관리원",
-      "board_url": "https://www.kpetro.or.kr/lay1/program/S1T48C50/poll/list.do",
-      "error": "[Errno 104] Connection reset by peer"
-    },
-    {
-      "institution": "한국행정연구원",
-      "board_url": "https://www.kipa.re.kr/html/kor/cmn/bbs/cmnBbsGenList.do",
-      "error": "Cannot connect to host www.kipa.re.kr:443 ssl:default [No address associated with hostname]"
-    },
-    {
-      "institution": "재단법인 장애인기업종합지원센터",
-      "board_url": "https://www.debc.or.kr/bbs/board.php?bo_table=s2_7",
-      "error": "HTTP 0"
-    },
-    {
-      "institution": "중소벤처기업연구원",
-      "board_url": "https://www.kosi.re.kr/front/functionDisplay?menuFrontNo=78602310172731705597633385694148844092&menuFrontURL=/front/webZineList",
-      "error": "HTTP 0"
-    },
-    {
-      "institution": "한국도로공사",
-      "board_url": "https://www.ex.co.kr/partcptn",
-      "error": "HTTP 0"
-    }
-  ],
-  "telegram": {
-    "ok": true,
-    "sent": 0,
-    "attempted": 0,
-    "errors": [],
-    "truncated": false
+  "summary": {
+    "targets": 355,
+    "note": "first run not executed"
   }
 }
