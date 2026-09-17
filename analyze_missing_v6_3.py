@@ -1,5 +1,6 @@
 import asyncio
 import re
+from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import aiohttp
@@ -8,24 +9,44 @@ from bs4 import BeautifulSoup
 
 
 # ============================================================
-# 기본 설정
+# V6.3 설정
 # ============================================================
 
 INPUT = "boards_v6.xlsx"
 OUTPUT = "boards_v6_3_analysis.xlsx"
 
+# 동시 접속 수
 CONCURRENCY = 8
-TIMEOUT = 25
-MAX_PAGES = 35
+
+# 개별 HTTP 요청 제한
+REQUEST_TIMEOUT = 15
+
+# 기관 하나당 최대 탐색 페이지
+MAX_PAGES = 25
+
+# 링크 탐색 깊이
 MAX_DEPTH = 2
-MAX_LINKS_PER_PAGE = 120
+
+# 한 페이지에서 다음 탐색 대상으로 사용할 최대 링크
+MAX_LINKS_PER_PAGE = 60
+
+# 기관 하나의 전체 분석 제한시간
+INSTITUTION_TIMEOUT = 70
+
 
 HEADERS = {
     "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Mozilla/5.0 "
+        "(Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 "
+        "(KHTML, like Gecko) "
         "Chrome/128.0 Safari/537.36"
-    )
+    ),
+    "Accept": (
+        "text/html,application/xhtml+xml,"
+        "application/xml;q=0.9,*/*;q=0.8"
+    ),
+    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.7,en;q=0.5",
 }
 
 
@@ -52,11 +73,65 @@ BOARD_WORDS = [
     "홍보",
     "전자민원",
     "고객센터",
+    "사업공고",
+    "입찰공고",
+    "채용공고",
+    "언론보도",
+    "보도",
+    "알림마당",
+    "공지/공고",
 ]
 
 
 # ============================================================
-# JS / API 관련 키워드
+# URL 패턴
+# ============================================================
+
+BOARD_URL_WORDS = [
+    "board",
+    "bbs",
+    "notice",
+    "news",
+    "announce",
+    "data",
+    "archive",
+    "community",
+    "list",
+    "article",
+    "content",
+    "pds",
+    "webzine",
+    "press",
+    "job",
+    "recruit",
+]
+
+
+POST_URL_WORDS = [
+    "view",
+    "detail",
+    "article",
+    "read",
+    "contentview",
+    "boardview",
+    "view.do",
+    "read.do",
+    "detail.do",
+    "seq=",
+    "idx=",
+    "ntt",
+    "ntt_id",
+    "bbsno=",
+    "boardno=",
+    "articleid=",
+    "article_no",
+    "menu_no",
+    "mode=view",
+]
+
+
+# ============================================================
+# API / JS 패턴
 # ============================================================
 
 API_WORDS = [
@@ -75,32 +150,39 @@ API_WORDS = [
 
 
 # ============================================================
-# CMS 탐지 패턴
+# CMS 패턴
 # ============================================================
 
 CMS_PATTERNS = {
+
     "K2Web": [
         r"k2web",
         r"webcontents",
     ],
+
     "Drupal": [
         r"drupal",
     ],
+
     "WordPress": [
         r"wp-content",
         r"wordpress",
     ],
+
     "Joomla": [
         r"joomla",
     ],
+
     "그누보드": [
         r"gnuboard",
         r"bbs/board\.php",
     ],
+
     "XpressEngine": [
         r"xpressengine",
-        r"xe/",
+        r"/xe/",
     ],
+
     "Rhymix": [
         r"rhymix",
     ],
@@ -108,15 +190,90 @@ CMS_PATTERNS = {
 
 
 # ============================================================
-# URL 유틸
+# 공통 URL
 # ============================================================
 
-def clean_url(url):
+COMMON_PATHS = [
+
+    "/sitemap.xml",
+    "/robots.txt",
+
+    "/notice",
+    "/notices",
+    "/notice/list",
+    "/notice.do",
+
+    "/news",
+    "/news/list",
+    "/news.do",
+
+    "/board",
+    "/board/list",
+    "/board/notice",
+    "/board/notice/list",
+
+    "/bbs",
+    "/bbs/list",
+    "/bbs/board",
+    "/bbs/board.php",
+
+    "/data",
+    "/data/list",
+
+    "/pds",
+    "/pds/list",
+
+    "/community",
+    "/community/notice",
+
+    "/information",
+    "/info",
+    "/archive",
+
+    "/contents/notice",
+    "/contents/news",
+
+    "/sub/notice",
+    "/sub/news",
+
+    "/ko/notice",
+    "/kr/notice",
+
+]
+
+
+# ============================================================
+# 숫자 변환
+# ============================================================
+
+def to_int(value):
+
+    try:
+        return int(float(value))
+    except:
+        return 0
+
+
+# ============================================================
+# URL 정리
+# ============================================================
+
+def normalize_url(url):
+
     if not url:
         return ""
 
-    return str(url).strip()
+    url = str(url).strip()
 
+    if not url:
+        return ""
+
+    return url
+
+
+# ============================================================
+# Host 비교
+# ============================================================
 
 def same_host(a, b):
 
@@ -133,7 +290,7 @@ def same_host(a, b):
 
 
 # ============================================================
-# 게시판 URL 점수
+# 링크 점수
 # ============================================================
 
 def score_link(text, href):
@@ -141,33 +298,43 @@ def score_link(text, href):
     text = str(text or "")
     href = str(href or "")
 
-    value = (text + " " + href).lower()
+    value = (
+        text
+        + " "
+        + href
+    ).lower()
 
     score = 0
+
+
+    # 한글 게시판 키워드
 
     for word in BOARD_WORDS:
 
         if word.lower() in value:
 
-            score += 3
+            score += 4
 
 
-    for word in [
-        "list",
-        "board",
-        "bbs",
-        "notice",
-        "news",
-        "article",
-        "view",
-        "detail",
-        "content",
-    ]:
+    # URL 패턴
+
+    for word in BOARD_URL_WORDS:
 
         if word in value:
 
             score += 2
 
+
+    # 게시물 패턴
+
+    for word in POST_URL_WORDS:
+
+        if word in value:
+
+            score += 1
+
+
+    # 불필요한 페이지 감점
 
     for word in [
         "login",
@@ -175,6 +342,8 @@ def score_link(text, href):
         "sitemap",
         "search",
         "member",
+        "terms",
+        "copyright",
     ]:
 
         if word in value:
@@ -186,27 +355,50 @@ def score_link(text, href):
 
 
 # ============================================================
-# 기존 V6.2 결과를 기준으로 1차 공략방법 분류
+# V6.2 결과를 이용한 공략방법
 # ============================================================
 
 def classify_method(row):
 
-    status = str(row.get("접속상태", ""))
-    cms = str(row.get("CMS", ""))
-    iframe = str(row.get("iframe", ""))
-    js = str(row.get("JS", ""))
-    fail = str(row.get("실패단계", ""))
+    status = str(
+        row.get("접속상태", "")
+    )
 
-    try:
-        old_board = int(row.get("게시판후보수", 0) or 0)
-    except:
-        old_board = 0
+    cms = str(
+        row.get("CMS", "")
+    )
 
-    try:
-        old_post = int(row.get("게시물후보수", 0) or 0)
-    except:
-        old_post = 0
+    iframe = str(
+        row.get("iframe", "")
+    )
 
+    js = str(
+        row.get("JS", "")
+    )
+
+    fail = str(
+        row.get("실패단계", "")
+    )
+
+
+    old_board = to_int(
+        row.get("게시판후보수", 0)
+    )
+
+    old_post = to_int(
+        row.get("게시물후보수", 0)
+    )
+
+
+    # 이미 후보가 있으면 이번 V6.3 대상에서
+    # 원칙적으로 제외
+
+    if old_board > 0 or old_post > 0:
+
+        return "제외_기존후보"
+
+
+    # 접속 실패
 
     if (
         "실패" in status
@@ -217,28 +409,32 @@ def classify_method(row):
         return "A_접속실패_재시도"
 
 
-    if old_board > 0 or old_post > 0:
-
-        return "B_기존후보_정밀검증"
-
+    # K2Web
 
     if "k2web" in cms.lower():
 
-        return "C_K2Web_정밀탐색"
+        return "B_K2Web"
 
 
-    if (
-        "있음" in iframe.lower()
-        or "true" in iframe.lower()
-        or "yes" in iframe.lower()
-    ):
-
-        return "D_iframe_실제주소추적"
-
+    # iframe
 
     if any(
-        word in js.lower()
-        for word in [
+        x in iframe.lower()
+        for x in [
+            "있음",
+            "true",
+            "yes",
+        ]
+    ):
+
+        return "C_iframe"
+
+
+    # JS
+
+    if any(
+        x in js.lower()
+        for x in [
             "높음",
             "high",
             "동적",
@@ -246,38 +442,42 @@ def classify_method(row):
         ]
     ):
 
-        return "E_JS_API_추적"
+        return "D_JS_API"
 
 
-    return "F_메뉴_사이트맵_URL패턴"
+    return "E_메뉴_사이트맵_URL"
 
 
 # ============================================================
 # HTTP 요청
 # ============================================================
 
-async def fetch(session, url):
+async def fetch(
+    session,
+    url,
+):
 
     try:
 
         async with session.get(
             url,
             headers=HEADERS,
-            timeout=TIMEOUT,
+            timeout=REQUEST_TIMEOUT,
             allow_redirects=True,
             ssl=False,
         ) as response:
 
-            html = await response.text(
+            body = await response.text(
                 errors="ignore"
             )
 
             return (
                 response.status,
                 str(response.url),
-                html,
+                body,
                 "",
             )
+
 
     except Exception as e:
 
@@ -290,7 +490,35 @@ async def fetch(session, url):
 
 
 # ============================================================
-# 기관 하나 분석
+# URL에서 게시판 패턴 검사
+# ============================================================
+
+def is_board_url(url):
+
+    value = str(url).lower()
+
+    return any(
+        word in value
+        for word in BOARD_URL_WORDS
+    )
+
+
+# ============================================================
+# URL에서 게시물 패턴 검사
+# ============================================================
+
+def is_post_url(url):
+
+    value = str(url).lower()
+
+    return any(
+        word in value
+        for word in POST_URL_WORDS
+    )
+
+
+# ============================================================
+# 기관 분석
 # ============================================================
 
 async def analyze_one(
@@ -301,148 +529,223 @@ async def analyze_one(
 
     async with semaphore:
 
-        homepage = clean_url(
-            record.get("홈페이지", "")
+        return await asyncio.wait_for(
+            analyze_one_inner(
+                session,
+                record,
+            ),
+            timeout=INSTITUTION_TIMEOUT,
         )
 
-        result = dict(record)
 
-        result.update({
+# ============================================================
+# 실제 기관 분석
+# ============================================================
 
-            "V6.3상태": "",
+async def analyze_one_inner(
+    session,
+    record,
+):
 
-            "V6.3탐색페이지": 0,
-
-            "V6.3게시판후보": 0,
-
-            "V6.3게시물후보": 0,
-
-            "V6.3iframe": 0,
-
-            "V6.3API후보": 0,
-
-            "V6.3CMS": "",
-
-            "V6.3게시판URL": "",
-
-            "V6.3게시물URL": "",
-
-            "V6.3iframeURL": "",
-
-            "V6.3API예시": "",
-
-            "V6.3탐색방법": classify_method(record),
-
-            "V6.3신뢰도": "미발견",
-
-            "V6.3오류": "",
-
-        })
+    homepage = normalize_url(
+        record.get(
+            "홈페이지",
+            "",
+        )
+    )
 
 
-        # 홈페이지 없음
+    result = dict(record)
+
+
+    # 결과 필드
+
+    result.update({
+
+        "V6.3상태": "",
+
+        "V6.3탐색페이지": 0,
+
+        "V6.3게시판후보": 0,
+
+        "V6.3게시물후보": 0,
+
+        "V6.3iframe": 0,
+
+        "V6.3API후보": 0,
+
+        "V6.3CMS": "",
+
+        "V6.3게시판URL": "",
+
+        "V6.3게시물URL": "",
+
+        "V6.3iframeURL": "",
+
+        "V6.3API예시": "",
+
+        "V6.3탐색방법": classify_method(
+            record
+        ),
+
+        "V6.3신뢰도": "미발견",
+
+        "V6.3오류": "",
+
+    })
+
+
+    # ========================================================
+    # 홈페이지 없음
+    # ========================================================
+
+    if (
+        not homepage
+        or homepage.lower() == "nan"
+    ):
+
+        result[
+            "V6.3상태"
+        ] = "홈페이지없음"
+
+        return result
+
+
+    # ========================================================
+    # 탐색 큐
+    # ========================================================
+
+    queue = [
+        (
+            homepage,
+            0,
+        )
+    ]
+
+
+    seen = set()
+
+    board_candidates = []
+
+    post_candidates = []
+
+    iframe_urls = []
+
+    api_candidates = []
+
+    cms_hits = set()
+
+
+    # ========================================================
+    # 홈페이지의 공통 URL도 큐에 추가
+    # ========================================================
+
+    homepage_base = homepage.rstrip("/")
+
+
+    for path in COMMON_PATHS:
+
+        target = urljoin(
+            homepage_base + "/",
+            path.lstrip("/"),
+        )
+
+        queue.append(
+            (
+                target,
+                1,
+            )
+        )
+
+
+    # ========================================================
+    # BFS
+    # ========================================================
+
+    while (
+        queue
+        and len(seen) < MAX_PAGES
+    ):
+
+        url, depth = queue.pop(0)
+
+
+        if url in seen:
+
+            continue
+
+
+        seen.add(url)
+
+
+        status, final_url, html, error = (
+            await fetch(
+                session,
+                url,
+            )
+        )
+
+
+        # 오류
+
+        if error:
+
+            if not result["V6.3오류"]:
+
+                result[
+                    "V6.3오류"
+                ] = error
+
+            continue
+
+
+        # 첫 번째 정상 접속
 
         if (
-            not homepage
-            or homepage.lower() == "nan"
+            len(seen) == 1
+            and status is not None
         ):
 
-            result["V6.3상태"] = "홈페이지없음"
+            result[
+                "V6.3상태"
+            ] = f"정상:{status}"
 
-            return result
+
+        if status is None:
+
+            continue
 
 
-        # 탐색 큐
+        if status >= 400:
 
-        queue = [
-            (homepage, 0)
-        ]
-
-        seen = set()
-
-        board_urls = []
-
-        post_urls = []
-
-        iframe_urls = []
-
-        api_urls = []
-
-        cms_hits = set()
+            continue
 
 
         # ====================================================
-        # BFS 탐색
+        # HTML 분석
         # ====================================================
 
-        while (
-            queue
-            and len(seen) < MAX_PAGES
-        ):
-
-            url, depth = queue.pop(0)
+        soup = BeautifulSoup(
+            html,
+            "html.parser",
+        )
 
 
-            if url in seen:
-
-                continue
+        html_lower = html.lower()
 
 
-            seen.add(url)
+        # ====================================================
+        # CMS
+        # ====================================================
 
+        for (
+            cms_name,
+            patterns,
+        ) in CMS_PATTERNS.items():
 
-            status, final_url, html, error = (
-                await fetch(
-                    session,
-                    url,
-                )
-            )
+            for pattern in patterns:
 
-
-            # 오류
-
-            if error:
-
-                if not result["V6.3오류"]:
-
-                    result["V6.3오류"] = error
-
-                continue
-
-
-            # 첫 페이지 상태
-
-            if len(seen) == 1:
-
-                result["V6.3상태"] = (
-                    f"정상:{status}"
-                )
-
-
-            if status >= 400:
-
-                continue
-
-
-            soup = BeautifulSoup(
-                html,
-                "html.parser",
-            )
-
-
-            html_lower = html.lower()
-
-
-            # =================================================
-            # CMS 탐지
-            # =================================================
-
-            for (
-                cms_name,
-                patterns,
-            ) in CMS_PATTERNS.items():
-
-                for pattern in patterns:
+                try:
 
                     if re.search(
                         pattern,
@@ -455,435 +758,473 @@ async def analyze_one(
 
                         break
 
+                except:
 
-            # =================================================
-            # iframe / frame
-            # =================================================
-
-            for tag in soup.find_all(
-                ["iframe", "frame"]
-            ):
-
-                src = tag.get("src")
-
-                if not src:
-
-                    continue
+                    pass
 
 
-                target = urljoin(
-                    final_url,
-                    src,
+        # ====================================================
+        # iframe
+        # ====================================================
+
+        for tag in soup.find_all(
+            [
+                "iframe",
+                "frame",
+            ]
+        ):
+
+            src = tag.get("src")
+
+
+            if not src:
+
+                continue
+
+
+            target = urljoin(
+                final_url,
+                src,
+            )
+
+
+            if target not in iframe_urls:
+
+                iframe_urls.append(
+                    target
                 )
 
 
-                if target not in iframe_urls:
+            # iframe은 외부 도메인도 추적
 
-                    iframe_urls.append(
-                        target
-                    )
-
-
-                # iframe도 탐색 큐에 추가
-                # 단, 외부 사이트도 추적 가능
-
-                if target not in seen:
-
-                    queue.append(
-                        (
-                            target,
-                            depth + 1,
-                        )
-                    )
-
-
-            # =================================================
-            # JS / API 탐지
-            # =================================================
-
-            for script in soup.find_all(
-                "script"
+            if (
+                target not in seen
+                and len(seen)
+                + len(queue)
+                < MAX_PAGES + 10
             ):
 
-                src = script.get("src")
-
-                inline_code = (
-                    script.string
-                    or ""
-                )
-
-
-                blob = (
-                    str(src or "")
-                    + " "
-                    + inline_code[:20000]
-                ).lower()
-
-
-                if any(
-                    word in blob
-                    for word in API_WORDS
-                ):
-
-                    # 외부 JS 파일
-
-                    if src:
-
-                        target = urljoin(
-                            final_url,
-                            src,
-                        )
-
-                        if (
-                            target
-                            not in api_urls
-                        ):
-
-                            api_urls.append(
-                                target
-                            )
-
-
-                    # 코드 내부 API URL
-
-                    patterns = [
-
-                        r'https?://[^"\']+',
-
-                        r'/[^"\']*(?:api|ajax|json)[^"\']*',
-
-                        r'["\']([^"\']*(?:api|ajax|json)[^"\']*)["\']',
-
-                    ]
-
-
-                    for pattern in patterns:
-
-                        try:
-
-                            matches = re.findall(
-                                pattern,
-                                inline_code,
-                                re.I,
-                            )
-
-                        except:
-
-                            matches = []
-
-
-                        for match in matches:
-
-                            if isinstance(
-                                match,
-                                tuple,
-                            ):
-
-                                match = match[0]
-
-
-                            target = urljoin(
-                                final_url,
-                                str(match),
-                            )
-
-
-                            if (
-                                target
-                                not in api_urls
-                            ):
-
-                                api_urls.append(
-                                    target
-                                )
-
-
-            # =================================================
-            # 링크 분석
-            # =================================================
-
-            links = []
-
-
-            for a in soup.find_all(
-                "a",
-                href=True,
-            ):
-
-                href = a.get("href")
-
-                if not href:
-
-                    continue
-
-
-                target = urljoin(
-                    final_url,
-                    href,
-                )
-
-
-                if not target.startswith(
+                queue.append(
                     (
-                        "http://",
-                        "https://",
+                        target,
+                        depth + 1,
                     )
-                ):
-
-                    continue
-
-
-                text = a.get_text(
-                    " ",
-                    strip=True,
                 )
 
 
-                score = score_link(
-                    text,
-                    target,
-                )
+        # ====================================================
+        # JS / API
+        # ====================================================
+
+        for script in soup.find_all(
+            "script"
+        ):
+
+            src = script.get("src")
+
+            inline_code = (
+                script.string
+                or ""
+            )
 
 
-                # ---------------------------------------------
-                # 게시판 후보
-                # ---------------------------------------------
+            blob = (
+                str(src or "")
+                + " "
+                + inline_code[:30000]
+            ).lower()
 
-                if score >= 3:
 
-                    board_urls.append(
-                        (
-                            score,
-                            target,
-                            text[:100],
+            if any(
+                word in blob
+                for word in API_WORDS
+            ):
+
+                if src:
+
+                    target = urljoin(
+                        final_url,
+                        src,
+                    )
+
+
+                    if (
+                        target
+                        not in api_candidates
+                    ):
+
+                        api_candidates.append(
+                            target
                         )
-                    )
 
 
-                # ---------------------------------------------
-                # 게시물 후보
-                # ---------------------------------------------
+                # API 주소 추출
 
-                path_query = (
-                    urlparse(target).path.lower()
-                    + " "
-                    + urlparse(target).query.lower()
-                )
+                patterns = [
 
+                    r'https?://[^"\']+',
 
-                post_patterns = [
+                    r'["\']([^"\']*(?:/api/|/ajax/|/json/)[^"\']*)["\']',
 
-                    "view",
-
-                    "detail",
-
-                    "article",
-
-                    "read",
-
-                    "contentview",
-
-                    "boardview",
-
-                    "view.do",
-
-                    "read.do",
-
-                    "seq=",
-
-                    "idx=",
-
-                    "ntt",
-
-                    "ntt_id",
-
-                    "bbsno=",
-
-                    "boardno=",
-
-                    "articleid=",
+                    r'["\']([^"\']*(?:api|ajax|json)[^"\']*)["\']',
 
                 ]
 
 
-                if any(
-                    pattern
-                    in path_query
-                    for pattern
-                    in post_patterns
-                ):
+                for pattern in patterns:
 
-                    post_urls.append(
-                        (
-                            score + 1,
-                            target,
-                            text[:100],
+                    try:
+
+                        matches = re.findall(
+                            pattern,
+                            inline_code,
+                            re.I,
                         )
-                    )
+
+                    except:
+
+                        matches = []
 
 
-                # ---------------------------------------------
-                # 다음 페이지
-                # ---------------------------------------------
+                    for match in matches:
 
-                if (
-                    same_host(
-                        homepage,
-                        target,
-                    )
-                    and depth < MAX_DEPTH
-                ):
+                        if isinstance(
+                            match,
+                            tuple,
+                        ):
 
-                    links.append(
-                        (
-                            score,
-                            target,
+                            match = match[0]
+
+
+                        if not match:
+
+                            continue
+
+
+                        target = urljoin(
+                            final_url,
+                            str(match),
                         )
-                    )
 
 
-            # 점수 높은 링크 우선
+                        if (
+                            target
+                            not in api_candidates
+                        ):
 
-            links.sort(
-                reverse=True
+                            api_candidates.append(
+                                target
+                            )
+
+
+        # ====================================================
+        # 링크
+        # ====================================================
+
+        next_links = []
+
+
+        for a in soup.find_all(
+            "a",
+            href=True,
+        ):
+
+            href = a.get(
+                "href"
             )
 
 
-            for (
-                _,
+            if not href:
+
+                continue
+
+
+            # javascript 제거
+
+            if href.lower().startswith(
+                (
+                    "javascript:",
+                    "mailto:",
+                    "tel:",
+                    "#",
+                )
+            ):
+
+                continue
+
+
+            target = urljoin(
+                final_url,
+                href,
+            )
+
+
+            if not target.startswith(
+                (
+                    "http://",
+                    "https://",
+                )
+            ):
+
+                continue
+
+
+            text = a.get_text(
+                " ",
+                strip=True,
+            )
+
+
+            score = score_link(
+                text,
                 target,
-            ) in links[
-                :MAX_LINKS_PER_PAGE
+            )
+
+
+            # =================================================
+            # 게시판 후보
+            # =================================================
+
+            if (
+                score >= 4
+                or is_board_url(target)
+            ):
+
+                board_candidates.append(
+                    (
+                        score,
+                        target,
+                        text[:120],
+                    )
+                )
+
+
+            # =================================================
+            # 게시물 후보
+            # =================================================
+
+            if is_post_url(
+                target
+            ):
+
+                post_candidates.append(
+                    (
+                        score + 1,
+                        target,
+                        text[:120],
+                    )
+                )
+
+
+            # =================================================
+            # 다음 페이지
+            # =================================================
+
+            if (
+                same_host(
+                    homepage,
+                    target,
+                )
+                and depth < MAX_DEPTH
+                and target not in seen
+            ):
+
+                next_links.append(
+                    (
+                        score,
+                        target,
+                    )
+                )
+
+
+        # ====================================================
+        # 점수 높은 링크부터 탐색
+        # ====================================================
+
+        next_links.sort(
+            reverse=True
+        )
+
+
+        added = 0
+
+
+        for (
+            score,
+            target,
+        ) in next_links:
+
+            if target in seen:
+
+                continue
+
+
+            if target in [
+                x[0]
+                for x in queue
             ]:
 
-                if target not in seen:
-
-                    queue.append(
-                        (
-                            target,
-                            depth + 1,
-                        )
-                    )
+                continue
 
 
-        # ====================================================
-        # 결과 정리
-        # ====================================================
+            queue.append(
+                (
+                    target,
+                    depth + 1,
+                )
+            )
 
-        board_urls = sorted(
-            set(board_urls),
-            reverse=True,
+
+            added += 1
+
+
+            if added >= MAX_LINKS_PER_PAGE:
+
+                break
+
+
+    # ========================================================
+    # 중복 제거
+    # ========================================================
+
+    board_candidates = sorted(
+        set(board_candidates),
+        reverse=True,
+    )
+
+
+    post_candidates = sorted(
+        set(post_candidates),
+        reverse=True,
+    )
+
+
+    iframe_urls = list(
+        dict.fromkeys(
+            iframe_urls
         )
+    )
 
 
-        post_urls = sorted(
-            set(post_urls),
-            reverse=True,
+    api_candidates = list(
+        dict.fromkeys(
+            api_candidates
         )
+    )
 
+
+    # ========================================================
+    # 결과
+    # ========================================================
+
+    result[
+        "V6.3탐색페이지"
+    ] = len(seen)
+
+
+    result[
+        "V6.3게시판후보"
+    ] = len(
+        board_candidates
+    )
+
+
+    result[
+        "V6.3게시물후보"
+    ] = len(
+        post_candidates
+    )
+
+
+    result[
+        "V6.3iframe"
+    ] = len(
+        iframe_urls
+    )
+
+
+    result[
+        "V6.3API후보"
+    ] = len(
+        api_candidates
+    )
+
+
+    result[
+        "V6.3CMS"
+    ] = ", ".join(
+        sorted(cms_hits)
+    )
+
+
+    if board_candidates:
 
         result[
-            "V6.3탐색페이지"
-        ] = len(seen)
+            "V6.3게시판URL"
+        ] = board_candidates[0][1]
 
 
-        result[
-            "V6.3게시판후보"
-        ] = len(board_urls)
-
+    if post_candidates:
 
         result[
-            "V6.3게시물후보"
-        ] = len(post_urls)
+            "V6.3게시물URL"
+        ] = post_candidates[0][1]
 
 
-        result[
-            "V6.3iframe"
-        ] = len(iframe_urls)
-
+    if iframe_urls:
 
         result[
-            "V6.3API후보"
-        ] = len(api_urls)
+            "V6.3iframeURL"
+        ] = iframe_urls[0]
 
+
+    if api_candidates:
 
         result[
-            "V6.3CMS"
-        ] = ", ".join(
-            sorted(cms_hits)
-        )
+            "V6.3API예시"
+        ] = api_candidates[0]
 
 
-        if board_urls:
+    # ========================================================
+    # 신뢰도
+    # ========================================================
 
-            result[
-                "V6.3게시판URL"
-            ] = board_urls[0][1]
+    if (
+        board_candidates
+        and post_candidates
+    ):
 
-
-        if post_urls:
-
-            result[
-                "V6.3게시물URL"
-            ] = post_urls[0][1]
-
-
-        if iframe_urls:
-
-            result[
-                "V6.3iframeURL"
-            ] = iframe_urls[0]
+        result[
+            "V6.3신뢰도"
+        ] = "높음"
 
 
-        if api_urls:
+    elif board_candidates:
 
-            result[
-                "V6.3API예시"
-            ] = api_urls[0]
-
-
-        # ====================================================
-        # 신뢰도
-        # ====================================================
-
-        if (
-            board_urls
-            and post_urls
-        ):
-
-            result[
-                "V6.3신뢰도"
-            ] = "높음"
+        result[
+            "V6.3신뢰도"
+        ] = "중간"
 
 
-        elif board_urls:
+    elif (
+        post_candidates
+        or iframe_urls
+        or api_candidates
+    ):
 
-            result[
-                "V6.3신뢰도"
-            ] = "중간"
-
-
-        elif (
-            post_urls
-            or iframe_urls
-            or api_urls
-        ):
-
-            result[
-                "V6.3신뢰도"
-            ] = "낮음-추가검증"
+        result[
+            "V6.3신뢰도"
+        ] = "낮음-추가검증"
 
 
-        elif str(
-            result["V6.3상태"]
-        ).startswith("정상"):
+    else:
 
-            result[
-                "V6.3신뢰도"
-            ] = "미발견"
+        result[
+            "V6.3신뢰도"
+        ] = "미발견"
 
 
-        return result
+    return result
 
 
 # ============================================================
@@ -893,15 +1234,13 @@ async def analyze_one(
 async def main():
 
     print("=" * 80)
-
-    print(
-        "V6.3 정밀 게시판 탐색 시작"
-    )
-
+    print("V6.3 미발견 기관 정밀탐색")
     print("=" * 80)
 
 
-    # 입력 파일 확인
+    # ========================================================
+    # 입력파일 확인
+    # ========================================================
 
     if not Path(INPUT).exists():
 
@@ -916,14 +1255,66 @@ async def main():
 
 
     print(
-        f"분석 기관 : {len(df)}개"
+        f"V6.2 전체 기관 : {len(df)}개"
     )
 
 
-    records = df.to_dict(
+    # ========================================================
+    # 미발견 기관만 선택
+    #
+    # 게시판 후보 = 0
+    # AND
+    # 게시물 후보 = 0
+    # ========================================================
+
+    target_df = df[
+        (
+            df["게시판후보수"]
+            .apply(to_int)
+            == 0
+        )
+        &
+        (
+            df["게시물후보수"]
+            .apply(to_int)
+            == 0
+        )
+    ].copy()
+
+
+    print(
+        f"V6.3 정밀탐색 대상 : "
+        f"{len(target_df)}개"
+    )
+
+
+    print(
+        f"제외 기관 : "
+        f"{len(df) - len(target_df)}개"
+    )
+
+
+    # ========================================================
+    # 대상이 없으면 종료
+    # ========================================================
+
+    if target_df.empty:
+
+        print(
+            "정밀탐색 대상이 없습니다."
+        )
+
+        return
+
+
+    records = target_df.to_dict(
         "records"
     )
 
+
+    # ========================================================
+    # HTTP 세션
+    # ========================================================
 
     semaphore = asyncio.Semaphore(
         CONCURRENCY
@@ -931,14 +1322,19 @@ async def main():
 
 
     timeout = aiohttp.ClientTimeout(
-        total=TIMEOUT
+        total=REQUEST_TIMEOUT
     )
 
 
     connector = aiohttp.TCPConnector(
         limit=CONCURRENCY,
+        limit_per_host=2,
         ssl=False,
+        ttl_dns_cache=300,
     )
+
+
+    results = []
 
 
     async with aiohttp.ClientSession(
@@ -961,9 +1357,6 @@ async def main():
         ]
 
 
-        results = []
-
-
         completed = 0
 
 
@@ -979,6 +1372,14 @@ async def main():
                     result
                 )
 
+
+            except asyncio.TimeoutError:
+
+                print(
+                    "[TIMEOUT] 기관 분석시간 초과"
+                )
+
+
             except Exception as e:
 
                 print(
@@ -992,24 +1393,28 @@ async def main():
 
             if (
                 completed % 10 == 0
-                or completed == len(tasks)
+                or completed == len(records)
             ):
 
                 print(
                     f"[V6.3] "
                     f"{completed}/"
-                    f"{len(tasks)} 완료"
+                    f"{len(records)} 완료"
                 )
 
 
     # ========================================================
-    # 결과 저장
+    # 결과 DataFrame
     # ========================================================
 
-    out = pd.DataFrame(
+    result_df = pd.DataFrame(
         results
     )
 
+
+    # ========================================================
+    # 원래 컬럼 순서 + V6.3 컬럼
+    # ========================================================
 
     original_columns = list(
         df.columns
@@ -1020,42 +1425,48 @@ async def main():
 
         c
 
-        for c in out.columns
+        for c in result_df.columns
 
         if c not in original_columns
 
     ]
 
 
-    out = out[
+    result_df = result_df[
         original_columns
         + new_columns
     ]
 
 
-    out.to_excel(
+    # ========================================================
+    # 저장
+    # ========================================================
+
+    result_df.to_excel(
         OUTPUT,
         index=False,
     )
 
 
     # ========================================================
-    # 요약
+    # 결과 요약
     # ========================================================
 
     print()
 
     print("=" * 80)
-
-    print(
-        "V6.3 정밀탐색 완료"
-    )
-
+    print("V6.3 정밀탐색 완료")
     print("=" * 80)
 
 
     print(
-        f"기관 수 : {len(out)}"
+        f"전체 V6.2 기관 : {len(df)}개"
+    )
+
+
+    print(
+        f"V6.3 분석 기관 : "
+        f"{len(result_df)}개"
     )
 
 
@@ -1066,44 +1477,88 @@ async def main():
 
     print()
 
+
     print(
-        "[신뢰도별 결과]"
+        "===== 신뢰도 ====="
     )
 
 
-    print(
-        out[
-            "V6.3신뢰도"
-        ]
-        .value_counts(
-            dropna=False
+    if not result_df.empty:
+
+        print(
+            result_df[
+                "V6.3신뢰도"
+            ]
+            .value_counts(
+                dropna=False
+            )
+            .to_string()
         )
-        .to_string()
-    )
 
 
     print()
 
+
     print(
-        "[탐색방법별 결과]"
+        "===== 공략방법 ====="
     )
 
 
-    print(
-        out[
-            "V6.3탐색방법"
-        ]
-        .value_counts(
-            dropna=False
+    if not result_df.empty:
+
+        print(
+            result_df[
+                "V6.3탐색방법"
+            ]
+            .value_counts(
+                dropna=False
+            )
+            .to_string()
         )
-        .to_string()
+
+
+    print()
+
+
+    print(
+        "===== 게시판 후보 발견 기관 ====="
     )
+
+
+    found = result_df[
+        result_df[
+            "V6.3게시판후보"
+        ]
+        .apply(to_int)
+        > 0
+    ]
+
+
+    print(
+        f"{len(found)}개 기관"
+    )
+
+
+    for _, row in found.iterrows():
+
+        print(
+            f"- "
+            f"{row.get('기관명', '')} | "
+            f"{row.get('V6.3게시판URL', '')} | "
+            f"{row.get('V6.3신뢰도', '')}"
+        )
 
 
     print()
 
     print("=" * 80)
+    print("분석 종료")
+    print("=" * 80)
 
+
+# ============================================================
+# 실행
+# ============================================================
 
 if __name__ == "__main__":
 
