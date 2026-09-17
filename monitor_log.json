@@ -1,15 +1,15 @@
 {
   "version": "8.6.6",
-  "timestamp": "2026-09-17 14:26:18",
+  "timestamp": "2026-09-17 14:30:14",
   "targets": 100,
   "completed": 100,
-  "posts_checked": 367,
-  "candidate_links": 548,
-  "detail_links": 548,
+  "posts_checked": 388,
+  "candidate_links": 589,
+  "detail_links": 589,
   "new_matches": 0,
-  "errors": 6,
+  "errors": 3,
   "timed_out": false,
-  "elapsed_seconds": 91.7,
+  "elapsed_seconds": 78.8,
   "keywords": [
     "설문조사",
     "시민참여",
@@ -18,34 +18,19 @@
   "matches": [],
   "error_details": [
     {
-      "institution": "한국세라믹기술원",
-      "board_url": "https://www.kicet.re.kr/00020/00117/00120.web",
+      "institution": "한국고전번역원",
+      "board_url": "https://www.itkc.or.kr/bbs/board.do?id=76&menuId=86",
       "error": "HTTP 0"
     },
     {
-      "institution": "한국세라믹기술원",
-      "board_url": "https://www.kicet.re.kr/00120.web",
+      "institution": "대외경제정책연구원",
+      "board_url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
       "error": "HTTP 0"
     },
     {
-      "institution": "한국세라믹기술원",
-      "board_url": "https://www.kicet.re.kr/00117.web",
-      "error": "HTTP 0"
-    },
-    {
-      "institution": "(재)우체국시설관리단",
-      "board_url": "https://www.poma.or.kr/poma/notice.do",
-      "error": "Cannot connect to host www.poma.or.kr:443 ssl:default [Temporary failure in name resolution]"
-    },
-    {
-      "institution": "국가수리과학연구소",
-      "board_url": "https://www.nims.re.kr/noticeYard/post/notification",
-      "error": "HTTP 0"
-    },
-    {
-      "institution": "국가수리과학연구소",
-      "board_url": "https://www.nims.re.kr/post/equipNotice",
-      "error": "HTTP 0"
+      "institution": "대한법률구조공단",
+      "board_url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
+      "error": "Cannot connect to host www.klac.or.kr:443 ssl:default [Temporary failure in name resolution]"
     }
   ],
   "telegram": {
