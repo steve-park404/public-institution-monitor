@@ -1,419 +1,163 @@
-import os
-import re
-import json
-import hashlib
-import asyncio
-from datetime import datetime, timezone, timedelta
-from urllib.parse import urljoin, urlparse
-
+import os,re,json,asyncio,hashlib
+from datetime import datetime,timezone,timedelta
+from urllib.parse import urljoin
 import aiohttp
 from bs4 import BeautifulSoup
+import pandas as pd
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-TARGET_FILE = os.path.join(BASE, "monitor_targets.xlsx")
-KEYWORD_FILE = os.path.join(BASE, "keywords.txt")
-STATE_FILE = os.path.join(BASE, "state.json")
-LOG_FILE = os.path.join(BASE, "monitor_log.json")
+BASE=os.path.dirname(os.path.abspath(__file__))
+TARGET=os.path.join(BASE,"monitor_targets.xlsx")
+KEYWORDS=os.path.join(BASE,"keywords.txt")
+STATE=os.path.join(BASE,"state.json")
+LOG=os.path.join(BASE,"monitor_log.json")
+KST=timezone(timedelta(hours=9))
 
-KST = timezone(timedelta(hours=9))
+CONC=int(os.getenv("MAX_CONCURRENCY","12"))
+TIMEOUT=int(os.getenv("TIMEOUT_SECONDS","15"))
+RECENT=int(os.getenv("RECENT_POSTS","15"))
+MAX_SECONDS=int(os.getenv("MAX_TOTAL_SECONDS","600"))
+SEED=os.getenv("SEED_ON_FIRST_RUN","true").lower()=="true"
 
-MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "15"))
-TIMEOUT_SECONDS = int(os.getenv("TIMEOUT_SECONDS", "25"))
-RECENT_POSTS = int(os.getenv("RECENT_POSTS", "20"))
-DISCOVER_NOTICE = os.getenv("DISCOVER_NOTICE", "true").lower() == "true"
-SEED_ON_FIRST_RUN = os.getenv("SEED_ON_FIRST_RUN", "true").lower() == "true"
+DETAIL=("act=view","mode=view","list_no=","articleNo=","article_no=","seq=","idx=","view.do","view.jsp","view.aspx")
+BAD=("로그인","회원가입","예약","진료","검색","설문","채용","입찰","자료실","뉴스레터","소식지","개인정보","약관","사이트맵","교육신청","민원","발급","결제","일정","문의")
 
-NOTICE_LABELS = [
-    "공지사항", "공지", "알림마당", "기관소식", "새소식", "공고",
-    "알림", "소식", "공지·공고", "공지/공고"
-]
-BAD_LINK_WORDS = [
-    "로그인", "회원가입", "예약", "진료", "검색", "설문", "채용", "입찰",
-    "자료실", "뉴스레터", "소식지", "이용안내", "찾아오시는길",
-    "개인정보", "약관", "사이트맵", "교육", "신청", "민원", "발급",
-    "결제", "일정", "문의", "다운로드"
-]
-DETAIL_HINTS = [
-    "list_no=", "articleNo=", "article_no=", "seq=", "idx=", "bbsId=",
-    "view.do", "view.jsp", "view.aspx", "act=view", "mode=view"
-]
-
-def now_kst():
-    return datetime.now(KST).isoformat()
-
+def clean(x): return re.sub(r"\s+"," ",str(x or "")).strip()
+def now(): return datetime.now(KST).isoformat()
 def load_keywords():
-    if not os.path.exists(KEYWORD_FILE):
-        return []
-    out = []
-    for line in open(KEYWORD_FILE, encoding="utf-8"):
-        s = line.strip()
-        if s and not s.startswith("#"):
-            out.append(s)
-    return list(dict.fromkeys(out))
-
+    if not os.path.exists(KEYWORDS): return []
+    return list(dict.fromkeys(clean(x) for x in open(KEYWORDS,encoding="utf-8") if clean(x) and not clean(x).startswith("#")))
 def load_state():
-    if not os.path.exists(STATE_FILE):
-        return {"seen": {}, "initialized": False}
-    try:
-        return json.load(open(STATE_FILE, encoding="utf-8"))
-    except Exception:
-        return {"seen": {}, "initialized": False}
+    try: return json.load(open(STATE,encoding="utf-8"))
+    except: return {"seen":{},"initialized":False}
+def save(path,obj):
+    tmp=path+".tmp"
+    json.dump(obj,open(tmp,"w",encoding="utf-8"),ensure_ascii=False,indent=2)
+    os.replace(tmp,path)
+def is_detail(u):
+    u=u.lower()
+    return any(x.lower() in u for x in DETAIL)
+def bad_title(t):
+    t=clean(t)
+    return len(t)<3 or len(t)>300 or t in {"이전글이 없습니다.","다음글이 없습니다.","스킵네비게이션","본문","메뉴","홈","공지사항 상세"}
+def atitle(a):
+    return clean(a.get("title") or a.get("aria-label") or a.get_text(" ",strip=True))
+def extract_posts(soup,base):
+    out=[]; seen=set()
+    selectors=["table tbody tr","table tr","ul.board-list li","ul.bbs-list li","ul.notice-list li",
+               "div.board-list li","div.bbs-list li","div[class*='board'] li","div[class*='bbs'] li"]
+    for sel in selectors:
+        for row in soup.select(sel):
+            vals=[]
+            for a in row.find_all("a",href=True):
+                t=atitle(a); u=urljoin(base,a["href"]).strip()
+                if bad_title(t) or any(w in t for w in BAD) or not is_detail(u): continue
+                vals.append((t,u))
+            if vals:
+                t,u=max(vals,key=lambda z:len(z[0]))
+                if u not in seen: seen.add(u); out.append({"title":t,"url":u})
+        if len(out)>=RECENT: break
+    if len(out)<3:
+        for a in soup.find_all("a",href=True):
+            t=atitle(a); u=urljoin(base,a["href"]).strip()
+            if bad_title(t) or any(w in t for w in BAD) or not is_detail(u) or u in seen: continue
+            seen.add(u); out.append({"title":t,"url":u})
+            if len(out)>=RECENT: break
+    return out[:RECENT]
+def body(soup):
+    for x in soup(["script","style","noscript","svg","iframe"]): x.decompose()
+    return clean(soup.get_text(" ",strip=True))
 
-def save_json(path, obj):
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, path)
-
-def clean_text(s):
-    return re.sub(r"\s+", " ", s or "").strip()
-
-def normalize_url(url):
-    if not url:
-        return ""
-    return url.strip().replace(" ", "%20")
-
-def is_detail_url(url):
-    low = url.lower()
-    return any(x.lower() in low for x in DETAIL_HINTS)
-
-def looks_like_notice_label(text):
-    t = clean_text(text)
-    if not t:
-        return False
-    return any(label in t for label in NOTICE_LABELS)
-
-def is_bad_link_text(text):
-    t = clean_text(text)
-    return any(x in t for x in BAD_LINK_WORDS)
-
-def title_is_bad(title):
-    t = clean_text(title)
-    if len(t) < 3 or len(t) > 250:
-        return True
-    bad_exact = {
-        "이전글이 없습니다.", "다음글이 없습니다.", "스킵네비게이션",
-        "메뉴", "본문", "홈", "공지사항 상세", "새소식 공지사항 상세"
-    }
-    if t in bad_exact:
-        return True
-    if any(x in t.lower() for x in ["skip navigation", "privacy policy"]):
-        return True
-    return False
-
-def get_title_from_anchor(a):
-    for attr in ("title", "aria-label"):
-        v = clean_text(a.get(attr))
-        if v:
-            return v
-    return clean_text(a.get_text(" ", strip=True))
-
-def extract_list_posts(soup, base_url):
-    candidates = []
-
-    # 우선 table/list의 반복 행에서 추출
-    containers = soup.select("table, ul, ol, .board-list, .bbs-list, .list, [class*='board'], [class*='bbs']")
-    seen = set()
-
-    for container in containers:
-        anchors = container.find_all("a", href=True)
-        local = []
-        for a in anchors:
-            title = get_title_from_anchor(a)
-            href = normalize_url(urljoin(base_url, a.get("href")))
-            if not title or not href or href in seen:
-                continue
-            if title_is_bad(title) or is_bad_link_text(title):
-                continue
-            if href.rstrip("/") == base_url.rstrip("/"):
-                continue
-            if href.lower().startswith(("javascript:", "mailto:", "tel:")):
-                continue
-            # 메뉴/기능 링크 제외
-            cls = " ".join(a.get("class", [])).lower()
-            parent_text = clean_text(a.parent.get_text(" ", strip=True)) if a.parent else ""
-            if any(x in (cls + " " + title.lower()) for x in [
-                "login", "search", "menu", "gnb", "lnb", "reservation"
-            ]):
-                continue
-            local.append((title, href))
-        # 같은 컨테이너에서 여러 게시물 후보가 나오는 경우에만 채택
-        if len(local) >= 3:
-            for x in local:
-                seen.add(x[1])
-                candidates.append(x)
-
-    # fallback: 페이지의 앵커 중 상세 URL 패턴이 명확한 것
-    if len(candidates) < 3:
-        for a in soup.find_all("a", href=True):
-            title = get_title_from_anchor(a)
-            href = normalize_url(urljoin(base_url, a.get("href")))
-            if title_is_bad(title) or is_bad_link_text(title):
-                continue
-            if href.lower().startswith(("javascript:", "mailto:", "tel:")):
-                continue
-            if is_detail_url(href) and href not in seen:
-                seen.add(href)
-                candidates.append((title, href))
-
-    # URL 중복 제거 + 제목 다양성 확보
-    out = []
-    seen_urls = set()
-    for title, href in candidates:
-        if href in seen_urls:
-            continue
-        seen_urls.add(href)
-        out.append({"title": title, "url": href})
-        if len(out) >= RECENT_POSTS:
-            break
-    return out
-
-def extract_body_text(soup):
-    for tag in soup(["script", "style", "noscript", "svg"]):
-        tag.decompose()
-    return clean_text(soup.get_text(" ", strip=True))
-
-def discover_notice_boards(home_url, soup):
-    found = []
-    seen = set()
-    for a in soup.find_all("a", href=True):
-        text = get_title_from_anchor(a)
-        href = normalize_url(urljoin(home_url, a.get("href")))
-        if not looks_like_notice_label(text):
-            continue
-        if is_bad_link_text(text) and "공지" not in text:
-            continue
-        if href.lower().startswith(("javascript:", "mailto:", "tel:")):
-            continue
-        if is_detail_url(href):
-            continue
-        # 외부 도메인 제외
-        if urlparse(href).netloc and urlparse(href).netloc != urlparse(home_url).netloc:
-            continue
-        if href not in seen:
-            seen.add(href)
-            found.append((text, href))
-    return found
-
-async def fetch(session, url):
-    try:
-        async with session.get(
-            url,
-            timeout=aiohttp.ClientTimeout(total=TIMEOUT_SECONDS),
-            allow_redirects=True,
-            headers={
-                "User-Agent": "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.1)"
-            },
-            ssl=False,
-        ) as r:
-            text = await r.text(errors="ignore")
-            return r.status, str(r.url), text
-    except Exception as e:
-        return 0, url, f"{type(e).__name__}: {e}"
-
-async def verify_notice_board(session, label, url):
-    status, final_url, html = await fetch(session, url)
-    if status != 200:
-        return None, {"label": label, "url": url, "error": f"HTTP {status}"}
-    soup = BeautifulSoup(html, "html.parser")
-    posts = extract_list_posts(soup, final_url)
-    titles = {clean_text(p["title"]) for p in posts if not title_is_bad(p["title"])}
-    # 게시물 3개 이상 + 서로 다른 제목 3개 이상이면 실제 목록으로 인정
-    if len(posts) >= 3 and len(titles) >= 3:
-        return {"label": label, "url": final_url, "posts": posts}, None
-    return None, {"label": label, "url": url, "error": f"NOT_BOARD posts={len(posts)} unique_titles={len(titles)}"}
-
-async def verify_post(session, post):
-    status, final_url, html = await fetch(session, post["url"])
-    if status != 200:
-        return False
-    soup = BeautifulSoup(html, "html.parser")
-    body = extract_body_text(soup)
-    title = clean_text(post["title"])
-    # 상세 페이지의 제목이 별도로 깨져도 목록 제목을 기준으로 검증
-    if len(title) >= 4 and title in body:
-        return True
-    # 제목의 핵심어 2개 이상이 본문에 존재하면 보조 인정
-    words = [w for w in re.split(r"\s+", title) if len(w) >= 2]
-    hits = sum(1 for w in words[:8] if w in body)
-    return hits >= 2 and len(body) >= 100
-
-async def process_target(session, sem, row, keywords):
-    async with sem:
-        institution = clean_text(str(row.get("기관명", "")))
-        board = clean_text(str(row.get("게시판명", "")))
-        url = normalize_url(str(row.get("게시판URL", "")))
-        if not url or url.lower() == "nan":
-            return [], {"기관명": institution, "게시판": board, "URL": url, "error": "EMPTY_URL"}
-
-        status, final_url, html = await fetch(session, url)
-        if status != 200:
-            return [], {"기관명": institution, "게시판": board, "URL": url, "error": f"HTTP {status}"}
-
-        soup = BeautifulSoup(html, "html.parser")
-        posts = extract_list_posts(soup, final_url)
-        results = []
-
-        for p in posts:
-            matched = [kw for kw in keywords if kw.casefold() in p["title"].casefold()]
-            if not matched:
-                ok = await verify_post(session, p)
-                if ok:
-                    # 본문 확인
-                    st2, _, html2 = await fetch(session, p["url"])
-                    if st2 == 200:
-                        s2 = BeautifulSoup(html2, "html.parser")
-                        body = extract_body_text(s2)
-                        matched = [kw for kw in keywords if kw.casefold() in body.casefold()]
-            if matched:
-                key = hashlib.sha256(
-                    f"{institution}|{p['title']}|{p['url']}".encode("utf-8")
-                ).hexdigest()
-                results.append({
-                    "key": key, "기관명": institution, "게시판": board,
-                    "title": p["title"], "url": p["url"], "keywords": matched
-                })
-        return results, None
-
-async def send_telegram(matches):
-    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-    chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-    if not token or not chat_id:
-        return {"ok": False, "error": "TELEGRAM secrets missing"}
-
-    api = f"https://api.telegram.org/bot{token}/sendMessage"
-    text = "🚨 공공기관 공지사항 키워드 발견\n\n"
-    for m in matches[:20]:
-        text += f"🏢 {m['기관명']}\n📌 {m['게시판']}\n📝 {m['title']}\n🔑 {', '.join(m['keywords'])}\n🔗 {m['url']}\n\n"
-
-    async with aiohttp.ClientSession() as session:
+async def fetch(s,url,retry=True):
+    for n in range(2 if retry else 1):
         try:
-            async with session.post(api, data={"chat_id": chat_id, "text": text}, timeout=20) as r:
-                body = await r.text()
-                if r.status != 200:
-                    return {"ok": False, "error": f"HTTP {r.status}: {body}"}
-                return {"ok": True}
+            async with s.get(url,allow_redirects=True,ssl=False,
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT),
+                headers={"User-Agent":"Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.2)"}) as r:
+                return r.status,str(r.url),await r.text(errors="ignore")
         except Exception as e:
-            return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+            err=f"{type(e).__name__}: {e}"
+            if n==0 and retry: await asyncio.sleep(1)
+    return 0,url,err
+
+async def check(s,sem,row,keywords,deadline):
+    async with sem:
+        if asyncio.get_running_loop().time()>=deadline: return {"timeout":1,"row":row}
+        org=clean(row.get("기관명")); board=clean(row.get("게시판명")); url=clean(row.get("게시판URL"))
+        if not url or url.lower()=="nan": return {"error":"EMPTY_URL","row":row}
+        st,final,html=await fetch(s,url)
+        if st!=200: return {"error":f"HTTP {st}","row":row}
+        posts=extract_posts(BeautifulSoup(html,"html.parser"),final)
+        matches=[]
+        for p in posts:
+            if asyncio.get_running_loop().time()>=deadline: break
+            hit=[k for k in keywords if k.casefold() in p["title"].casefold()]
+            if not hit:
+                st2,_,h2=await fetch(s,p["url"],retry=False)
+                if st2==200:
+                    txt=body(BeautifulSoup(h2,"html.parser"))
+                    hit=[k for k in keywords if k.casefold() in txt.casefold()]
+            if hit:
+                key=hashlib.sha256(f"{org}|{p['title']}|{p['url']}".encode()).hexdigest()
+                matches.append({"key":key,"기관명":org,"게시판":board,"title":p["title"],"url":p["url"],"keywords":hit})
+        return {"ok":1,"checked":len(posts),"matches":matches,"row":row}
+
+async def telegram(matches):
+    token=os.getenv("TELEGRAM_BOT_TOKEN","").strip(); chat=os.getenv("TELEGRAM_CHAT_ID","").strip()
+    if not token or not chat: return {"ok":False,"error":"TELEGRAM secrets missing"}
+    api=f"https://api.telegram.org/bot{token}/sendMessage"
+    chunks=[]; cur="🚨 공공기관 공지사항 키워드 발견\n\n"
+    for m in matches:
+        b=f"🏢 {m['기관명']}\n📌 {m['게시판']}\n📝 {m['title']}\n🔑 {', '.join(m['keywords'])}\n🔗 {m['url']}\n\n"
+        if len(cur)+len(b)>3800: chunks.append(cur); cur="🚨 공공기관 공지사항 키워드 발견\n\n"
+        cur+=b
+    chunks.append(cur)
+    async with aiohttp.ClientSession() as s:
+        for text in chunks[:10]:
+            try:
+                async with s.post(api,data={"chat_id":chat,"text":text},timeout=20) as r:
+                    b=await r.text()
+                    if r.status!=200: return {"ok":False,"error":f"HTTP {r.status}: {b}"}
+            except Exception as e: return {"ok":False,"error":f"{type(e).__name__}: {e}"}
+    return {"ok":True,"sent_chunks":len(chunks)}
 
 async def main():
-    import pandas as pd
+    kw=load_keywords()
+    if not kw: raise SystemExit("keywords.txt에 키워드가 없습니다.")
+    if not os.path.exists(TARGET): raise SystemExit("monitor_targets.xlsx가 없습니다.")
+    df=pd.read_excel(TARGET).fillna("")
+    rows=[]; seen_targets=set()
+    for r in df.to_dict("records"):
+        k=(clean(r.get("기관명")),clean(r.get("게시판URL")))
+        if k[1] and k not in seen_targets: seen_targets.add(k); rows.append(r)
 
-    keywords = load_keywords()
-    state = load_state()
+    state=load_state(); first=not state.get("initialized",False); state.setdefault("seen",{})
+    deadline=asyncio.get_running_loop().time()+MAX_SECONDS
+    sem=asyncio.Semaphore(CONC)
+    conn=aiohttp.TCPConnector(limit=CONC,limit_per_host=3,ssl=False)
+    results=[]; errors=[]; checked=0; completed=0; timed=0
 
-    if not keywords:
-        print("No keywords configured.")
-        return
+    async with aiohttp.ClientSession(connector=conn) as s:
+        tasks=[check(s,sem,r,kw,deadline) for r in rows]
+        for f in asyncio.as_completed(tasks):
+            if asyncio.get_running_loop().time()>=deadline: timed+=1; break
+            x=await f
+            if x.get("ok"):
+                completed+=1; checked+=x["checked"]; results.extend(x["matches"])
+            elif x.get("error"):
+                r=x["row"]; errors.append({"기관명":clean(r.get("기관명")),"게시판":clean(r.get("게시판명")),"URL":clean(r.get("게시판URL")),"error":x["error"]})
 
-    if not os.path.exists(TARGET_FILE):
-        print(f"Target file not found: {TARGET_FILE}")
-        return
+    new=[]
+    for m in results:
+        if m["key"] not in state["seen"]:
+            state["seen"][m["key"]]={"seen_at":now(),"title":m["title"],"url":m["url"]}
+            if not first or not SEED: new.append(m)
+    state["initialized"]=True; state["last_run"]=now(); save(STATE,state)
 
-    df = pd.read_excel(TARGET_FILE)
-    rows = df.fillna("").to_dict("records")
+    tg={"ok":True,"skipped":True}
+    if new: tg=await telegram(new)
+    log={"run_at":now(),"targets":len(rows),"completed":completed,"posts_checked":checked,
+         "new_matches":len(new),"errors":len(errors),"timed_out":timed,"first_run":first,
+         "discovered_notice_boards":0,"telegram":tg,"errors_detail":errors[:100]}
+    save(LOG,log); print(json.dumps(log,ensure_ascii=False,indent=2))
 
-    timeout = aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
-    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENCY, limit_per_host=4, ssl=False)
-    sem = asyncio.Semaphore(MAX_CONCURRENCY)
-
-    discovered = []
-    discovery_errors = []
-
-    async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
-        # 홈페이지에서 공지사항 후보 발견: 별도 검색 대상으로 추가하기 전에 실제 게시판 검증
-        if DISCOVER_NOTICE and os.path.exists(os.path.join(BASE, "url_완성.xlsx")):
-            hdf = pd.read_excel(os.path.join(BASE, "url_완성.xlsx"))
-            for r in hdf.fillna("").to_dict("records"):
-                institution = clean_text(str(r.get("기관명", "")))
-                home = normalize_url(str(r.get("URL", "")))
-                if not home or home.lower() == "nan":
-                    continue
-                st, final_home, html = await fetch(session, home)
-                if st != 200:
-                    continue
-                soup = BeautifulSoup(html, "html.parser")
-                for label, notice_url in discover_notice_boards(final_home, soup):
-                    verified, err = await verify_notice_board(session, label, notice_url)
-                    if verified:
-                        discovered.append({
-                            "기관명": institution,
-                            "게시판명": label,
-                            "게시판URL": verified["url"],
-                            "priority": 1,
-                            "source": "homepage_discovery"
-                        })
-                    elif err:
-                        discovery_errors.append({"기관명": institution, **err})
-
-        # 기존 대상 + 검증된 자동발견 게시판만 병합
-        all_rows = rows + discovered
-        unique = {}
-        for r in all_rows:
-            u = normalize_url(str(r.get("게시판URL", "")))
-            if not u or u.lower() == "nan":
-                continue
-            key = (clean_text(str(r.get("기관명", ""))), u)
-            if key not in unique:
-                unique[key] = r
-            else:
-                # 공지사항 명칭을 우선
-                old = unique[key]
-                if "공지" in clean_text(str(r.get("게시판명", ""))) and "공지" not in clean_text(str(old.get("게시판명", ""))):
-                    unique[key] = r
-
-        targets = list(unique.values())
-        print(f"Monitoring {len(targets)} verified board URLs")
-        print(f"Homepage notice discoveries verified: {len(discovered)}")
-
-        tasks = [process_target(session, sem, r, keywords) for r in targets]
-        outputs = await asyncio.gather(*tasks)
-
-    all_matches = []
-    errors = []
-    posts_checked = 0
-
-    for matches, err in outputs:
-        if matches:
-            all_matches.extend(matches)
-            posts_checked += len(matches)
-        if err:
-            errors.append(err)
-
-    first_run = not state.get("initialized", False)
-    new_matches = []
-
-    for m in all_matches:
-        if m["key"] not in state.get("seen", {}):
-            state.setdefault("seen", {})[m["key"]] = {
-                "seen_at": now_kst(),
-                "title": m["title"],
-                "url": m["url"]
-            }
-            if not first_run or not SEED_ON_FIRST_RUN:
-                new_matches.append(m)
-
-    state["initialized"] = True
-    state["last_run"] = now_kst()
-    save_json(STATE_FILE, state)
-
-    telegram_result = {"ok": True, "skipped": True}
-    if new_matches:
-        telegram_result = await send_telegram(new_matches)
-
-    log = {
-        "run_at": now_kst(),
-        "targets": len(targets),
-        "posts_checked": posts_checked,
-        "new_matches": len(new_matches),
-        "errors": len(errors),
-        "first_run": first_run,
-        "discovered_notice_boards": len(discovered),
-        "telegram": telegram_result,
-        "errors_detail": errors[:100]
-    }
-    save_json(LOG_FILE, log)
-    print(json.dumps(log, ensure_ascii=False, indent=2))
-
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__=="__main__": asyncio.run(main())
