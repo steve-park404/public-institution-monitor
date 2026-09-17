@@ -3,80 +3,101 @@ import aiohttp
 import pandas as pd
 import re
 import ssl
+
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse
 from collections import deque
 from pathlib import Path
 
+
 # ============================================================
-# V6.1 - 미발견 기관 안정형 심층 탐색
+# V6.1 안정형
+# 미발견 기관만 대상으로 게시판/게시물 구조 탐색
 # ============================================================
 
 INPUT_FILE = "boards_missing.xlsx"
 OUTPUT_FILE = "boards_v6.xlsx"
 
-# 안정성 우선
+# 동시 접속 기관 수
 CONCURRENCY = 6
+
+# 개별 HTTP 요청 제한시간
 TIMEOUT = 15
+
+# 기관 하나에 허용되는 최대 분석시간
 INSTITUTION_TIMEOUT = 90
 
-# 기관당 탐색 페이지 수
+# 기관당 최대 탐색 페이지
 MAX_PAGES = 20
 
-# 페이지당 링크 최대
+# 페이지당 최대 링크
 MAX_LINKS_PER_PAGE = 100
 
-# 후보 검증 개수
+# 게시판 후보 실제 검증 개수
 MAX_BOARD_VERIFY = 5
+
+# 게시물 후보 역추적 개수
 MAX_POST_VERIFY = 5
 
+
+# ============================================================
+# User-Agent
+# ============================================================
+
 USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/140.0.0.0 Safari/537.36",
-
-    "Mozilla/5.0 (X11; Linux x86_64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/140.0.0.0 Safari/537.36",
-
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
-    "AppleWebKit/605.1.15 (KHTML, like Gecko) "
-    "Version/17.0 Mobile/15E148 Safari/604.1"
+    (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/140.0.0.0 Safari/537.36"
+    ),
+    (
+        "Mozilla/5.0 (X11; Linux x86_64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/140.0.0.0 Safari/537.36"
+    ),
+    (
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+        "Version/17.0 Mobile/15E148 Safari/604.1"
+    )
 ]
+
+
+# ============================================================
+# 게시판 관련 키워드
+# ============================================================
 
 BOARD_WORDS = [
-    "공지사항", "공지", "알림", "소식", "새소식",
-    "게시판", "공지·공고", "공지/공고",
-    "공고", "채용", "입찰", "보도자료", "자료실",
-    "뉴스", "정보마당", "고시", "공시"
+    "공지사항",
+    "공지",
+    "알림",
+    "소식",
+    "새소식",
+    "게시판",
+    "공지·공고",
+    "공지/공고",
+    "공고",
+    "채용",
+    "입찰",
+    "보도자료",
+    "자료실",
+    "뉴스",
+    "정보마당",
+    "고시",
+    "공시"
 ]
+
 
 NOTICE_WORDS = [
-    "공지사항", "공지", "알림", "새소식",
-    "소식", "공지·공고", "공지/공고"
+    "공지사항",
+    "공지",
+    "알림",
+    "새소식",
+    "소식",
+    "공지·공고",
+    "공지/공고"
 ]
 
-BAD_IFRAME_WORDS = [
-    "google.com/maps",
-    "youtube.com/embed",
-    "googletagmanager.com",
-    "google-analytics.com",
-    "doubleclick.net",
-    "facebook.com/plugins",
-    "instagram.com"
-]
-
-API_WORDS = [
-    "fetch(",
-    "axios",
-    "$.ajax",
-    "$.get",
-    "$.post",
-    "XMLHttpRequest",
-    "ajax/",
-    "api/",
-    "/api"
-]
 
 BOARD_URL_WORDS = [
     "board",
@@ -86,14 +107,15 @@ BOARD_URL_WORDS = [
     "announce",
     "bulletin",
     "community",
-    "boardList",
-    "boardView",
+    "boardlist",
+    "boardview",
     "board.do",
     "bbs.do",
     "notice.do",
     "list.do",
     "view.do"
 ]
+
 
 POST_PARAM_WORDS = [
     "nttId",
@@ -107,6 +129,39 @@ POST_PARAM_WORDS = [
     "boardSeq"
 ]
 
+
+# ============================================================
+# iframe / JS
+# ============================================================
+
+BAD_IFRAME_WORDS = [
+    "google.com/maps",
+    "youtube.com/embed",
+    "googletagmanager.com",
+    "google-analytics.com",
+    "doubleclick.net",
+    "facebook.com/plugins",
+    "instagram.com"
+]
+
+
+API_WORDS = [
+    "fetch(",
+    "axios",
+    "$.ajax",
+    "$.get",
+    "$.post",
+    "XMLHttpRequest",
+    "ajax/",
+    "api/",
+    "/api"
+]
+
+
+# ============================================================
+# 허용 Content-Type
+# ============================================================
+
 CONTENT_TYPES = [
     "text/html",
     "application/xhtml+xml",
@@ -114,13 +169,18 @@ CONTENT_TYPES = [
     "text/xml"
 ]
 
+
+# ============================================================
+# SSL
+# ============================================================
+
 SSL_CONTEXT = ssl.create_default_context()
 SSL_CONTEXT.check_hostname = False
 SSL_CONTEXT.verify_mode = ssl.CERT_NONE
 
 
 # ============================================================
-# 기본 함수
+# URL 함수
 # ============================================================
 
 def normalize_url(url):
@@ -137,9 +197,22 @@ def normalize_url(url):
 
 def same_domain(base, target):
     try:
-        b = urlparse(base).netloc.lower().replace("www.", "")
-        t = urlparse(target).netloc.lower().replace("www.", "")
-        return b == t
+        base_domain = (
+            urlparse(base)
+            .netloc
+            .lower()
+            .replace("www.", "")
+        )
+
+        target_domain = (
+            urlparse(target)
+            .netloc
+            .lower()
+            .replace("www.", "")
+        )
+
+        return base_domain == target_domain
+
     except Exception:
         return False
 
@@ -167,26 +240,31 @@ def clean_url(url):
             if k not in remove
         }
 
-        new_query = urlencode(query, doseq=True)
+        new_query = urlencode(
+            query,
+            doseq=True
+        )
 
-        return urlunparse((
-            p.scheme,
-            p.netloc,
-            p.path,
-            p.params,
-            new_query,
-            ""
-        ))
+        return urlunparse(
+            (
+                p.scheme,
+                p.netloc,
+                p.path,
+                p.params,
+                new_query,
+                ""
+            )
+        )
 
     except Exception:
         return url
 
 
 # ============================================================
-# HTTP
+# HTTP 요청
 # ============================================================
 
-async def fetch(session, url, retries=1):
+async def fetch(session, url, retries=0):
 
     url = normalize_url(url)
 
@@ -199,8 +277,11 @@ async def fetch(session, url, retries=1):
                 attempt % len(USER_AGENTS)
             ],
             "Accept": (
-                "text/html,application/xhtml+xml,"
-                "application/xml,text/xml;q=0.9,*/*;q=0.8"
+                "text/html,"
+                "application/xhtml+xml,"
+                "application/xml,"
+                "text/xml,"
+                "*/*;q=0.8"
             ),
             "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
             "Connection": "close"
@@ -221,59 +302,56 @@ async def fetch(session, url, retries=1):
                 ssl=SSL_CONTEXT,
                 allow_redirects=True,
                 max_redirects=5
-            ) as r:
+            ) as response:
 
                 content_type = (
-                    r.headers.get(
-                        "Content-Type",
-                        ""
-                    ).lower()
+                    response.headers
+                    .get("Content-Type", "")
+                    .lower()
                 )
 
-                # 너무 큰 파일 방지
-                content_length = r.headers.get(
-                    "Content-Length"
+                content_length = (
+                    response.headers
+                    .get("Content-Length")
                 )
 
                 if content_length:
 
                     try:
-                        if int(content_length) > 5_000_000:
+                        if int(content_length) > 5000000:
                             return {
                                 "ok": False,
-                                "status": r.status,
-                                "url": str(r.url),
+                                "status": response.status,
+                                "url": str(response.url),
                                 "content_type": content_type,
                                 "text": "",
                                 "error": "too_large"
                             }
+
                     except Exception:
                         pass
 
-                text = await r.text(
+                text = await response.text(
                     encoding=None,
                     errors="ignore"
                 )
 
                 return {
-                    "ok": r.status < 400,
-                    "status": r.status,
-                    "url": str(r.url),
+                    "ok": response.status < 400,
+                    "status": response.status,
+                    "url": str(response.url),
                     "content_type": content_type,
                     "text": text,
                     "error": ""
                 }
 
         except asyncio.TimeoutError:
-
             last_error = "Timeout"
 
         except aiohttp.ClientError as e:
-
             last_error = type(e).__name__
 
         except Exception as e:
-
             last_error = type(e).__name__
 
         if attempt < retries:
@@ -290,7 +368,8 @@ async def fetch(session, url, retries=1):
 
 
 # ============================================================
-# HTML 분석
+# BeautifulSoup
+# XML이면 XML parser 사용
 # ============================================================
 
 def make_soup(html):
@@ -299,13 +378,13 @@ def make_soup(html):
         return None
 
     try:
-        # XML이면 XML parser 사용
-        stripped = html.lstrip()
+
+        start = html.lstrip()[:500].lower()
 
         if (
-            stripped.startswith("<?xml")
-            or "<rss" in stripped[:500].lower()
-            or "<feed" in stripped[:500].lower()
+            start.startswith("<?xml")
+            or "<rss" in start
+            or "<feed" in start
         ):
             return BeautifulSoup(
                 html,
@@ -324,9 +403,14 @@ def make_soup(html):
                 html,
                 "html.parser"
             )
+
         except Exception:
             return None
 
+
+# ============================================================
+# 링크 추출
+# ============================================================
 
 def extract_links(html, base_url):
 
@@ -336,20 +420,26 @@ def extract_links(html, base_url):
         return []
 
     links = []
+    seen = set()
 
     for a in soup.find_all("a", href=True):
 
-        href = a.get("href", "").strip()
+        href = a.get(
+            "href",
+            ""
+        ).strip()
 
         if not href:
             continue
 
-        if href.startswith((
-            "javascript:",
-            "mailto:",
-            "tel:",
-            "#"
-        )):
+        if href.startswith(
+            (
+                "javascript:",
+                "mailto:",
+                "tel:",
+                "#"
+            )
+        ):
             continue
 
         try:
@@ -361,35 +451,38 @@ def extract_links(html, base_url):
                 )
             )
 
-            if absolute.startswith((
-                "http://",
-                "https://"
-            )):
+            if not absolute.startswith(
+                (
+                    "http://",
+                    "https://"
+                )
+            ):
+                continue
 
-                links.append({
+            if absolute in seen:
+                continue
+
+            seen.add(absolute)
+
+            links.append(
+                {
                     "url": absolute,
                     "text": a.get_text(
                         " ",
                         strip=True
                     )
-                })
+                }
+            )
 
         except Exception:
-            pass
+            continue
 
-    # 중복 제거
-    unique = []
-    seen = set()
+    return links[:MAX_LINKS_PER_PAGE]
 
-    for item in links:
 
-        if item["url"] not in seen:
-
-            seen.add(item["url"])
-            unique.append(item)
-
-    return unique[:MAX_LINKS_PER_PAGE]
-
+# ============================================================
+# iframe 추출
+# ============================================================
 
 def extract_iframes(html, base_url):
 
@@ -413,20 +506,72 @@ def extract_iframes(html, base_url):
             continue
 
         try:
+
             result.append(
                 urljoin(
                     base_url,
                     src
                 )
             )
+
         except Exception:
             pass
 
     return result
 
 
+def valid_iframe(url):
+
+    low = url.lower()
+
+    for word in BAD_IFRAME_WORDS:
+
+        if word in low:
+            return False
+
+    return True
+
+
 # ============================================================
-# JS / CMS
+# CMS 확인
+# ============================================================
+
+def detect_cms(html):
+
+    low = html.lower()
+
+    result = []
+
+    if "k2web" in low:
+        result.append("K2Web")
+
+    if (
+        "joomla" in low
+        or "/components/com_" in low
+    ):
+        result.append("Joomla")
+
+    if "wordpress" in low:
+        result.append("WordPress")
+
+    if (
+        "drupal" in low
+        or "drupalsettings" in low
+    ):
+        result.append("Drupal")
+
+    if (
+        "gnu board" in low
+        or "gnuboard" in low
+        or "g5_" in low
+    ):
+        result.append("그누보드")
+
+    return result
+
+
+# ============================================================
+# JS / API 분석
 # ============================================================
 
 def analyze_js(html):
@@ -468,20 +613,22 @@ def analyze_js(html):
                 re.I
             )
 
-            for x in matches:
+            for match in matches:
 
-                if isinstance(x, tuple):
-                    x = x[0]
+                if isinstance(
+                    match,
+                    tuple
+                ):
+                    match = match[0]
 
-                x = str(x).strip()
+                match = str(match).strip()
 
                 if (
-                    x
-                    and len(x) < 500
-                    and x not in endpoints
+                    match
+                    and len(match) < 500
+                    and match not in endpoints
                 ):
-
-                    endpoints.append(x)
+                    endpoints.append(match)
 
         except Exception:
             pass
@@ -493,39 +640,15 @@ def analyze_js(html):
     )
 
 
-def detect_cms(html):
-
-    low = html.lower()
-
-    cms = []
-
-    if "k2web" in low:
-        cms.append("K2Web")
-
-    if "joomla" in low or "/components/com_" in low:
-        cms.append("Joomla")
-
-    if "wordpress" in low:
-        cms.append("WordPress")
-
-    if "drupal" in low or "drupalsettings" in low:
-        cms.append("Drupal")
-
-    if (
-        "gnu board" in low
-        or "gnuboard" in low
-        or "g5_" in low
-    ):
-        cms.append("그누보드")
-
-    return cms
-
-
 # ============================================================
-# 게시판 판별
+# 게시판 점수
 # ============================================================
 
-def board_score(url, text, html=""):
+def board_score(
+    url,
+    text,
+    html=""
+):
 
     target = (
         str(url)
@@ -536,22 +659,27 @@ def board_score(url, text, html=""):
     score = 0
     reasons = []
 
+    target_low = target.lower()
+    text_low = str(text).lower()
+
     for word in BOARD_URL_WORDS:
 
-        if word.lower() in target.lower():
+        if word.lower() in target_low:
 
             score += 2
+
             reasons.append(
-                f"URL:{word}"
+                "URL:" + word
             )
 
     for word in BOARD_WORDS:
 
-        if word.lower() in str(text).lower():
+        if word.lower() in text_low:
 
             score += 2
+
             reasons.append(
-                f"TEXT:{word}"
+                "TEXT:" + word
             )
 
     if html:
@@ -581,21 +709,20 @@ def board_score(url, text, html=""):
                     "날짜복수"
                 )
 
-            pagination_words = [
+            pagination_count = 0
+
+            for word in [
                 "다음",
                 "이전",
                 "1",
                 "2",
                 "3"
-            ]
+            ]:
 
-            page_count = sum(
-                1
-                for x in pagination_words
-                if x in body_text
-            )
+                if word in body_text:
+                    pagination_count += 1
 
-            if page_count >= 3:
+            if pagination_count >= 3:
 
                 score += 2
                 reasons.append(
@@ -605,7 +732,14 @@ def board_score(url, text, html=""):
     return score, reasons
 
 
-def looks_like_post(url, text=""):
+# ============================================================
+# 게시물 URL 판별
+# ============================================================
+
+def looks_like_post(
+    url,
+    text=""
+):
 
     low = (
         str(url)
@@ -614,11 +748,12 @@ def looks_like_post(url, text=""):
     ).lower()
 
     parsed = urlparse(url)
+
     query = parsed.query.lower()
 
-    for p in POST_PARAM_WORDS:
+    for param in POST_PARAM_WORDS:
 
-        if p.lower() + "=" in query:
+        if param.lower() + "=" in query:
             return True
 
     patterns = [
@@ -647,6 +782,10 @@ def looks_like_post(url, text=""):
     return False
 
 
+# ============================================================
+# 게시물 → 상위 게시판 URL 추정
+# ============================================================
+
 def parent_candidates(url):
 
     result = []
@@ -666,27 +805,31 @@ def parent_candidates(url):
             )
 
             result.append(
-                urlunparse((
-                    p.scheme,
-                    p.netloc,
-                    parent + "/",
-                    "",
-                    "",
-                    ""
-                ))
+                urlunparse(
+                    (
+                        p.scheme,
+                        p.netloc,
+                        parent + "/",
+                        "",
+                        "",
+                        ""
+                    )
+                )
             )
 
         if p.query:
 
             result.append(
-                urlunparse((
-                    p.scheme,
-                    p.netloc,
-                    p.path,
-                    "",
-                    "",
-                    ""
-                ))
+                urlunparse(
+                    (
+                        p.scheme,
+                        p.netloc,
+                        p.path,
+                        "",
+                        "",
+                        ""
+                    )
+                )
             )
 
         for token in [
@@ -706,14 +849,16 @@ def parent_candidates(url):
                 )
 
                 result.append(
-                    urlunparse((
-                        p.scheme,
-                        p.netloc,
-                        candidate,
-                        "",
-                        "",
-                        ""
-                    ))
+                    urlunparse(
+                        (
+                            p.scheme,
+                            p.netloc,
+                            candidate,
+                            "",
+                            "",
+                            ""
+                        )
+                    )
                 )
 
     except Exception:
@@ -724,44 +869,16 @@ def parent_candidates(url):
     )
 
 
-def valid_iframe(url):
-
-    low = url.lower()
-
-    for bad in BAD_IFRAME_WORDS:
-
-        if bad in low:
-            return False
-
-    return True
-
-
 # ============================================================
-# 기관 1개 분석
+# 기관 기본 결과
 # ============================================================
 
-async def analyze_institution(
-    session,
-    semaphore,
-    row
+def create_result(
+    name,
+    homepage
 ):
 
-    name = str(
-        row.get(
-            "기관명",
-            ""
-        )
-    )
-
-    homepage = normalize_url(
-        row.get(
-            "URL",
-            ""
-        )
-    )
-
-    result = {
-
+    return {
         "기관명": name,
         "홈페이지": homepage,
         "접속상태": "",
@@ -781,40 +898,10 @@ async def analyze_institution(
         "오류": ""
     }
 
-    async with semaphore:
 
-        try:
-
-            # ------------------------------------------------
-            # 전체 기관 제한시간
-            # ------------------------------------------------
-
-            return await asyncio.wait_for(
-                analyze_institution_inner(
-                    session,
-                    result
-                ),
-                timeout=INSTITUTION_TIMEOUT
-            )
-
-        except asyncio.TimeoutError:
-
-            result["실패단계"] = "기관전체 Timeout"
-            result["오류"] = (
-                f"{INSTITUTION_TIMEOUT}초 초과"
-            )
-
-            return result
-
-        except Exception as e:
-
-            result["실패단계"] = "전체분석"
-            result["오류"] = (
-                f"{type(e).__name__}: {str(e)[:200]}"
-            )
-
-            return result
-
+# ============================================================
+# 기관 분석 내부
+# ============================================================
 
 async def analyze_institution_inner(
     session,
@@ -824,7 +911,7 @@ async def analyze_institution_inner(
     homepage = result["홈페이지"]
 
     # --------------------------------------------------------
-    # 1. 홈페이지 접속
+    # 1. 홈페이지
     # --------------------------------------------------------
 
     first = await fetch(
@@ -836,39 +923,48 @@ async def analyze_institution_inner(
     if not first["ok"]:
 
         result["접속상태"] = (
-            f"실패:{first['error'] or first['status']}"
+            "실패:"
+            + str(
+                first["error"]
+                or first["status"]
+            )
         )
 
-        result["실패단계"] = "홈페이지 접속"
+        result["실패단계"] = (
+            "홈페이지 접속"
+        )
 
         return result
 
     result["접속상태"] = (
-        f"정상:{first['status']}"
+        "정상:"
+        + str(first["status"])
     )
 
-    # 실제 리다이렉트된 주소
     homepage_final = first["url"]
+
+    # --------------------------------------------------------
+    # BFS
+    # --------------------------------------------------------
 
     visited = set()
 
-    queue = deque([
+    queue = deque()
+
+    queue.append(
         homepage_final
-    ])
+    )
 
     candidate_boards = []
     candidate_posts = []
     candidate_iframes = []
     candidate_api = []
 
-    js_score = 0
     cms_findings = []
 
-    pages = 0
+    js_score = 0
 
-    # --------------------------------------------------------
-    # 2. BFS 탐색
-    # --------------------------------------------------------
+    pages = 0
 
     while queue and pages < MAX_PAGES:
 
@@ -901,8 +997,8 @@ async def analyze_institution_inner(
         ]
 
         if not any(
-            x in content_type
-            for x in CONTENT_TYPES
+            item in content_type
+            for item in CONTENT_TYPES
         ):
             continue
 
@@ -914,8 +1010,6 @@ async def analyze_institution_inner(
         pages += 1
 
         result["탐색페이지수"] = pages
-
-        low = html.lower()
 
         # ----------------------------------------------------
         # CMS
@@ -947,7 +1041,6 @@ async def analyze_institution_inner(
                     iframe_url
                 )
 
-                # iframe은 소수만 실제 탐색
                 if len(candidate_iframes) <= 3:
 
                     if same_domain(
@@ -963,35 +1056,39 @@ async def analyze_institution_inner(
         # JS / API
         # ----------------------------------------------------
 
-        score, findings, endpoints = analyze_js(
+        js_result = analyze_js(
             html
         )
+
+        score = js_result[0]
+        endpoints = js_result[2]
 
         js_score += score
 
         for endpoint in endpoints:
 
-            if endpoint not in candidate_api:
+            if endpoint in candidate_api:
+                continue
 
-                candidate_api.append(
+            candidate_api.append(
+                endpoint
+            )
+
+            if endpoint.startswith("/"):
+
+                api_url = urljoin(
+                    current,
                     endpoint
                 )
 
-                if endpoint.startswith("/"):
+                if same_domain(
+                    homepage_final,
+                    api_url
+                ):
 
-                    api_url = urljoin(
-                        current,
-                        endpoint
-                    )
-
-                    if same_domain(
-                        homepage_final,
+                    queue.append(
                         api_url
-                    ):
-
-                        queue.append(
-                            api_url
-                        )
+                    )
 
         # ----------------------------------------------------
         # 링크
@@ -1034,10 +1131,12 @@ async def analyze_institution_inner(
                     )
                 }
 
-                if not any(
+                exists = any(
                     x["url"] == link
                     for x in candidate_boards
-                ):
+                )
+
+                if not exists:
 
                     candidate_boards.append(
                         candidate
@@ -1072,7 +1171,7 @@ async def analyze_institution_inner(
                             )
 
             # ----------------------------------------------
-            # 우선 탐색 링크
+            # 우선 탐색
             # ----------------------------------------------
 
             link_text = (
@@ -1108,10 +1207,12 @@ async def analyze_institution_inner(
                 and link not in visited
             ):
 
-                queue.append(link)
+                queue.append(
+                    link
+                )
 
         # ----------------------------------------------------
-        # 초반 메뉴 추가 탐색
+        # 초기 메뉴 탐색
         # ----------------------------------------------------
 
         if pages <= 5:
@@ -1134,8 +1235,110 @@ async def analyze_institution_inner(
                 ).lower()
 
                 if any(
-                    x.lower() in target
-                    for x in BOARD_WORDS
+                    word.lower() in target
+                    for word in BOARD_WORDS
                 ):
 
-                    if
+                    if link not in visited:
+
+                        queue.append(
+                            link
+                        )
+
+        # ----------------------------------------------------
+        # queue 폭주 방지
+        # ----------------------------------------------------
+
+        max_queue = MAX_PAGES * 3
+
+        if len(queue) > max_queue:
+
+            queue = deque(
+                list(queue)[:max_queue]
+            )
+
+    # --------------------------------------------------------
+    # 후보 정리
+    # --------------------------------------------------------
+
+    candidate_boards = sorted(
+        candidate_boards,
+        key=lambda x: x["score"],
+        reverse=True
+    )[:10]
+
+    candidate_posts = list(
+        dict.fromkeys(
+            candidate_posts
+        )
+    )[:10]
+
+    # --------------------------------------------------------
+    # 게시판 실제 검증
+    # --------------------------------------------------------
+
+    verified_boards = []
+
+    for candidate in candidate_boards[
+        :MAX_BOARD_VERIFY
+    ]:
+
+        check = await fetch(
+            session,
+            candidate["url"],
+            retries=0
+        )
+
+        if not check["ok"]:
+            continue
+
+        score, reasons = board_score(
+            candidate["url"],
+            candidate["text"],
+            check["text"]
+        )
+
+        if score >= 6:
+
+            verified_boards.append(
+                {
+                    "url": candidate["url"],
+                    "score": score,
+                    "reasons": reasons
+                }
+            )
+
+    # --------------------------------------------------------
+    # 게시물에서 게시판 역추적
+    # --------------------------------------------------------
+
+    for post in candidate_posts[
+        :MAX_POST_VERIFY
+    ]:
+
+        parents = parent_candidates(
+            post
+        )
+
+        for parent in parents[:3]:
+
+            check = await fetch(
+                session,
+                parent,
+                retries=0
+            )
+
+            if not check["ok"]:
+                continue
+
+            score, reasons = board_score(
+                parent,
+                "",
+                check["text"]
+            )
+
+            if score >= 6:
+
+                verified_boards.append(
+                    {
+                       
