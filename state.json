@@ -1,5 +1,5 @@
 {
-  "version": 8621,
+  "version": 863,
   "initialized": true,
   "seen": {
     "42038927ce849d91afc21ad81c5a6c4595c1167bce19cc5bbc6894d51edb85f9": {
@@ -2184,6 +2184,37 @@
     "에너지경제연구원|https://www.keei.re.kr/rss/board.es?mid=a10201010000&bid=0005": true,
     "에너지경제연구원|https://www.keei.re.kr/board.es?mid=a10201010000&bid=0005&act=view&list_no=127725&tag=&nPage=1": true,
     "오송첨단의료산업진흥재단|https://www.kbiohealth.kr/board.es?mid=a10301000000&bid=0002&act=view&list_no=12358&tag=&nPage=1": true,
-    "오송첨단의료산업진흥재단|https://www.kbiohealth.kr/board.es?mid=a10301000000&bid=0002&act=view&list_no=12311&tag=&nPage=1": true
+    "오송첨단의료산업진흥재단|https://www.kbiohealth.kr/board.es?mid=a10301000000&bid=0002&act=view&list_no=12311&tag=&nPage=1": true,
+    "한국석유공사|https://www.knoc.co.kr/member/sitemap.jsp": true,
+    "한국노인인력개발원|https://www.kordi.or.kr/content.do?cmsId=100": true,
+    "경제인문사회연구회|https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001": true,
+    "한국수산자원공단|https://www.fira.or.kr/newfira/web/news/news01_01.jsp?mode=list&board_no=2&pager.offset=100": true,
+    "아시아·태평양경제협력체 기후센터|https://www.apcc21.org/board/BBSMSTR_000000000016/view/3322885b-7451-11f1-bdf1-87ca28b62537?lang=ko": true,
+    "아시아·태평양경제협력체 기후센터|https://www.apcc21.org/board/BBSMSTR_000000000016/view/6d90fb61-f03b-11f0-91e2-fdb424025cfb?lang=ko": true,
+    "아시아·태평양경제협력체 기후센터|https://www.apcc21.org/board/BBSMSTR_000000000016/view/f60ab20e-6825-11f0-881b-9d25060d5d88?lang=ko": true,
+    "아시아·태평양경제협력체 기후센터|https://www.apcc21.org/board/BBSMSTR_000000000016/view/93f420af-3b8e-11f0-9de6-6d769c435f0a?lang=ko": true,
+    "한국체육산업개발(주)|https://www.ksponco.or.kr/programProposal?mid=a10201060000": true,
+    "서울요양원|https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=98&category=&pageIdx=": true,
+    "서울요양원|https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=97&category=&pageIdx=": true,
+    "서울요양원|https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=96&category=&pageIdx=": true,
+    "한국원산지정보원|https://www.origin.or.kr/lay1/S1T14C42/contents.do": true,
+    "한국건강가정진흥원|https://www.ffsb.kr/": true,
+    "(재)축산환경관리원|https://www.lemi.or.kr/view.do?boardno=24&menuno=71&seq=6845": true,
+    "(재)우체국시설관리단|https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964&article.offset=0&articleLimit=10": true,
+    "(재)한국보건의료정보원|https://www.khis.kr/kr/": true,
+    "국토연구원|https://www.krihs.re.kr/krihsLibraryArticle/articleList.es?mid=a10103010000&pub_kind=1": true,
+    "농림식품기술기획평가원|https://www.ipet.re.kr/Gov30/NoticePrvInfoCateLV.asp": true,
+    "국제식물검역인증원|https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7394": true,
+    "국제식물검역인증원|https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7278": true,
+    "국제식물검역인증원|https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7246": true,
+    "국제식물검역인증원|https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7165": true,
+    "동북아역사재단|https://www.nahf.or.kr/web/portal/bbs/1989/102491?cp=1&pageSize=10&bcId=1989&baNotice=false&baCommSelec=false&baOpenDay=fa": true,
+    "선박해양플랜트연구소|https://www.kriso.re.kr/main/": true,
+    "부산항만공사|https://busanpa.com/board/view.bpa?boardId=BBS_0000027&menuCd=DOM_000000105001001000&paging=ok&startPage=1&dataSid=28921": true,
+    "시청자미디어재단|https://kcmf.or.kr/KCMF/contents/KCMF010400.do": true,
+    "시청자미디어재단|https://kcmf.or.kr/KCMF/contents/KCMF020200.do": true,
+    "시청자미디어재단|https://kcmf.or.kr/KCMF/contents/KCMF020100.do": true,
+    "오송첨단의료산업진흥재단|https://www.kbiohealth.kr/kr/": true,
+    "대외경제정책연구원|https://www.kiep.go.kr/gallery.es?mid=a10102020000&bid=0003": true
   }
 }
