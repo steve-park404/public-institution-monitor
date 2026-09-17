@@ -10,6 +10,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,11 +31,20 @@ jobs:
           POST_CHECK: "8"
         run: python validate_v8_3.py
 
-      - name: 결과 커밋
+      - name: 검증 결과 Artifact 업로드
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8_3_validation_result
+          path: v8_3_notice_validation.xlsx
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 결과 엑셀 저장
+        if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add v8_3_notice_validation.xlsx
-          git diff --cached --quiet || git commit -m "chore: V8.3 notice candidate validation"
+          git diff --cached --quiet || git commit -m "chore: save V8.3 validation result"
           git push
