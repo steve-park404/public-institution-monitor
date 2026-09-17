@@ -1,0 +1,48 @@
+name: V8.10 355기관 게시판 고정형 모니터링 + Telegram 대기열
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 0 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: 패키지 설치
+        run: pip install -r requirements.txt
+
+      - name: 355기관 모니터링
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MAX_CONCURRENCY: "20"
+          TIMEOUT_SECONDS: "15"
+          RECENT_POSTS: "15"
+          MAX_TOTAL_SECONDS: "1200"
+          HTTP_RETRIES: "2"
+          TELEGRAM_MAX_SEND: "20"
+          MAX_PENDING: "10000"
+        run: python monitor.py
+
+      - name: 상태 저장
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json pending.json monitor_log.json monitor_targets.xlsx
+          git diff --cached --quiet || git commit -m "chore: V8.10 355 institution state and telegram queue update"
+          git push
