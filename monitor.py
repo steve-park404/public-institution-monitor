@@ -1,506 +1,419 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-V8 public-institution notice monitor
-- Prioritizes boards named "공지사항"
-- Uses V7.6 validated boards as seed targets
-- Optionally discovers "공지사항" links from homepage data in url_완성.xlsx
-- Searches both title and body
-- Sends only newly detected keyword matches to Telegram
-- Saves state.json so the same post is not repeatedly notified
-"""
-
-import asyncio
-import hashlib
-import html
-import json
 import os
 import re
-import sys
+import json
+import hashlib
+import asyncio
 from datetime import datetime, timezone, timedelta
-from pathlib import Path
-from urllib.parse import urljoin, urlparse, urldefrag
+from urllib.parse import urljoin, urlparse
 
 import aiohttp
-import pandas as pd
 from bs4 import BeautifulSoup
 
-BASE = Path(__file__).resolve().parent
-TARGET_FILE = BASE / "monitor_targets.xlsx"
-HOME_FILE = BASE / "url_완성.xlsx"
-KEYWORD_FILE = BASE / "keywords.txt"
-STATE_FILE = BASE / "state.json"
-LOG_FILE = BASE / "monitor_log.json"
-
-MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "20"))
-TIMEOUT = int(os.getenv("TIMEOUT_SECONDS", "20"))
-RECENT_POSTS = int(os.getenv("RECENT_POSTS", "20"))
-DISCOVER_NOTICE = os.getenv("DISCOVER_NOTICE", "true").lower() == "true"
-SEED_ON_FIRST_RUN = os.getenv("SEED_ON_FIRST_RUN", "true").lower() == "true"
-MAX_DISCOVERED_PER_HOME = int(os.getenv("MAX_DISCOVERED_PER_HOME", "5"))
-MAX_TELEGRAM_MESSAGES = int(os.getenv("MAX_TELEGRAM_MESSAGES", "50"))
+BASE = os.path.dirname(os.path.abspath(__file__))
+TARGET_FILE = os.path.join(BASE, "monitor_targets.xlsx")
+KEYWORD_FILE = os.path.join(BASE, "keywords.txt")
+STATE_FILE = os.path.join(BASE, "state.json")
+LOG_FILE = os.path.join(BASE, "monitor_log.json")
 
 KST = timezone(timedelta(hours=9))
 
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36 "
-    "PublicInstitutionNoticeMonitor/8.0"
-)
+MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "15"))
+TIMEOUT_SECONDS = int(os.getenv("TIMEOUT_SECONDS", "25"))
+RECENT_POSTS = int(os.getenv("RECENT_POSTS", "20"))
+DISCOVER_NOTICE = os.getenv("DISCOVER_NOTICE", "true").lower() == "true"
+SEED_ON_FIRST_RUN = os.getenv("SEED_ON_FIRST_RUN", "true").lower() == "true"
 
-NOTICE_NAMES = {
-    "공지사항", "공지", "알림마당", "알림", "소식", "기관소식",
-    "새소식", "공고", "공지·공고", "공지/공고", "알림·소식"
-}
-
-BAD_LINK_WORDS = {
-    "로그인", "회원가입", "사이트맵", "검색", "메뉴", "닫기", "더보기",
-    "개인정보", "이용약관", "오시는길", "문의", "예약", "진료", "결제",
-    "설문", "캘린더", "행사일정", "교육신청"
-}
-
-TITLE_SELECTORS = [
-    "h1", "h2", "h3",
-    ".subject", ".title", ".tit", ".bbs_title", ".board_title",
-    ".view-title", ".article-title", ".notice-title",
-    "td.subject", "td.title", "a.subject", "a.title"
+NOTICE_LABELS = [
+    "공지사항", "공지", "알림마당", "기관소식", "새소식", "공고",
+    "알림", "소식", "공지·공고", "공지/공고"
+]
+BAD_LINK_WORDS = [
+    "로그인", "회원가입", "예약", "진료", "검색", "설문", "채용", "입찰",
+    "자료실", "뉴스레터", "소식지", "이용안내", "찾아오시는길",
+    "개인정보", "약관", "사이트맵", "교육", "신청", "민원", "발급",
+    "결제", "일정", "문의", "다운로드"
+]
+DETAIL_HINTS = [
+    "list_no=", "articleNo=", "article_no=", "seq=", "idx=", "bbsId=",
+    "view.do", "view.jsp", "view.aspx", "act=view", "mode=view"
 ]
 
-DATE_PATTERNS = [
-    re.compile(r"(20\d{2}[./-]\d{1,2}[./-]\d{1,2})"),
-    re.compile(r"(20\d{2}\.\s*\d{1,2}\.\s*\d{1,2})"),
-]
+def now_kst():
+    return datetime.now(KST).isoformat()
 
-def normalize_space(s):
+def load_keywords():
+    if not os.path.exists(KEYWORD_FILE):
+        return []
+    out = []
+    for line in open(KEYWORD_FILE, encoding="utf-8"):
+        s = line.strip()
+        if s and not s.startswith("#"):
+            out.append(s)
+    return list(dict.fromkeys(out))
+
+def load_state():
+    if not os.path.exists(STATE_FILE):
+        return {"seen": {}, "initialized": False}
+    try:
+        return json.load(open(STATE_FILE, encoding="utf-8"))
+    except Exception:
+        return {"seen": {}, "initialized": False}
+
+def save_json(path, obj):
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
+def clean_text(s):
     return re.sub(r"\s+", " ", s or "").strip()
 
 def normalize_url(url):
     if not url:
         return ""
-    url, _ = urldefrag(str(url).strip())
-    return url.rstrip("/")
+    return url.strip().replace(" ", "%20")
 
-def canonical_key(url):
-    p = urlparse(url)
-    # Keep query strings because many Korean board systems use IDs in query params.
-    return f"{p.scheme.lower()}://{p.netloc.lower()}{p.path.rstrip('/')}?{p.query}"
+def is_detail_url(url):
+    low = url.lower()
+    return any(x.lower() in low for x in DETAIL_HINTS)
 
-def text_norm(s):
-    return normalize_space(s).lower()
-
-def load_keywords():
-    if not KEYWORD_FILE.exists():
-        return []
-    out = []
-    for line in KEYWORD_FILE.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        out.append(line)
-    return out
-
-def load_state():
-    if not STATE_FILE.exists():
-        return {"posts": {}, "initialized_at": None}
-    try:
-        return json.loads(STATE_FILE.read_text(encoding="utf-8"))
-    except Exception:
-        return {"posts": {}, "initialized_at": None}
-
-def save_state(state):
-    STATE_FILE.write_text(
-        json.dumps(state, ensure_ascii=False, indent=2),
-        encoding="utf-8"
-    )
-
-def post_id(institution, title, url):
-    raw = f"{institution}|{normalize_space(title)}|{normalize_url(url)}"
-    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
-
-def likely_notice_link(text):
-    t = normalize_space(text)
+def looks_like_notice_label(text):
+    t = clean_text(text)
     if not t:
         return False
-    compact = re.sub(r"[\s·/|_-]+", "", t)
-    notice_compact = {re.sub(r"[\s·/|_-]+", "", x) for x in NOTICE_NAMES}
-    if compact in notice_compact:
-        return True
-    return ("공지" in t and len(t) <= 20) or ("알림" in t and len(t) <= 20)
+    return any(label in t for label in NOTICE_LABELS)
 
-def is_bad_link(text, href):
-    t = text_norm(text)
-    if any(x in t for x in BAD_LINK_WORDS):
+def is_bad_link_text(text):
+    t = clean_text(text)
+    return any(x in t for x in BAD_LINK_WORDS)
+
+def title_is_bad(title):
+    t = clean_text(title)
+    if len(t) < 3 or len(t) > 250:
         return True
-    if href.startswith("javascript:") or href.startswith("#"):
+    bad_exact = {
+        "이전글이 없습니다.", "다음글이 없습니다.", "스킵네비게이션",
+        "메뉴", "본문", "홈", "공지사항 상세", "새소식 공지사항 상세"
+    }
+    if t in bad_exact:
+        return True
+    if any(x in t.lower() for x in ["skip navigation", "privacy policy"]):
         return True
     return False
 
-def extract_body_text(soup):
-    for tag in soup(["script", "style", "noscript", "svg", "header", "footer", "nav"]):
-        tag.decompose()
-    return normalize_space(soup.get_text(" ", strip=True))
+def get_title_from_anchor(a):
+    for attr in ("title", "aria-label"):
+        v = clean_text(a.get(attr))
+        if v:
+            return v
+    return clean_text(a.get_text(" ", strip=True))
 
-def extract_title_from_detail(soup):
-    # Avoid using <title> or generic h1 alone because Korean sites often
-    # use a common page title such as "공지사항 상세" or a site name.
-    for sel in TITLE_SELECTORS:
-        node = soup.select_one(sel)
-        if node:
-            txt = normalize_space(node.get_text(" ", strip=True))
-            if 3 <= len(txt) <= 300:
-                return txt
-    return ""
+def extract_list_posts(soup, base_url):
+    candidates = []
 
-def extract_links_from_board(soup, board_url):
-    out = []
+    # 우선 table/list의 반복 행에서 추출
+    containers = soup.select("table, ul, ol, .board-list, .bbs-list, .list, [class*='board'], [class*='bbs']")
     seen = set()
-    for a in soup.find_all("a", href=True):
-        text = normalize_space(a.get_text(" ", strip=True))
-        href = normalize_url(urljoin(board_url, a.get("href")))
-        if not text or not href or is_bad_link(text, href):
-            continue
-        if href == normalize_url(board_url):
-            continue
-        # Avoid obvious non-detail links.
-        if any(x in href.lower() for x in [
-            "javascript:", "mailto:", "/login", "/member", "/search"
-        ]):
-            continue
-        key = (text, href)
-        if key not in seen:
-            seen.add(key)
-            out.append((text, href))
-    return out
 
-def score_post_candidate(text, href):
-    score = 0
-    if 4 <= len(text) <= 200:
-        score += 2
-    if any(x in text for x in ["공지", "안내", "공고", "모집", "채용", "입찰", "교육"]):
-        score += 1
-    if re.search(r"(20\d{2}[./-]\d{1,2}[./-]\d{1,2})", text):
-        score += 2
-    if any(x in href.lower() for x in ["view", "detail", "article", "board", "bbs", "seq=", "idx=", "ntt", "no="]):
-        score += 2
-    return score
+    for container in containers:
+        anchors = container.find_all("a", href=True)
+        local = []
+        for a in anchors:
+            title = get_title_from_anchor(a)
+            href = normalize_url(urljoin(base_url, a.get("href")))
+            if not title or not href or href in seen:
+                continue
+            if title_is_bad(title) or is_bad_link_text(title):
+                continue
+            if href.rstrip("/") == base_url.rstrip("/"):
+                continue
+            if href.lower().startswith(("javascript:", "mailto:", "tel:")):
+                continue
+            # 메뉴/기능 링크 제외
+            cls = " ".join(a.get("class", [])).lower()
+            parent_text = clean_text(a.parent.get_text(" ", strip=True)) if a.parent else ""
+            if any(x in (cls + " " + title.lower()) for x in [
+                "login", "search", "menu", "gnb", "lnb", "reservation"
+            ]):
+                continue
+            local.append((title, href))
+        # 같은 컨테이너에서 여러 게시물 후보가 나오는 경우에만 채택
+        if len(local) >= 3:
+            for x in local:
+                seen.add(x[1])
+                candidates.append(x)
 
-def extract_post_candidates(soup, board_url):
-    links = extract_links_from_board(soup, board_url)
-    scored = [(score_post_candidate(t, h), t, h) for t, h in links]
-    scored.sort(key=lambda x: (-x[0], x[1]))
-    result = []
+    # fallback: 페이지의 앵커 중 상세 URL 패턴이 명확한 것
+    if len(candidates) < 3:
+        for a in soup.find_all("a", href=True):
+            title = get_title_from_anchor(a)
+            href = normalize_url(urljoin(base_url, a.get("href")))
+            if title_is_bad(title) or is_bad_link_text(title):
+                continue
+            if href.lower().startswith(("javascript:", "mailto:", "tel:")):
+                continue
+            if is_detail_url(href) and href not in seen:
+                seen.add(href)
+                candidates.append((title, href))
+
+    # URL 중복 제거 + 제목 다양성 확보
+    out = []
     seen_urls = set()
-    for score, text, href in scored:
-        if score < 2:
-            continue
+    for title, href in candidates:
         if href in seen_urls:
             continue
         seen_urls.add(href)
-        result.append((text, href))
-        if len(result) >= RECENT_POSTS:
+        out.append({"title": title, "url": href})
+        if len(out) >= RECENT_POSTS:
             break
-    return result
+    return out
+
+def extract_body_text(soup):
+    for tag in soup(["script", "style", "noscript", "svg"]):
+        tag.decompose()
+    return clean_text(soup.get_text(" ", strip=True))
+
+def discover_notice_boards(home_url, soup):
+    found = []
+    seen = set()
+    for a in soup.find_all("a", href=True):
+        text = get_title_from_anchor(a)
+        href = normalize_url(urljoin(home_url, a.get("href")))
+        if not looks_like_notice_label(text):
+            continue
+        if is_bad_link_text(text) and "공지" not in text:
+            continue
+        if href.lower().startswith(("javascript:", "mailto:", "tel:")):
+            continue
+        if is_detail_url(href):
+            continue
+        # 외부 도메인 제외
+        if urlparse(href).netloc and urlparse(href).netloc != urlparse(home_url).netloc:
+            continue
+        if href not in seen:
+            seen.add(href)
+            found.append((text, href))
+    return found
 
 async def fetch(session, url):
     try:
         async with session.get(
             url,
-            timeout=aiohttp.ClientTimeout(total=TIMEOUT),
-            headers={"User-Agent": USER_AGENT, "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.7"},
+            timeout=aiohttp.ClientTimeout(total=TIMEOUT_SECONDS),
             allow_redirects=True,
+            headers={
+                "User-Agent": "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.1)"
+            },
+            ssl=False,
         ) as r:
-            content_type = r.headers.get("Content-Type", "")
-            if r.status >= 400:
-                return r.status, "", str(r.url)
-            raw = await r.read()
-            enc = r.charset or "utf-8"
-            try:
-                text = raw.decode(enc, errors="ignore")
-            except Exception:
-                text = raw.decode("utf-8", errors="ignore")
-            if "html" not in content_type.lower() and "<html" not in text[:1000].lower():
-                return r.status, "", str(r.url)
-            return r.status, text, str(r.url)
+            text = await r.text(errors="ignore")
+            return r.status, str(r.url), text
     except Exception as e:
-        return 0, "", str(e)
+        return 0, url, f"{type(e).__name__}: {e}"
 
-async def verify_post(session, institution, title_from_list, url):
-    status, body, final_url = await fetch(session, url)
-    if status != 200 or not body:
-        return None
-    soup = BeautifulSoup(body, "html.parser")
-    text = extract_body_text(soup)
-    list_title = normalize_space(title_from_list)
-    # The list title should appear in the detail page when possible.
-    title = list_title
-    if not title:
-        title = extract_title_from_detail(soup)
-    # Ignore obvious function/detail pages.
-    if not title or len(title) < 3:
-        return None
-    return {
-        "title": title[:300],
-        "url": normalize_url(final_url if final_url.startswith("http") else url),
-        "body": text[:30000],
-    }
+async def verify_notice_board(session, label, url):
+    status, final_url, html = await fetch(session, url)
+    if status != 200:
+        return None, {"label": label, "url": url, "error": f"HTTP {status}"}
+    soup = BeautifulSoup(html, "html.parser")
+    posts = extract_list_posts(soup, final_url)
+    titles = {clean_text(p["title"]) for p in posts if not title_is_bad(p["title"])}
+    # 게시물 3개 이상 + 서로 다른 제목 3개 이상이면 실제 목록으로 인정
+    if len(posts) >= 3 and len(titles) >= 3:
+        return {"label": label, "url": final_url, "posts": posts}, None
+    return None, {"label": label, "url": url, "error": f"NOT_BOARD posts={len(posts)} unique_titles={len(titles)}"}
 
-async def scan_board(session, target):
-    institution = target["기관명"]
-    board_name = target.get("게시판명", "")
-    board_url = normalize_url(target["게시판URL"])
+async def verify_post(session, post):
+    status, final_url, html = await fetch(session, post["url"])
+    if status != 200:
+        return False
+    soup = BeautifulSoup(html, "html.parser")
+    body = extract_body_text(soup)
+    title = clean_text(post["title"])
+    # 상세 페이지의 제목이 별도로 깨져도 목록 제목을 기준으로 검증
+    if len(title) >= 4 and title in body:
+        return True
+    # 제목의 핵심어 2개 이상이 본문에 존재하면 보조 인정
+    words = [w for w in re.split(r"\s+", title) if len(w) >= 2]
+    hits = sum(1 for w in words[:8] if w in body)
+    return hits >= 2 and len(body) >= 100
 
-    status, body, final_url = await fetch(session, board_url)
-    result = {
-        "기관명": institution,
-        "게시판명": board_name,
-        "게시판URL": board_url,
-        "status": status,
-        "posts_checked": 0,
-        "matches": [],
-        "error": "",
-    }
-    if status != 200 or not body:
-        result["error"] = f"HTTP {status}"
-        return result
-
-    soup = BeautifulSoup(body, "html.parser")
-    candidates = extract_post_candidates(soup, board_url)
-
-    sem = asyncio.Semaphore(MAX_CONCURRENCY)
-
-    async def one(item):
-        async with sem:
-            return await verify_post(session, institution, item[0], item[1])
-
-    verified = [x for x in await asyncio.gather(*(one(x) for x in candidates)) if x]
-    result["posts_checked"] = len(verified)
-
-    keywords = load_keywords()
-    for p in verified:
-        hay = f'{p["title"]}\n{p["body"]}'.lower()
-        hit = [k for k in keywords if k.lower() in hay]
-        if hit:
-            result["matches"].append({
-                "institution": institution,
-                "board": board_name or "공지사항",
-                "title": p["title"],
-                "url": p["url"],
-                "keywords": hit,
-            })
-    return result
-
-async def discover_notice_boards(session):
-    if not DISCOVER_NOTICE or not HOME_FILE.exists():
-        return []
-
-    try:
-        df = pd.read_excel(HOME_FILE)
-    except Exception:
-        return []
-
-    if not {"기관명", "URL"}.issubset(df.columns):
-        return []
-
-    async def discover_one(row):
-        institution = str(row["기관명"]).strip()
-        home = normalize_url(str(row["URL"]).strip())
-        if not home or home.lower() == "nan":
-            return []
-        status, body, final_url = await fetch(session, home)
-        if status != 200 or not body:
-            return []
-        soup = BeautifulSoup(body, "html.parser")
-        found = []
-        seen = set()
-        for a in soup.find_all("a", href=True):
-            text = normalize_space(a.get_text(" ", strip=True))
-            href = normalize_url(urljoin(home, a.get("href")))
-            if not likely_notice_link(text) or is_bad_link(text, href):
-                continue
-            if href in seen:
-                continue
-            seen.add(href)
-            found.append({
-                "기관명": institution,
-                "게시판명": text,
-                "게시판URL": href,
-                "우선순위": 1,
-                "출처": "V8 홈페이지 공지사항 자동발견",
-            })
-            if len(found) >= MAX_DISCOVERED_PER_HOME:
-                break
-        return found
-
-    results = await asyncio.gather(*(discover_one(r) for _, r in df.iterrows()))
-    out = []
-    for x in results:
-        out.extend(x)
-    return out
-
-async def main():
-    keywords = load_keywords()
-    if not keywords:
-        print("ERROR: keywords.txt is empty.")
-        sys.exit(2)
-
-    if not TARGET_FILE.exists():
-        print(f"ERROR: {TARGET_FILE.name} not found.")
-        sys.exit(2)
-
-    target_df = pd.read_excel(TARGET_FILE)
-    required = {"기관명", "게시판URL"}
-    if not required.issubset(target_df.columns):
-        print(f"ERROR: target file needs columns {required}")
-        sys.exit(2)
-
-    targets = []
-    for _, r in target_df.iterrows():
-        url = normalize_url(str(r["게시판URL"]).strip())
+async def process_target(session, sem, row, keywords):
+    async with sem:
+        institution = clean_text(str(row.get("기관명", "")))
+        board = clean_text(str(row.get("게시판명", "")))
+        url = normalize_url(str(row.get("게시판URL", "")))
         if not url or url.lower() == "nan":
-            continue
-        targets.append({
-            "기관명": str(r["기관명"]).strip(),
-            "게시판명": str(r.get("게시판명", "")).strip(),
-            "게시판URL": url,
-            "우선순위": int(r.get("우선순위", 9)),
-            "출처": str(r.get("출처", "")),
-        })
+            return [], {"기관명": institution, "게시판": board, "URL": url, "error": "EMPTY_URL"}
 
-    timeout = aiohttp.ClientTimeout(total=TIMEOUT)
-    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENCY, ssl=False)
-    async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
-        discovered = await discover_notice_boards(session)
+        status, final_url, html = await fetch(session, url)
+        if status != 200:
+            return [], {"기관명": institution, "게시판": board, "URL": url, "error": f"HTTP {status}"}
 
-        # Merge discovered notice boards with validated seeds.
-        all_targets = targets + discovered
-        dedup = {}
-        for t in all_targets:
-            key = (t["기관명"], canonical_key(t["게시판URL"]))
-            if key not in dedup or t.get("우선순위", 9) < dedup[key].get("우선순위", 9):
-                dedup[key] = t
-        targets = list(dedup.values())
+        soup = BeautifulSoup(html, "html.parser")
+        posts = extract_list_posts(soup, final_url)
+        results = []
 
-        print(f"Monitoring {len(targets)} board URLs")
+        for p in posts:
+            matched = [kw for kw in keywords if kw.casefold() in p["title"].casefold()]
+            if not matched:
+                ok = await verify_post(session, p)
+                if ok:
+                    # 본문 확인
+                    st2, _, html2 = await fetch(session, p["url"])
+                    if st2 == 200:
+                        s2 = BeautifulSoup(html2, "html.parser")
+                        body = extract_body_text(s2)
+                        matched = [kw for kw in keywords if kw.casefold() in body.casefold()]
+            if matched:
+                key = hashlib.sha256(
+                    f"{institution}|{p['title']}|{p['url']}".encode("utf-8")
+                ).hexdigest()
+                results.append({
+                    "key": key, "기관명": institution, "게시판": board,
+                    "title": p["title"], "url": p["url"], "keywords": matched
+                })
+        return results, None
 
-        results = await asyncio.gather(
-            *(scan_board(session, t) for t in targets)
-        )
-
-    state = load_state()
-    posts = state.setdefault("posts", {})
-    first_run = not bool(state.get("initialized_at"))
-
-    all_matches = []
-    errors = []
-    checked = 0
-
-    for res in results:
-        checked += res["posts_checked"]
-        if res["error"]:
-            errors.append({
-                "기관명": res["기관명"],
-                "게시판": res["게시판명"],
-                "URL": res["게시판URL"],
-                "error": res["error"],
-            })
-        for m in res["matches"]:
-            pid = post_id(m["institution"], m["title"], m["url"])
-            if pid in posts:
-                continue
-            posts[pid] = {
-                "institution": m["institution"],
-                "board": m["board"],
-                "title": m["title"],
-                "url": m["url"],
-                "keywords": m["keywords"],
-                "first_seen": datetime.now(KST).isoformat(),
-            }
-            if not (first_run and SEED_ON_FIRST_RUN):
-                all_matches.append(m)
-
-    # Prevent state from growing forever.
-    if len(posts) > 10000:
-        items = sorted(posts.items(), key=lambda kv: kv[1].get("first_seen", ""))
-        posts = dict(items[-8000:])
-        state["posts"] = posts
-
-    if not state.get("initialized_at"):
-        state["initialized_at"] = datetime.now(KST).isoformat()
-
-    save_state(state)
-
-    summary = {
-        "run_at": datetime.now(KST).isoformat(),
-        "targets": len(targets),
-        "posts_checked": checked,
-        "new_matches": len(all_matches),
-        "errors": len(errors),
-        "first_run": first_run,
-        "discovered_notice_boards": len(discovered),
-    }
-    LOG_FILE.write_text(
-        json.dumps({"summary": summary, "errors": errors}, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-
-    await send_telegram(all_matches, errors, summary)
-
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
-    if errors:
-        print("Errors:")
-        for e in errors[:30]:
-            print(e)
-
-async def send_telegram(matches, errors, summary):
+async def send_telegram(matches):
     token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
     if not token or not chat_id:
-        print("Telegram secrets not configured; skipping notification.")
+        return {"ok": False, "error": "TELEGRAM secrets missing"}
+
+    api = f"https://api.telegram.org/bot{token}/sendMessage"
+    text = "🚨 공공기관 공지사항 키워드 발견\n\n"
+    for m in matches[:20]:
+        text += f"🏢 {m['기관명']}\n📌 {m['게시판']}\n📝 {m['title']}\n🔑 {', '.join(m['keywords'])}\n🔗 {m['url']}\n\n"
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post(api, data={"chat_id": chat_id, "text": text}, timeout=20) as r:
+                body = await r.text()
+                if r.status != 200:
+                    return {"ok": False, "error": f"HTTP {r.status}: {body}"}
+                return {"ok": True}
+        except Exception as e:
+            return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+async def main():
+    import pandas as pd
+
+    keywords = load_keywords()
+    state = load_state()
+
+    if not keywords:
+        print("No keywords configured.")
         return
 
-    messages = []
-    for m in matches[:MAX_TELEGRAM_MESSAGES]:
-        kws = ", ".join(m["keywords"])
-        messages.append(
-            "🚨 <b>공공기관 공지사항 키워드 감지</b>\n"
-            f"<b>기관:</b> {html.escape(m['institution'])}\n"
-            f"<b>게시판:</b> {html.escape(m['board'])}\n"
-            f"<b>제목:</b> {html.escape(m['title'])}\n"
-            f"<b>키워드:</b> {html.escape(kws)}\n"
-            f"<a href=\"{html.escape(m['url'], quote=True)}\">게시물 바로가기</a>"
-        )
-
-    if errors and not messages:
-        messages.append(
-            "⚠️ <b>공공기관 모니터링 오류</b>\n"
-            f"전체 게시판: {summary['targets']}\n"
-            f"접속/처리 오류: {summary['errors']}\n"
-            "GitHub Actions 로그를 확인하세요."
-        )
-
-    if not messages:
+    if not os.path.exists(TARGET_FILE):
+        print(f"Target file not found: {TARGET_FILE}")
         return
 
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    timeout = aiohttp.ClientTimeout(total=20)
+    df = pd.read_excel(TARGET_FILE)
+    rows = df.fillna("").to_dict("records")
 
-    async with aiohttp.ClientSession(timeout=timeout) as session:
-        for msg in messages:
-            try:
-                async with session.post(
-                    url,
-                    json={
-                        "chat_id": chat_id,
-                        "text": msg[:4096],
-                        "parse_mode": "HTML",
-                        "disable_web_page_preview": False,
-                    },
-                ) as r:
-                    if r.status >= 400:
-                        print("Telegram error:", r.status, await r.text())
-            except Exception as e:
-                print("Telegram exception:", e)
+    timeout = aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
+    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENCY, limit_per_host=4, ssl=False)
+    sem = asyncio.Semaphore(MAX_CONCURRENCY)
+
+    discovered = []
+    discovery_errors = []
+
+    async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
+        # 홈페이지에서 공지사항 후보 발견: 별도 검색 대상으로 추가하기 전에 실제 게시판 검증
+        if DISCOVER_NOTICE and os.path.exists(os.path.join(BASE, "url_완성.xlsx")):
+            hdf = pd.read_excel(os.path.join(BASE, "url_완성.xlsx"))
+            for r in hdf.fillna("").to_dict("records"):
+                institution = clean_text(str(r.get("기관명", "")))
+                home = normalize_url(str(r.get("URL", "")))
+                if not home or home.lower() == "nan":
+                    continue
+                st, final_home, html = await fetch(session, home)
+                if st != 200:
+                    continue
+                soup = BeautifulSoup(html, "html.parser")
+                for label, notice_url in discover_notice_boards(final_home, soup):
+                    verified, err = await verify_notice_board(session, label, notice_url)
+                    if verified:
+                        discovered.append({
+                            "기관명": institution,
+                            "게시판명": label,
+                            "게시판URL": verified["url"],
+                            "priority": 1,
+                            "source": "homepage_discovery"
+                        })
+                    elif err:
+                        discovery_errors.append({"기관명": institution, **err})
+
+        # 기존 대상 + 검증된 자동발견 게시판만 병합
+        all_rows = rows + discovered
+        unique = {}
+        for r in all_rows:
+            u = normalize_url(str(r.get("게시판URL", "")))
+            if not u or u.lower() == "nan":
+                continue
+            key = (clean_text(str(r.get("기관명", ""))), u)
+            if key not in unique:
+                unique[key] = r
+            else:
+                # 공지사항 명칭을 우선
+                old = unique[key]
+                if "공지" in clean_text(str(r.get("게시판명", ""))) and "공지" not in clean_text(str(old.get("게시판명", ""))):
+                    unique[key] = r
+
+        targets = list(unique.values())
+        print(f"Monitoring {len(targets)} verified board URLs")
+        print(f"Homepage notice discoveries verified: {len(discovered)}")
+
+        tasks = [process_target(session, sem, r, keywords) for r in targets]
+        outputs = await asyncio.gather(*tasks)
+
+    all_matches = []
+    errors = []
+    posts_checked = 0
+
+    for matches, err in outputs:
+        if matches:
+            all_matches.extend(matches)
+            posts_checked += len(matches)
+        if err:
+            errors.append(err)
+
+    first_run = not state.get("initialized", False)
+    new_matches = []
+
+    for m in all_matches:
+        if m["key"] not in state.get("seen", {}):
+            state.setdefault("seen", {})[m["key"]] = {
+                "seen_at": now_kst(),
+                "title": m["title"],
+                "url": m["url"]
+            }
+            if not first_run or not SEED_ON_FIRST_RUN:
+                new_matches.append(m)
+
+    state["initialized"] = True
+    state["last_run"] = now_kst()
+    save_json(STATE_FILE, state)
+
+    telegram_result = {"ok": True, "skipped": True}
+    if new_matches:
+        telegram_result = await send_telegram(new_matches)
+
+    log = {
+        "run_at": now_kst(),
+        "targets": len(targets),
+        "posts_checked": posts_checked,
+        "new_matches": len(new_matches),
+        "errors": len(errors),
+        "first_run": first_run,
+        "discovered_notice_boards": len(discovered),
+        "telegram": telegram_result,
+        "errors_detail": errors[:100]
+    }
+    save_json(LOG_FILE, log)
+    print(json.dumps(log, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
     asyncio.run(main())
