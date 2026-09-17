@@ -2,7 +2,9 @@ import os,re,json,asyncio,hashlib
 from datetime import datetime,timezone,timedelta
 from urllib.parse import urljoin
 import aiohttp
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
+import warnings
+warnings.filterwarnings('ignore', category=XMLParsedAsHTMLWarning)
 import pandas as pd
 
 BASE=os.path.dirname(os.path.abspath(__file__))
