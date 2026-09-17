@@ -1,0 +1,51 @@
+name: V6.8 Deep Board Re-validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run V6.8
+        run: |
+          python validate_v6_8.py
+
+      - name: Upload V6.8 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: boards-v6-8-validation
+          path: boards_v6_8_validation.xlsx
+          if-no-files-found: error
+
+      - name: Commit result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add validate_v6_8.py validate_v6_8.yml boards_v6_8_validation.xlsx
+          git diff --cached --quiet || git commit -m "Add V6.8 deep board re-validation result"
+
+      - name: Push result
+        run: |
+          git push origin HEAD:main
