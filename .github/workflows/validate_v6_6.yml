@@ -3,14 +3,19 @@ name: V6.6 Structural Board Validation
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -19,14 +24,22 @@ jobs:
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Check input file
         run: |
           if [ ! -f "boards_v6_5_validation.xlsx" ]; then
-            echo "입력파일 없음: boards_v6_5_validation.xlsx"
+            echo "ERROR: boards_v6_5_validation.xlsx not found"
             exit 1
           fi
+
+          if [ ! -f "validate_v6_6.py" ]; then
+            echo "ERROR: validate_v6_6.py not found"
+            exit 1
+          fi
+
+          echo "Input files confirmed."
 
       - name: Run V6.6 validation
         run: |
@@ -35,15 +48,19 @@ jobs:
       - name: Check output file
         run: |
           if [ ! -f "boards_v6_6_validation.xlsx" ]; then
-            echo "결과파일 생성 실패"
+            echo "ERROR: boards_v6_6_validation.xlsx was not created"
             exit 1
           fi
+
+          ls -lh boards_v6_6_validation.xlsx
+          echo "V6.6 validation result confirmed."
 
       - name: Upload validation result
         uses: actions/upload-artifact@v4
         with:
           name: boards-v6-6-validation
           path: boards_v6_6_validation.xlsx
+          if-no-files-found: error
 
       - name: Commit validation result
         run: |
@@ -52,6 +69,13 @@ jobs:
 
           git add boards_v6_6_validation.xlsx
 
-          git diff --cached --quiet || git commit -m "Add V6.6 structural board validation result"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
 
-          git push
+          git commit -m "Add V6.6 structural board validation result"
+
+      - name: Push validation result
+        run: |
+          git push origin HEAD:main
