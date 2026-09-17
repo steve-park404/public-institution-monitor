@@ -1,32 +1,79 @@
 {
   "version": "8.6.6",
-  "timestamp": "2026-09-17 14:41:52",
-  "targets": 100,
-  "completed": 100,
-  "posts_checked": 386,
-  "candidate_links": 589,
-  "detail_links": 589,
-  "new_matches": 0,
-  "errors": 1,
+  "timestamp": "2026-09-17 14:53:22",
+  "targets": 200,
+  "completed": 200,
+  "posts_checked": 692,
+  "candidate_links": 1125,
+  "detail_links": 1125,
+  "new_matches": 1,
+  "errors": 8,
   "timed_out": false,
-  "elapsed_seconds": 134.0,
+  "elapsed_seconds": 374.4,
   "keywords": [
     "설문조사",
     "시민참여",
     "국민참여"
   ],
-  "matches": [],
+  "matches": [
+    {
+      "institution": "한국방송통신전파진흥원",
+      "keyword": "설문조사",
+      "keywords": [
+        "설문조사"
+      ],
+      "match_type": "title",
+      "title": "[과학기술정보통신부] AI 친화ㆍ고가치 데이터 개방ㆍ활용 확대를 위한 설문조사",
+      "url": "https://www.kca.kr/boardView.do?pageId=www47&boardId=NOTICE&seq=5190319&movePage=1",
+      "board_url": "https://www.kca.kr/boardList.do?boardId=NOTICE&pageId=www47"
+    }
+  ],
   "error_details": [
     {
-      "institution": "대외경제정책연구원",
-      "board_url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "institution": "국립중앙의료원",
+      "board_url": "https://www.nmc.or.kr/nmc/board/B0000001",
+      "error": "Cannot connect to host www.nmc.or.kr:443 ssl:default [Name or service not known]"
+    },
+    {
+      "institution": "(재)한국우편사업진흥원",
+      "board_url": "https://www.posa.or.kr/portal/bbs/B0000008/list.do?menuNo=200020",
+      "error": "HTTP 0"
+    },
+    {
+      "institution": "한국석유관리원",
+      "board_url": "https://www.kpetro.or.kr/lay1/program/S1T48C50/poll/list.do",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "institution": "한국동서발전(주)",
+      "board_url": "https://www.ewp.co.kr/kor/subpage/content.html?pc=6DP9QZAJ0UTZYGSTBXZM2LIV6V25JGP",
+      "error": "HTTP 502"
+    },
+    {
+      "institution": "한국자산관리공사",
+      "board_url": "https://www.kamco.or.kr/portal/contents.do?mId=0406050000",
+      "error": "HTTP 0"
+    },
+    {
+      "institution": "한국전력기술주식회사",
+      "board_url": "https://www.kepco-enc.com/menu.es?mid=a10205050000",
+      "error": "HTTP 503"
+    },
+    {
+      "institution": "한국제품안전관리원",
+      "board_url": "https://www.kips.kr/cntns/cntns.do?menuSn=5010",
+      "error": "HTTP 0"
+    },
+    {
+      "institution": "한국도로공사",
+      "board_url": "https://www.ex.co.kr/partcptn",
       "error": "HTTP 0"
     }
   ],
   "telegram": {
     "ok": true,
-    "sent": 0,
-    "attempted": 0,
+    "sent": 1,
+    "attempted": 1,
     "errors": [],
     "truncated": false
   }
