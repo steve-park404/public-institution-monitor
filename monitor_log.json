@@ -1,48 +1,51 @@
 {
   "version": "8.6.6",
-  "timestamp": "2026-09-17 14:53:22",
+  "timestamp": "2026-09-17 15:08:37",
   "targets": 200,
   "completed": 200,
   "posts_checked": 692,
   "candidate_links": 1125,
   "detail_links": 1125,
-  "new_matches": 1,
-  "errors": 8,
+  "new_matches": 0,
+  "errors": 11,
   "timed_out": false,
-  "elapsed_seconds": 374.4,
+  "elapsed_seconds": 469.9,
   "keywords": [
     "설문조사",
     "시민참여",
     "국민참여"
   ],
-  "matches": [
-    {
-      "institution": "한국방송통신전파진흥원",
-      "keyword": "설문조사",
-      "keywords": [
-        "설문조사"
-      ],
-      "match_type": "title",
-      "title": "[과학기술정보통신부] AI 친화ㆍ고가치 데이터 개방ㆍ활용 확대를 위한 설문조사",
-      "url": "https://www.kca.kr/boardView.do?pageId=www47&boardId=NOTICE&seq=5190319&movePage=1",
-      "board_url": "https://www.kca.kr/boardList.do?boardId=NOTICE&pageId=www47"
-    }
-  ],
+  "matches": [],
   "error_details": [
+    {
+      "institution": "대외경제정책연구원",
+      "board_url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "error": "HTTP 0"
+    },
+    {
+      "institution": "(재)우체국시설관리단",
+      "board_url": "https://www.poma.or.kr/poma/notice.do",
+      "error": "Cannot connect to host www.poma.or.kr:443 ssl:default [Temporary failure in name resolution]"
+    },
     {
       "institution": "국립중앙의료원",
       "board_url": "https://www.nmc.or.kr/nmc/board/B0000001",
-      "error": "Cannot connect to host www.nmc.or.kr:443 ssl:default [Name or service not known]"
+      "error": "Cannot connect to host www.nmc.or.kr:443 ssl:default [Temporary failure in name resolution]"
     },
     {
-      "institution": "(재)한국우편사업진흥원",
-      "board_url": "https://www.posa.or.kr/portal/bbs/B0000008/list.do?menuNo=200020",
+      "institution": "대외경제정책연구원",
+      "board_url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
       "error": "HTTP 0"
     },
     {
       "institution": "한국석유관리원",
       "board_url": "https://www.kpetro.or.kr/lay1/program/S1T48C50/poll/list.do",
       "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "institution": "한국여성과학기술인육성재단",
+      "board_url": "https://www.wiset.or.kr/prog/qustnr/kor/sub02_05_02/list.do",
+      "error": "HTTP 0"
     },
     {
       "institution": "한국동서발전(주)",
@@ -60,20 +63,20 @@
       "error": "HTTP 503"
     },
     {
-      "institution": "한국제품안전관리원",
-      "board_url": "https://www.kips.kr/cntns/cntns.do?menuSn=5010",
+      "institution": "한국도로공사",
+      "board_url": "https://www.ex.co.kr/partcptn",
       "error": "HTTP 0"
     },
     {
-      "institution": "한국도로공사",
-      "board_url": "https://www.ex.co.kr/partcptn",
+      "institution": "한국여성과학기술인육성재단",
+      "board_url": "https://www.wiset.or.kr/bbs/BBSMSTR_000000000304/list.do",
       "error": "HTTP 0"
     }
   ],
   "telegram": {
     "ok": true,
-    "sent": 1,
-    "attempted": 1,
+    "sent": 0,
+    "attempted": 0,
     "errors": [],
     "truncated": false
   }
