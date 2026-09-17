@@ -1,0 +1,57 @@
+name: V6.6 Structural Board Validation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Check input file
+        run: |
+          if [ ! -f "boards_v6_5_validation.xlsx" ]; then
+            echo "입력파일 없음: boards_v6_5_validation.xlsx"
+            exit 1
+          fi
+
+      - name: Run V6.6 validation
+        run: |
+          python validate_v6_6.py
+
+      - name: Check output file
+        run: |
+          if [ ! -f "boards_v6_6_validation.xlsx" ]; then
+            echo "결과파일 생성 실패"
+            exit 1
+          fi
+
+      - name: Upload validation result
+        uses: actions/upload-artifact@v4
+        with:
+          name: boards-v6-6-validation
+          path: boards_v6_6_validation.xlsx
+
+      - name: Commit validation result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add boards_v6_6_validation.xlsx
+
+          git diff --cached --quiet || git commit -m "Add V6.6 structural board validation result"
+
+          git push
