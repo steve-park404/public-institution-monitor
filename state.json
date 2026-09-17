@@ -1,4 +1,1116 @@
 {
-  "seen": {},
-  "initialized": false
+  "seen": {
+    "9629e3e93e91a29430b9f851993612d4bbe8126f6f79610ef595e1f7dbc5f0e6": {
+      "seen_at": "2026-09-17T20:49:27.431402+09:00",
+      "title": "관련 규정",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www307"
+    },
+    "f4aee61ba80d24b7213a11e855a97c01d7c2432c66527feaaf7d820adee7b9fd": {
+      "seen_at": "2026-09-17T20:49:27.431419+09:00",
+      "title": "열린경영",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www55"
+    },
+    "e2e8cfb7c0dc24d79d444fa22e1d69dc721e140e3060d9b7f5cbc0792a80e334": {
+      "seen_at": "2026-09-17T20:49:27.431424+09:00",
+      "title": "국민참여",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www56"
+    },
+    "f40da2b55153593cd87001d1c4e967203040844f40d06eb36eae21298bb7f662": {
+      "seen_at": "2026-09-17T20:49:27.431428+09:00",
+      "title": "고객책임경영",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www303"
+    },
+    "7dcee24117c7bb36c3de27ace3efad815ca45c3b25acf3931117d128fd73ca77": {
+      "seen_at": "2026-09-17T20:49:27.431431+09:00",
+      "title": "책임경영",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www332"
+    },
+    "6250438ef2767645f3a22ddb6fcf1573b67a1d6b817b78a23ff087007b550c57": {
+      "seen_at": "2026-09-17T20:49:27.431434+09:00",
+      "title": "시설자원개방",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www319"
+    },
+    "92a6931fb10d0e58015e6f34a5742a8fbdc4361c977072554224354f4231624a": {
+      "seen_at": "2026-09-17T20:49:27.431438+09:00",
+      "title": "기업성장응답센터",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www329"
+    },
+    "01af63783ea4750c9fa230bc934176e9c59876239844367e83191a6cba4d7491": {
+      "seen_at": "2026-09-17T20:49:27.431440+09:00",
+      "title": "규제애로 신고",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www330"
+    },
+    "1aad376b8cb5f31f43a0ee73b943dba54ca5a6f8c676a76120db84ff41ddbc39": {
+      "seen_at": "2026-09-17T20:49:27.431443+09:00",
+      "title": "ESG 경영",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www291"
+    },
+    "419b84d86c38c78d6ae7cccc91f0654956b576c8d217fb5b89495826d206ffe4": {
+      "seen_at": "2026-09-17T20:49:27.431447+09:00",
+      "title": "ESG 경영체계",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www292"
+    },
+    "3f5744435bf1d718c9923152b2d50d9cb25eb4bcdd6a94408180348c2b1eddc5": {
+      "seen_at": "2026-09-17T20:49:27.431449+09:00",
+      "title": "공시항목",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www293"
+    },
+    "78d69421770be0efa956e7b916e7d6dc05394f662b6351796bd37a96038c677c": {
+      "seen_at": "2026-09-17T20:49:27.431452+09:00",
+      "title": "(E) 환경",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www184"
+    },
+    "8ddc0228ddf3b8b3ddfcd0349492db1cb7e74516ba02220c6920b3eb909c617c": {
+      "seen_at": "2026-09-17T20:49:27.431455+09:00",
+      "title": "주요성과",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www189"
+    },
+    "dc07030435fbc35c7fed3e997078452e0cd4e62dc91fddac23b278fee60348a2": {
+      "seen_at": "2026-09-17T20:49:27.431459+09:00",
+      "title": "(S) 사회",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www191"
+    },
+    "23e520f8b1fe5525ba7807f0d896ff7015b65242ae6252a7a3881a4d946949e1": {
+      "seen_at": "2026-09-17T20:49:27.431462+09:00",
+      "title": "안전경영",
+      "url": "https://www.kca.kr/contentsView.do?pageId=www294"
+    },
+    "151c7d3ee385091950f2e30af3db9a68676f50ab5f26083dcf2b4913e26faa53": {
+      "seen_at": "2026-09-17T20:49:27.431464+09:00",
+      "title": "2026년 한전KDN 산업안전 숏폼 콘텐츠 공모전 결과 발표",
+      "url": "https://www.kdn.com/board.kdn?mid=a10111050000&bid=0019&act=view&list_no=25089&tag=&nPage=1"
+    },
+    "02d564416364bde7ef9d08e191242eb2be49aed21a8534ec639031cc29d20f7d": {
+      "seen_at": "2026-09-17T20:49:27.431467+09:00",
+      "title": "「케어캣과 함께하는 국민소통 DAY」 행사 시행 알림",
+      "url": "https://www.kdn.com/board.kdn?mid=a10111050000&bid=0019&act=view&list_no=25072&tag=&nPage=1"
+    },
+    "b2fe25dc9b934d1305e6eb1712448b3644d39223a01d2ea57bcba0bcb2fc24e5": {
+      "seen_at": "2026-09-17T20:49:27.431470+09:00",
+      "title": "2026년도 국민소통 청년 참여단 선정 결과 알림",
+      "url": "https://www.kdn.com/board.kdn?mid=a10111050000&bid=0019&act=view&list_no=24877&tag=&nPage=1"
+    },
+    "878f32165d53364ebd14e28c8822d12efcc1c84696be6da8007430caf999c6e4": {
+      "seen_at": "2026-09-17T20:49:27.431474+09:00",
+      "title": "2026년도 산업안전 포스터 공모전 최종심사 결과 안내",
+      "url": "https://www.kdn.com/board.kdn?mid=a10111050000&bid=0019&act=view&list_no=24932&tag=&nPage=1"
+    },
+    "d3be3c119e70c202faeb5b19a879695fa84bd0ed02768e433771fd84f7b46186": {
+      "seen_at": "2026-09-17T20:49:27.431477+09:00",
+      "title": "한전KDN 임직원 사칭 허위구매 사기피해 예방 안내",
+      "url": "https://www.kdn.com/board.kdn?mid=a10111050000&bid=0019&act=view&list_no=24853&tag=&nPage=1"
+    },
+    "493d34ff932ae6851e4ffa4bfd284fea923bb58c9570b12452532763fff5b1fc": {
+      "seen_at": "2026-09-17T20:49:27.431479+09:00",
+      "title": "'AI시대의 건축도면정보 활용과 저작권 보호방안 정책토론회' 개최",
+      "url": "https://www.auri.re.kr/board.es?mid=a10401010000&bid=0001&act=view&list_no=7514&tag=&nPage=1"
+    },
+    "be8cd6f1761bc59f33c8e13b1ba6681df1bca00a6b16541266fc84fd7ab9af44": {
+      "seen_at": "2026-09-17T20:49:27.431482+09:00",
+      "title": "2026 제2회 보행도시 아카데미 개최",
+      "url": "https://www.auri.re.kr/board.es?mid=a10401010000&bid=0001&act=view&list_no=7447&tag=&nPage=1"
+    },
+    "9b3df81c2e9951c0ad3ce92d7d30e70bd116a3656194603d78a5f33d1da6a6be": {
+      "seen_at": "2026-09-17T20:49:27.431486+09:00",
+      "title": "국민의 삶과 연계된 건축의 새로운 도약: 건축산업 및 건축규제 합리화 방안 국회토론..",
+      "url": "https://www.auri.re.kr/board.es?mid=a10401010000&bid=0001&act=view&list_no=7422&tag=&nPage=1"
+    },
+    "199860e02c8e4533e9a010c2307ed8308d596c17c912462d4a85503c98c0a7a8": {
+      "seen_at": "2026-09-17T20:49:27.431489+09:00",
+      "title": "한국웰에이징협회-국민건강보험공단 서울요양원, 존엄한 노년을 위한 업무협약 체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=51&category=&pageIdx="
+    },
+    "7071320c35da16bbccf1ae4b18bb943dd737aef7e4c7d0e6e7bfad6be387226f": {
+      "seen_at": "2026-09-17T20:49:27.431492+09:00",
+      "title": "안창호 인권위원장, 서울요양원 방문 \"초고령사회 노인인권 점검\"",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=50&category=&pageIdx="
+    },
+    "8404f8d0b0ce4d438c54727f0b8abb6bcbda1eee71ac7c63a55a7fb920e25535": {
+      "seen_at": "2026-09-17T20:49:27.431494+09:00",
+      "title": "건보공단 서울요양원 \"삶의 마지막까지 가족과 함께합니다\" (한국경제 2025.12.29. 보도자료)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=49&category=&pageIdx="
+    },
+    "ed03f2766fd28822ecca4e8786583c86aa14e22d2a6630616c14c6b20acd09b1": {
+      "seen_at": "2026-09-17T20:49:27.431497+09:00",
+      "title": "국민건강보험공단 서울요양원, '존엄한 임종돌봄 실천'을 위한 공동세미나 개최",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=48&category=&pageIdx="
+    },
+    "e295e7b2b75a130c1800cde3fe41b48141a438ae26aae13b4540c70861997df1": {
+      "seen_at": "2026-09-17T20:49:27.431500+09:00",
+      "title": "구윤철 부총리 겸 기획재정부 장관, 추석연휴 마지막날 서울요양원 방문",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=47&category=&pageIdx="
+    },
+    "ca8fcc20e389ada8b0cf57e818b67d78810b40616a5282acf7782992ab44c243": {
+      "seen_at": "2026-09-17T20:49:27.431503+09:00",
+      "title": "제29회 노인의 날 기념 서울요양원 김강수 원장 대통령상 표창",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=46&category=&pageIdx="
+    },
+    "9727110b674df98d7c3a4a4806e62e3d385789fc941fec9a83eabaa01922ae08": {
+      "seen_at": "2026-09-17T20:49:27.431505+09:00",
+      "title": "국민건강보험공단 서울요양원 주야간보호, 어버이날 행사 개최",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=45&category=&pageIdx="
+    },
+    "da12496f955cdbb403756dc866578778de1a8582d14297cd74ff60f24ef24197": {
+      "seen_at": "2026-09-17T20:49:27.431508+09:00",
+      "title": "한국마사회, 서울요양원 후원 물품 전달·홀스테라피 행사 성공적 개최",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=44&category=&pageIdx="
+    },
+    "0b06905dbcbfe071d505a96725049a2adc8e051b2b1cca6e927e9a6f51efb511": {
+      "seen_at": "2026-09-17T20:49:27.431510+09:00",
+      "title": "'국내 1호' 요양원 구강보건실 오픈, 노인 돌봄 새로운 전기",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=43&category=&pageIdx="
+    },
+    "4d122f564116c30717b43918678af2e78814cbe99b2b4237b0b10ef2fb9529d2": {
+      "seen_at": "2026-09-17T20:49:27.431513+09:00",
+      "title": "사회적 ‘돌봄’ 체계 구축해야... “스마일 돌봄 위원회, 창립 준비모임 개최!”",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=42&category=&pageIdx="
+    },
+    "9345ff8954b0b5e148e45dcb791194ab1d8d99ac1956960010edd7fa0fc2b1f5": {
+      "seen_at": "2026-09-17T20:49:27.431515+09:00",
+      "title": "[스마트돌봄④] 마음을 읽어주는 사람...나영미 요양팀장(이모작뉴스,2024.4.18)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=41&category=&pageIdx="
+    },
+    "e714aff1188aa250de77f6e14122153625355c8012e8654de72bf0734c94f162": {
+      "seen_at": "2026-09-17T20:49:27.431518+09:00",
+      "title": "[스마트돌봄③] ‘행복마을’의 지키미....공나윤 요양보호사(이모작뉴스,2024.4.18)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=40&category=&pageIdx="
+    },
+    "b0c58e0aa2a8929fb0e224754b8eac083a086e33f29363feb3a326827c8e7026": {
+      "seen_at": "2026-09-17T20:49:27.431521+09:00",
+      "title": "[스마트돌봄②] 내 집에서 죽을 권리...국내외 임종사례(이모작뉴스,2024.4.18)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=39&category=&pageIdx="
+    },
+    "2ffbbea7528cb24646603907cdc22fcad02b29d4baa5480f83c2a987f8ca8bda": {
+      "seen_at": "2026-09-17T20:49:27.431524+09:00",
+      "title": "[스마트돌봄①]내 집처럼 편안한 요양...서울요양원 사례(이모작뉴스,2024.4.18)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=38&category=&pageIdx="
+    },
+    "296ac4dacfd9b5b28549ea18f85d2798daebf685126f0bd7740b25affc78e5f9": {
+      "seen_at": "2026-09-17T20:49:27.431527+09:00",
+      "title": "\"150명 정원에 1300명 대기… 4년 기다려야\"(아시아경제,2024.4.18)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/PressReleases/?boardId=bbs_0000000000000008&mode=view&cntId=37&category=&pageIdx="
+    },
+    "d4a62ca1c1089402e95bd857cf61362153efba6f9b4e1b18796edce78745ef23": {
+      "seen_at": "2026-09-17T20:49:27.431529+09:00",
+      "title": "새글 2026년 한국전력거래소 혁신파트너십 지원사업 참여기업 모집 공고(연장)",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78136&tag=&nPage=1"
+    },
+    "ef213c3b04f5ddaa6e2c54d7fccc937037726b8cc6ee097167adf59165db9bf4": {
+      "seen_at": "2026-09-17T20:49:27.431531+09:00",
+      "title": "새글 2026년 가을철 전력계통 안정화 대책기간 운영 안내",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78124&tag=&nPage=1"
+    },
+    "91dd4131e8dc132dd627dab11e07580773a58954c93eee5e68e07806dd60a2c8": {
+      "seen_at": "2026-09-17T20:49:27.431534+09:00",
+      "title": "새글 2026년 가을철 태양광 연계 ESS 운영방안 시행 안내",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78119&tag=&nPage=1"
+    },
+    "5f0830aa1db4ba5dc63c3986f9b6c3b6fb10c0a3a488f5adb67be11babbb2cba": {
+      "seen_at": "2026-09-17T20:49:27.431537+09:00",
+      "title": "전력거래사 자격시험 관련 학습가이드(2026년 개정)",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78108&tag=&nPage=1"
+    },
+    "439a0c07393042b591ceb152d08c8f410448a58b3fe0ac4bb3f565231f3d02d5": {
+      "seen_at": "2026-09-17T20:49:27.431539+09:00",
+      "title": "2026년 제4회 전력거래사 자격시험 시행계획 공고",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78107&tag=&nPage=1"
+    },
+    "e50e94d09d8d707a7b4a195dfb8861b9aa4862b47b627d4b13b62e022d600d9f": {
+      "seen_at": "2026-09-17T20:49:27.431553+09:00",
+      "title": "제12차 전기본 공개토론회",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78098&tag=&nPage=1"
+    },
+    "4179b9edbc2db3a867b74bc0155d5223bc4e476a30726b36a499541efdefec94": {
+      "seen_at": "2026-09-17T20:49:27.431555+09:00",
+      "title": "2026년 한국전력거래소 창업·벤처기업 지원사업 참여기업 모집 공고",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78092&tag=&nPage=1"
+    },
+    "0f7e756ae174a05590833bbdad15166904b94753cb1eaf3f8021421a35773322": {
+      "seen_at": "2026-09-17T20:49:27.431557+09:00",
+      "title": "2026년 한국전력거래소 혁신파트너십 지원사업 참여기업 모집 공고",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78091&tag=&nPage=1"
+    },
+    "b86b2b34c691a3613602710dadac6abb0aa440b087094d5c777cb413ced1a43c": {
+      "seen_at": "2026-09-17T20:49:27.431560+09:00",
+      "title": "2026년도 협력사 및 중소기업 ESG 지원사업 모집 공고",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78090&tag=&nPage=1"
+    },
+    "65f1355b543b4fd7d5dd5e7b425ac7a828642b89deaaa1cd0c7517cabc86799c": {
+      "seen_at": "2026-09-17T20:49:27.431562+09:00",
+      "title": "라오스(비엔티안) 전력기자재 사절단 참가 공고",
+      "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&act=view&list_no=78089&tag=&nPage=1"
+    },
+    "2dad7c2acbeedd8a32243b90e89e4e904edae8f56c3b3c2f848d565bf3fb1c75": {
+      "seen_at": "2026-09-17T20:49:27.431565+09:00",
+      "title": "꼭 필요한 돌봄과 따뜻한 동행- 영상자료",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=106&category=&pageIdx="
+    },
+    "5eecdf735de7d36c50a5becc8105e657909abeb26a74a11bac04ff9aed31e0b3": {
+      "seen_at": "2026-09-17T20:49:27.431568+09:00",
+      "title": "MBC '생방송 오늘아침' 사랑채 방영 안내",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=110&category=&pageIdx="
+    },
+    "b5d7e47e7d9e585ff6726ed339ca7deb4a7fafc64f5af5f3adbc28dbbcc8538e": {
+      "seen_at": "2026-09-17T20:49:27.431571+09:00",
+      "title": "서울특별시 장기요양요원지원센터와 업무협약 체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=109&category=&pageIdx="
+    },
+    "2a3e4c624feffbc10478d84273516af57d807fae411e5913cc71d3ad7e6e6db6": {
+      "seen_at": "2026-09-17T20:49:27.431574+09:00",
+      "title": "한국치매가족협회와의 업무협약 체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=108&category=&pageIdx="
+    },
+    "90cfffa95ff46dd9283451775c75267eed66a9175c9b7c53cc8375517ec8c869": {
+      "seen_at": "2026-09-17T20:49:27.431576+09:00",
+      "title": "(주)복지유니온 부설 한국고령친화식품연구소와 MOU 체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=107&category=&pageIdx="
+    },
+    "bddadde701181974aeefbed47115ece59f66d8554c3306561e9dc436c20bd632": {
+      "seen_at": "2026-09-17T20:49:27.431579+09:00",
+      "title": "강남구치매안심센터와 MOU체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=105&category=&pageIdx="
+    },
+    "8f73074e3154c1e113df4dd05bde372509e11cb884124d053460121021303532": {
+      "seen_at": "2026-09-17T20:49:27.431582+09:00",
+      "title": "수서종합사회복지관 MOU체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=104&category=&pageIdx="
+    },
+    "f32dd551519fc47bddf3715276b12a01a9f7729b7d00258a52472f36240fb69b": {
+      "seen_at": "2026-09-17T20:49:27.431584+09:00",
+      "title": "2024년 장기요양기관 평가결과 최우수 A등급 선정(방문요양)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=103&category=&pageIdx="
+    },
+    "83e7123f1f5e8c69dbb22ccbb608373e908953cdc739a9e4008300e21eabdd5d": {
+      "seen_at": "2026-09-17T20:49:27.431586+09:00",
+      "title": "2024년 장기요양기관 평가결과 최우수 A등급 선정(주야간보호)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=102&category=&pageIdx="
+    },
+    "6d608727fb395fa7c67dd70812077bd065d8b5e9a262e622a8e43090cf2ae468": {
+      "seen_at": "2026-09-17T20:49:27.431589+09:00",
+      "title": "한국가정·방문간호학회 MOU 체결 (24.07.05.)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=101&category=&pageIdx="
+    },
+    "0072a42fd47f3708661f3d0531b174394400a27797b5a365b2d145a7267f11fd": {
+      "seen_at": "2026-09-17T20:49:27.431591+09:00",
+      "title": "국립연명의료관리기관 사전연명의료등록기관 지정 (24.5.31.)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=100&category=&pageIdx="
+    },
+    "4938127c79c36c14a51087ef6eb42f85c64e66b9fb42bf5233925a53a20ddc2b": {
+      "seen_at": "2026-09-17T20:49:27.431594+09:00",
+      "title": "2024년 상반기 강남소방서 서울요양원 합동소방훈련",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=98&category=&pageIdx="
+    },
+    "32eb266e56755dc42409cc187393365c1ab297da1fc8dbe446adc9b3b6cfae54": {
+      "seen_at": "2026-09-17T20:49:27.431596+09:00",
+      "title": "2021년 장기요양기관 평가 결과(최우수 A등급) 안내",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=96&category=&pageIdx="
+    },
+    "bab81b9ae9a9f69646f0f1e5a10907ebf7226a2c64d7321559323aa208b62033": {
+      "seen_at": "2026-09-17T20:49:27.431599+09:00",
+      "title": "서울요양원-한양대 간호학부 간호실습협력(MOU) 체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=95&category=&pageIdx="
+    },
+    "2a1c754ac753977b00dc58068319ac3f025825b34d50c764b65ceb1db409dacf": {
+      "seen_at": "2026-09-17T20:49:27.431601+09:00",
+      "title": "서울요양원-아주대요양병원 의료연계 협력(MOU) 체결",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News/?boardId=bbs_0000000000000020&mode=view&cntId=93&category=&pageIdx="
+    },
+    "bfdbb3ebd840e105f5cbf86dfddd00d7b7607e2115b0e53f11d42e2ccb6cda99": {
+      "seen_at": "2026-09-17T20:49:27.431604+09:00",
+      "title": "2026년 2분기 노인친화기업·기관 공모 최종 심사 결과 공고",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=678625&cmsId=91"
+    },
+    "af91e6a158970ded5804700d445bf58bbe5cce7947144137d5774994df87ca23": {
+      "seen_at": "2026-09-17T20:49:27.431606+09:00",
+      "title": "[공모전] 2026년 노인 일자리 및 사회활동 지원사업 수행기관 안전관리 우수사례 공모전",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=678617&cmsId=91"
+    },
+    "c12ee8d429af56155f24aa6c8ed0a44039f2524fe31ed5d304d8b9186e993c1f": {
+      "seen_at": "2026-09-17T20:49:27.431609+09:00",
+      "title": "[공모전 결과] 2026년 노인 일자리 및 사회활동 지원사업 참여노인 수기 공모전 최종 심사 결과 발표",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=675613&cmsId=91"
+    },
+    "58d29567ab25a5002f2344e52339f92e1f621ca922c28acce5f4c6d080df899b": {
+      "seen_at": "2026-09-17T20:49:27.431611+09:00",
+      "title": "2026년 제18회 한국의료패널 학술대회 논문공모 안내",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=76354"
+    },
+    "71366aa6348227dcfebb70ef9757d0d2ca81673dd24b94cc337f07347a8c7de7": {
+      "seen_at": "2026-09-17T20:49:27.431614+09:00",
+      "title": "2026년 아동실태조사 수요자 의견수렴 조사",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=75718"
+    },
+    "2fccddd395b72becb17d7a55ccd400a8016073f1da7f22552de517d9d4c8eac2": {
+      "seen_at": "2026-09-17T20:49:27.431616+09:00",
+      "title": "한국보건사회연구원 임직원 사칭 사기 피해 주의 안내",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=75651"
+    },
+    "efe31560c121934f3d67c910e0e868d315b3d188f3f9524b7e0f7aecaaaca44b": {
+      "seen_at": "2026-09-17T20:49:27.431619+09:00",
+      "title": "2025년도 상품권 구매 및 사용 현황 보고",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=75577"
+    },
+    "3eaf501b76e4b3cfc99b19f168394258557998bd8c5d8ecf5532914b2e5d7558": {
+      "seen_at": "2026-09-17T20:49:27.431622+09:00",
+      "title": "2026년도 차량 정수 및 보유현황 공개",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=73359"
+    },
+    "8214e40f7bbe2ca2e9226245de06e894c1fcba2afcafff145d502769768c72b2": {
+      "seen_at": "2026-09-17T20:49:27.431625+09:00",
+      "title": "[국민권익위원회] 비실명 대리신고 제도 안내(카드뉴스)",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=72095"
+    },
+    "a8f1a97990ec385c3158b5380899cbe0c7dd1f2bd88d73cd9ed7792997a2cc63": {
+      "seen_at": "2026-09-17T20:49:27.431627+09:00",
+      "title": "2024년 국민생활실태조사 실시",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=71277"
+    },
+    "b3116650ec297598256d24e879e3dd26b12cee4bb0ce6e947cbe1af586becf46": {
+      "seen_at": "2026-09-17T20:49:27.431630+09:00",
+      "title": "제7회 보건사회연구 우수논문 선정 결과",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=69720"
+    },
+    "65e5315fa1b5fce8aae65b50b4aa883d6365d58a7afa617c06a55d2d05b26c53": {
+      "seen_at": "2026-09-17T20:49:27.431632+09:00",
+      "title": "2024년도 상품권 구매 및 사용 현황 보고",
+      "url": "https://www.kihasa.re.kr/news/notice/view?seq=68713"
+    },
+    "50afd62b514ee26ded4a5cd00f30ea25c8361246d056b9baeba68527ec6fb6fe": {
+      "seen_at": "2026-09-17T20:49:27.431643+09:00",
+      "title": "2026년 주택금융 및 보금자리론 실태조사 고객 안내 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600572&article.offset=0&articleLimit=10"
+    },
+    "59519e30883dd07e2dd43d01ebe8b347c41209e2bda185abfa248576a18f29c0": {
+      "seen_at": "2026-09-17T20:49:27.431646+09:00",
+      "title": "2026년 주택금융 콘퍼런스 개최 안내 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600525&article.offset=0&articleLimit=10"
+    },
+    "625998cd2f0515a10d45310768dd7bbec4313a3d9b1f67006ef40b1aae9f1e0b": {
+      "seen_at": "2026-09-17T20:49:27.431649+09:00",
+      "title": "2026년 주택연금 수요실태조사 고객 안내 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600486&article.offset=0&articleLimit=10"
+    },
+    "458d2beb1fc1c42eafedc13bc2f3857b86c18a65e9286e71220c955fb461f7d1": {
+      "seen_at": "2026-09-17T20:49:27.431651+09:00",
+      "title": "2026 을지연습 연계 공습대비 민방위 훈련 전국 동시 실시 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600470&article.offset=0&articleLimit=10"
+    },
+    "eebf64c052aabf32a565222ce24b31d39aa507bc9f8e612b4cd9b772cd3cf5b8": {
+      "seen_at": "2026-09-17T20:49:27.431655+09:00",
+      "title": "2026년 을지연습에 동참해 주세요 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600469&article.offset=0&articleLimit=10"
+    },
+    "254c8acba2ff8eb6a2549067bc6f91f8c75c869c0554abb1e65310457168c8db": {
+      "seen_at": "2026-09-17T20:49:27.431657+09:00",
+      "title": "2026년도 주택연금 명예홍보대사 모집 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600454&article.offset=0&articleLimit=10"
+    },
+    "1bb5a44250e12c6316f2317e30b6a8efcb18ee9f690d68ac1bbf6bd9fec1a74c": {
+      "seen_at": "2026-09-17T20:49:27.431660+09:00",
+      "title": "대표 홈페이지 점검 안내 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600234&article.offset=0&articleLimit=10"
+    },
+    "a94ff23c75371bd6ff266246597fc0b1d7d0f3b17034da1c7b4055ab16b46f25": {
+      "seen_at": "2026-09-17T20:49:27.431663+09:00",
+      "title": "2026년 하반기 전월세전환율 안내 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600176&article.offset=0&articleLimit=10"
+    },
+    "36193fdcbd9e23e306f223dedad7912daec7f94da9825540a93fda81d2192538": {
+      "seen_at": "2026-09-17T20:49:27.431666+09:00",
+      "title": "2026년 행정안전부 중앙우수제안 선정을 위한 공사 자체우수제안 추천 후보작 사전공시 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600135&article.offset=0&articleLimit=10"
+    },
+    "5da90c8a83b64d73b6bf2d95b83e92509f2fb01a60e1ba5eb9fce8ff5a209966": {
+      "seen_at": "2026-09-17T20:49:27.431669+09:00",
+      "title": "2025년도 공공기관 안전관리등급 심사결과 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600126&article.offset=0&articleLimit=10"
+    },
+    "33bd676f814729facc04728680eaf069a3574d133f03f70971f92b2f1f5820ae": {
+      "seen_at": "2026-09-17T20:49:27.431672+09:00",
+      "title": "찾아가는 맞춤형 부동산 교육 안내",
+      "url": "https://www.auri.re.kr/board.es?mid=a10401020000&bid=0012&act=view&list_no=7452&tag=&nPage=1"
+    },
+    "42038927ce849d91afc21ad81c5a6c4595c1167bce19cc5bbc6894d51edb85f9": {
+      "seen_at": "2026-09-17T20:49:27.431678+09:00",
+      "title": "2026년 한국석유공사 짧은 영상(숏폼) 공모전(기간연..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=303&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    "3cf69f822f7411096c6edb93fce52d59637a1a7a2db2744c2b2116d3f91b6843": {
+      "seen_at": "2026-09-17T20:49:27.431680+09:00",
+      "title": "자원안보위기 경보 발령에 따른 공공기관 승용차5부제 실..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=298&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    "43139b377cdca2c7d09b13dcbc07af0b1676eb735851aaf96e2408a7d319a31b": {
+      "seen_at": "2026-09-17T20:49:27.431683+09:00",
+      "title": "한국석유공사 비상임이사 초빙 공고",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=297&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    "57166cfc6b7c92d1d50a2208dca9a33b9cf95a7986b40aa279e945a02704fba0": {
+      "seen_at": "2026-09-17T20:49:27.431686+09:00",
+      "title": "한국석유공사 퇴직연금사업자 추가선정 공고",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=296&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    "09361ca2d1cf2fcb4270e11c4877de6caa78247cba1d7cb9097c308472a134e1": {
+      "seen_at": "2026-09-17T20:49:27.431689+09:00",
+      "title": "새창열림",
+      "url": "https://www.iris.go.kr/contents/retrieveNoticeView.do?blltSeq=342"
+    },
+    "ea8d8e47d5d169cc841be6b11d74be6bf5f5a6d645ba2ebc214c487d12a67ddb": {
+      "seen_at": "2026-09-17T20:49:27.431691+09:00",
+      "title": "새글 (공고) 새만금 스마트그린 국가시범산업단지 재생에너지 공급 선도사업 사업자 모집 공..",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0007&act=view&list_no=1885&tag=&nPage=1&rtnBid=0006"
+    },
+    "ba06e9536ea17d2796a673987cda13c3a47c12b0a2ab6f1897db75d9807e88cc": {
+      "seen_at": "2026-09-17T20:49:27.431695+09:00",
+      "title": "(공고) \"새만금 제2산업단지 조성사업 해양이용협의 용역\" 사업수행능력평가..",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0007&act=view&list_no=1874&tag=&nPage=1&rtnBid=0006"
+    },
+    "198d9a6ae66ebe3e7519a31dd2cb2f7ce4744683539f824b6b11a696b96285e1": {
+      "seen_at": "2026-09-17T20:49:27.431697+09:00",
+      "title": "(공고) 새만금 수상태양광 1단계 300MW 발전사업 사업자 공모 공고",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0007&act=view&list_no=1873&tag=&nPage=1&rtnBid=0006"
+    },
+    "e74be53997aa6c8bb38bda4f09cf97ceaac373d08f6a23e5fcee47631fb31fcf": {
+      "seen_at": "2026-09-17T20:49:27.431701+09:00",
+      "title": "2026년도 전북 유관기관 합동 새만금지역 투자설명회 개최 및 사전수요조사 안내",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0006&act=view&list_no=1868&tag=&nPage=1&rtnBid=0006"
+    },
+    "dc6231f4c1993480bdf8175a9c90dad5b086d8f497849f34b36313a93e093993": {
+      "seen_at": "2026-09-17T20:49:27.431703+09:00",
+      "title": "[공모] 새만금개발공사 제2차 비상임임원(이사) 모집 공고",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0008&act=view&list_no=1845&tag=&nPage=1&rtnBid=0006"
+    },
+    "b7ab4470e23ad76e20e9e92c136d4295adad8f1df1c42cb539d7b30d997b154d": {
+      "seen_at": "2026-09-17T20:49:27.431706+09:00",
+      "title": "새만금개발공사 인사위원 공개모집 공고",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0007&act=view&list_no=1818&tag=&nPage=1&rtnBid=0006"
+    },
+    "4ec79e2c7c03b9838288b5980abde160986625bc5f4705ccef896cf2d71e0e01": {
+      "seen_at": "2026-09-17T20:49:27.431709+09:00",
+      "title": "[공모] 새만금개발공사 비상임임원 공모",
+      "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0008&act=view&list_no=1787&tag=&nPage=1&rtnBid=0006"
+    },
+    "2f8d1d208e5c6b77d1a99c3ec2b2f7d5f494f465cdc6165fb52269a2233759c0": {
+      "seen_at": "2026-09-17T20:49:27.431712+09:00",
+      "title": "[유관기관 홍보] 양육비 선지급제 소득기준 폐지 안내",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115951&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "35d006a6c88026881e7b5d623eb7fd89f66e1f9efcaa9fdebbaf8217dbe62327": {
+      "seen_at": "2026-09-17T20:49:27.431715+09:00",
+      "title": "[접수] 2026년 국제결혼중개업자 교육 6차 접수(9.30.) 사전안내",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115948&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "09def23a49ded1791c75829e43b676d74aad675ce624d88faab6f25a67b9462f": {
+      "seen_at": "2026-09-17T20:49:27.431718+09:00",
+      "title": "[유관기관 홍보] 2026년 디지털미디어 피해 청소년 회복 지원 사업 인식제고 홍보 이벤트",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115947&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "b4e64abe1e714914d2c42db8cd3ee3a04e31b1c04b4ff9ca1eaba0842c44c47a": {
+      "seen_at": "2026-09-17T20:49:27.431721+09:00",
+      "title": "2026년 한가원 통합 공모전 - 「가족의 행복을 잇는 우수사례 이야기」 _ 기한연장",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115946&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "de5691efda0ab63b10a4814fc55362141c6f2c939fc1cbf0364f99900fdae3d1": {
+      "seen_at": "2026-09-17T20:49:27.431724+09:00",
+      "title": "「2026 대한민국 다문화 어울림 엑스포」참관 안내",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115945&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "af5c920e7c63b37518ce236f882fc6fb5a27ac53b845e318cb74c12ba89831e2": {
+      "seen_at": "2026-09-17T20:49:27.431726+09:00",
+      "title": "[유관기관 홍보] 한국양성평등교육진흥원 \"2026년 양성평등주간 홍보 이벤트 진행\"",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115938&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "b1fef54a3396050bbd0c75b256b42940a1df662f8e6e2d2fe08530238b41ede3": {
+      "seen_at": "2026-09-17T20:49:27.431729+09:00",
+      "title": "[유관기관 홍보] 전국민 복지위기 알림 서비스 안내",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115937&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "41bf70854987df752945fe32e7842747f81e2eda8ce1af5723be41cd396ad56a": {
+      "seen_at": "2026-09-17T20:49:27.431732+09:00",
+      "title": "다누리콜센터1577-1366 지원언어 확대 안내(아랍어, 인도네시아어)",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115936&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "886bec95a805061164a0fb8d34b85500866f94764548d8bb260e462249ba3b9c": {
+      "seen_at": "2026-09-17T20:49:27.431734+09:00",
+      "title": "가족관계교육주간 퀴즈이벤트 안내",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115935&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "608415c400b34d558dbb84415f88da2f68722c1996d83bf5d095044f65b1d711": {
+      "seen_at": "2026-09-17T20:49:27.431737+09:00",
+      "title": "[유관기관 홍보] 2026년 양성평등주간 국민 참여 이벤트 진행",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115932&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    "d1c2d59357474c9ea7c210dac86bb78e84901e34ed522e78b25eee7db6370823": {
+      "seen_at": "2026-09-17T20:49:27.431740+09:00",
+      "title": "한국교통연구원 개원 40주년 기념세미나 환영사 (2026년 8월 25일 (화))",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12001300000&bid=0022&act=view&list_no=300636&tag=&nPage=1"
+    },
+    "7a3d7c5bc46a3506b99e98b7280da0b4f67fa5d58185796e63bac0d62ae5c815": {
+      "seen_at": "2026-09-17T20:49:27.431742+09:00",
+      "title": "한국보건복지인재원 청년정책의 전환과 미래 세미나 축사 (2026년 8월 21일 (금))",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12001300000&bid=0022&act=view&list_no=300635&tag=&nPage=1"
+    },
+    "790a8691b09ae820945f6e07d334aff13e30bacf5d56c1a16719cc3be1ce8a92": {
+      "seen_at": "2026-09-17T20:49:27.431745+09:00",
+      "title": "2026년 수요자 중심 공공데이터 개방을 위한 국민 의견 수렴",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=41&public_seq=41&rows=10&cpage=1"
+    },
+    "8f5399d1f0bead656860f47eddea39b89e2205ec86f15c0a35f109e858c46742": {
+      "seen_at": "2026-09-17T20:49:27.431748+09:00",
+      "title": "창립 20주년 한가원에 바란다",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=40&public_seq=40&rows=10&cpage=1"
+    },
+    "de8e1a8ede9d3166f9bed9dd1db13c1a16a5c0f73e1e35fe39d35647432964c7": {
+      "seen_at": "2026-09-17T20:49:27.431751+09:00",
+      "title": "'다문화 수용성'을 높이기 위한 활동에 대한 의견수렴",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=39&public_seq=39&rows=10&cpage=1"
+    },
+    "79f0c08f0eca6bf3185a527c1536475821197cde6491e90add391efdb47d6e5f": {
+      "seen_at": "2026-09-17T20:49:27.431753+09:00",
+      "title": "'아이돌봄사' 국가자격제에 대한 국민 의견수렴",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=38&public_seq=38&rows=10&cpage=1"
+    },
+    "0d5c8ed5d7e0585178b947e3158daa3e99a3d5a90c8d9c8665814d7bb07a0134": {
+      "seen_at": "2026-09-17T20:49:27.431756+09:00",
+      "title": "한국건강가정진흥원이 국민을 위해 추진해야 할 과제는?",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=36&public_seq=36&rows=10&cpage=1"
+    },
+    "8b4daad0a92a0af9440368866d0466413130ca4222fcd8ae26c64cff926e8f85": {
+      "seen_at": "2026-09-17T20:49:27.431758+09:00",
+      "title": "고객 중심 서비스 제공을 위한 국민 의견수렴",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=34&public_seq=34&rows=10&cpage=1"
+    },
+    "df767e1d8e6e565d26114a1d382346e17564d0e946d6cecaa24c5a2f7469f037": {
+      "seen_at": "2026-09-17T20:49:27.431761+09:00",
+      "title": "한국건강가정진흥원 중점 추진과제와 신규사업에 대한 국민 의견수렴",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=32&public_seq=32&rows=10&cpage=1"
+    },
+    "41b3cf80e3f7d4b39f331d23e842415b203102fcaaa93708ea21f2c8b26ee493": {
+      "seen_at": "2026-09-17T20:49:27.431764+09:00",
+      "title": "가족친화인증 활성화를 위한 인센티브 실효성 제고 방안",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=31&public_seq=31&rows=10&cpage=1"
+    },
+    "02639c622b6164092082a6f94a36e6aa7670909b63ad1dcc74ac0c9fd4db87cd": {
+      "seen_at": "2026-09-17T20:49:27.431767+09:00",
+      "title": "‘다양한 가족 편견 개선’ 국민의견",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=30&public_seq=30&rows=10&cpage=1"
+    },
+    "ba28a62bfd3c070d3d9996515d9e4d143a8bcf18318bb40ff9bf0b7b08ceaad4": {
+      "seen_at": "2026-09-17T20:49:27.431769+09:00",
+      "title": "'가족위기 발생 시 가족센터의 지원 서비스'에 대한 의견수렴",
+      "url": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/view.do?seq=29&public_seq=29&rows=10&cpage=1"
+    },
+    "f554f375b2cb0761590b0d71fc678eafbae2b02d7b1ad80ce76e96cb79207645": {
+      "seen_at": "2026-09-17T20:49:27.431773+09:00",
+      "title": "새글 조선해양 현장특화 sLLM·생성형 AI 활용 교육 참가자 모집",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=944&tag=&nPage=1"
+    },
+    "270d2f597dc449c93e55190a3c427829f977adeb28c97efd58b0d2ab72dc1f4c": {
+      "seen_at": "2026-09-17T20:49:27.431776+09:00",
+      "title": "새글 제7회 KRISO 미래바다 아이디어 공모전 개최",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=942&tag=&nPage=1"
+    },
+    "66f38094d8d90a98b8b0a0a6baa51106f9ca09f07f7668b218db2e33ed680cba": {
+      "seen_at": "2026-09-17T20:49:27.431779+09:00",
+      "title": "해양공학연구동 위험유해환경 개선사업(건축공사) 건설사업관리용역 공사감독자 배치기..",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=939&tag=&nPage=1"
+    },
+    "0149f95e12e888e14fc3f4a9a6460b0aa0b077b9945d9dd4a64540b5886f0b95": {
+      "seen_at": "2026-09-17T20:49:27.431781+09:00",
+      "title": "(수정)\"빙해공학연구동 연구시설 고도화사업 설계 용역\" 제안공모 서면질의..",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=938&tag=&nPage=1"
+    },
+    "d14e36c14a258e20f245526b4e6802215731fa26e05150373737fec0dd3f80e5": {
+      "seen_at": "2026-09-17T20:49:27.431784+09:00",
+      "title": "2026년 UST-KRISO 학술제 개최 안내",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=936&tag=&nPage=1"
+    },
+    "bd45df2f8a7a2094ca3ccf75574cf3fd06f144ddbc4f747b7f8a4bfc087f79d6": {
+      "seen_at": "2026-09-17T20:49:27.431787+09:00",
+      "title": "2026년 세계 습지의 날 정부포상 후보자 공개검증 공고",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=935&tag=&nPage=1"
+    },
+    "8b73306a08415aafcfd73cbc8e2543da68bc7ba5aadf97aef7219faa1615f123": {
+      "seen_at": "2026-09-17T20:49:27.431794+09:00",
+      "title": "서울요양원 입소시설 이용대기 신청 일시 중단 안내",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=336&category=&pageIdx="
+    },
+    "a08bdb41e61e3dc76095c2090353a4d4e08122f497e93a385b6fa6c3d298492f": {
+      "seen_at": "2026-09-17T20:49:27.431797+09:00",
+      "title": "서울요양원 유튜브(YouTube) 채널 개설",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=313&category=&pageIdx="
+    },
+    "8c0d1afbd0e8ab800473dd9d2aeb94c27709ad3b2b67bbb4f7bf5a6b0442f76e": {
+      "seen_at": "2026-09-17T20:49:27.431800+09:00",
+      "title": "서울요양원 도담이랑 체조(한국저작권위원회 저작권 등록 완료, 2025)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=310&category=&pageIdx="
+    },
+    "181a4019939d8a2a84aac090c059b59f651a319e0f97ef2f21f7d008504e33f4": {
+      "seen_at": "2026-09-17T20:49:27.431802+09:00",
+      "title": "서울요양원 입소시설 이용대기자 현황(2026.08.31.현재)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=349&category=&pageIdx="
+    },
+    "b00ad811dc514b5af5a521d34ff5ada08f53521ba9357832581412606c914308": {
+      "seen_at": "2026-09-17T20:49:27.431806+09:00",
+      "title": "서울요양원 입소시설 이용대기자 현황(2026.07.31.현재)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=342&category=&pageIdx="
+    },
+    "c6a95a6c655541969ad9d573ad6a095dba2ad2529eecf5052e62ad8532f03c5a": {
+      "seen_at": "2026-09-17T20:49:27.431809+09:00",
+      "title": "서울요양원 입소시설 이용대기자 현황(2026.06.30.현재)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=340&category=&pageIdx="
+    },
+    "cc50f85167aa2aeac0aad58121d4d3e1e3bb0c73c20715f92ea443958055d5bc": {
+      "seen_at": "2026-09-17T20:49:27.431812+09:00",
+      "title": "서울요양원 입소시설 이용대기자 명단(2026.05.31.현재)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=339&category=&pageIdx="
+    },
+    "122a496b2d6d2eb174d0a194c5dd643865f18cc05b07fb81d824f7cad65c337e": {
+      "seen_at": "2026-09-17T20:49:27.431814+09:00",
+      "title": "서울요양원 입소시설 이용대기자 명단(2026.04.30.현재)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=338&category=&pageIdx="
+    },
+    "cbb3fda7a4d22c66ab9868e6f913c2e82051daff218ade63dd93f0b123e7844b": {
+      "seen_at": "2026-09-17T20:49:27.431817+09:00",
+      "title": "서울요양원 입소시설 이용대기자 현황(2026.04.01.현재)",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=335&category=&pageIdx="
+    },
+    "8f0b059b4492feff05201492df0cf1e8046183073c94b7c7b8dad613da4299fb": {
+      "seen_at": "2026-09-17T20:49:27.431820+09:00",
+      "title": "2025년 국민건강보험공단 서울요양원(입소시설,재가복지센터)세입세출 결산서",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?boardId=bbs_0000000000000007&mode=view&cntId=334&category=&pageIdx="
+    },
+    "8df8e56f36d3a9cb1421f6ee95c82d2cef9eaa2da117dda47892f237e65ef9ec": {
+      "seen_at": "2026-09-17T20:49:27.431823+09:00",
+      "title": "처음페이지",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?pageIdx=1"
+    },
+    "284d2f38da5b892647c6bc438ac40231a9b2da61fb828ede41ba619a7849a856": {
+      "seen_at": "2026-09-17T20:49:27.431826+09:00",
+      "title": "2페이지",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?pageIdx=2"
+    },
+    "8233aa087f949f4cc32e79811b584526ff093f9c27f7b3089cf5e44ea8a9241d": {
+      "seen_at": "2026-09-17T20:49:27.431829+09:00",
+      "title": "3페이지",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?pageIdx=3"
+    },
+    "ea08c82f39c05b0539087e327e334f771a68da27419015ea120ef9b9a2819214": {
+      "seen_at": "2026-09-17T20:49:27.431832+09:00",
+      "title": "4페이지",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?pageIdx=4"
+    },
+    "868c897d31c0730dee2797cdd3abe1dd8a3f257229a1833cd9dd90efc4e3392b": {
+      "seen_at": "2026-09-17T20:49:27.431834+09:00",
+      "title": "5페이지",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/Notice/?pageIdx=5"
+    },
+    "35008cec8a6b5006dd340eb0d4667c4cc3116611fd0879efa0e2302b6e59ec39": {
+      "seen_at": "2026-09-17T20:49:27.431837+09:00",
+      "title": "한국공공조직은행, 2026년도 인체조직 전문가 양성과정 운영 상세보기",
+      "url": "https://kptb.kr/subpage_0512_view.asp?idx=1269"
+    },
+    "dfd3c6dc3c142952c2990b0673e6e3326b6eb8a532b287fc8fd137ca326bb9ac": {
+      "seen_at": "2026-09-17T20:49:27.431839+09:00",
+      "title": "냉동고·청정실 설비 안정 운영을 위한 UPS 용량 증설 완료 상세보기",
+      "url": "https://kptb.kr/subpage_0512_view.asp?idx=1042"
+    },
+    "50d4ba83a9e91d9686e8d1702db6eb908418620f31b0c25c21eee9c748c7e50a": {
+      "seen_at": "2026-09-17T20:49:27.431842+09:00",
+      "title": "신촌세브란스병원 흉부외과 박한기교수님 초청, 동종 인체조직 이식 최신 동향 강연 개최 상세보기",
+      "url": "https://kptb.kr/subpage_0512_view.asp?idx=1040"
+    },
+    "e47823e9f671228e4d87bae23202a7b9182f93cab060c583f3c3ba3e47509f2b": {
+      "seen_at": "2026-09-17T20:49:27.431845+09:00",
+      "title": "성남조직은행, 비상발전기 설치로 인체조직 안전관리 강화 상세보기",
+      "url": "https://kptb.kr/subpage_0512_view.asp?idx=1038"
+    },
+    "03ccbf61399676cd1c8bfef7e32ba756b6716c16664820652a1d61d824fb4e10": {
+      "seen_at": "2026-09-17T20:49:27.431848+09:00",
+      "title": "한국공공조직은행 성남조직은행, 한국생명기술연구조합 차영주 이사님 초청강연 상세보기",
+      "url": "https://kptb.kr/subpage_0512_view.asp?idx=957"
+    },
+    "82922307b05d911c782865ba3e2e25979d094b331c60ed0e75ba1d6f004a1761": {
+      "seen_at": "2026-09-17T20:49:27.431850+09:00",
+      "title": "[연구혁신본부] 2026년 바이오세라믹테크노베이터 입주기업 상시모집 공고 새 글",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12060&amode=view&"
+    },
+    "78f75049ac80813c71c8be67abf650d9a91caea0fbaa2c6b24cdfe3c97a7a75f": {
+      "seen_at": "2026-09-17T20:49:27.431853+09:00",
+      "title": "[산업지원본부] 한국세라믹학회 \"세라믹 취업브릿지\" 사전신청 새 글",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12315&amode=view&"
+    },
+    "0e99ffce566a5f722b565c8c16f8617ac5b7466ba595392f2f7cd63a88a50b12": {
+      "seen_at": "2026-09-17T20:49:27.431856+09:00",
+      "title": "[기획조정본부] 2026년 3차 KICET 기술이전조건부사업화지원사업 수혜기업 추가 모집 공고",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12311&amode=view&"
+    },
+    "85361e3c571fffeb741481f0a00c458537e0391ecf2d1d24e6d8a615c2cfc0cb": {
+      "seen_at": "2026-09-17T20:49:27.431859+09:00",
+      "title": "[경영혁신본부] 2026년 중대재해예방지원 사업 모집 공고",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12301&amode=view&"
+    },
+    "0678cd27f4e8838ed0841c67969034d0116ab895c0a89658ab135b13ea836a74": {
+      "seen_at": "2026-09-17T20:49:27.431862+09:00",
+      "title": "[기획조정본부] 2026년 3차 KICET 기술이전조건부사업화지원사업 수혜기업 모집 공고",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12297&amode=view&"
+    },
+    "59bed94698281a8b168045d3749050d9f32ceac3dd6c90c8ef915d793a9170f5": {
+      "seen_at": "2026-09-17T20:49:27.431865+09:00",
+      "title": "[기획조정본부] 한국세라믹기술원(이천)창업보육센터 2차 입주기업 모집 공고",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12289&amode=view&"
+    },
+    "0e22e09a02fd71a23c827098370a7df6e902eb9a757e84226bff169ccd3f9012": {
+      "seen_at": "2026-09-17T20:49:27.431868+09:00",
+      "title": "[경영혁신본부] 2026년도 하반기 2차 연수연구원 모집공고",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12132&amode=view&"
+    },
+    "ccc2622ba7151aee8d7bbcfb18ea3d63284cc1e665fe778988ccca9fb844be70": {
+      "seen_at": "2026-09-17T20:49:27.431870+09:00",
+      "title": "[산업지원본부] 2026년 2차 KICET 기술이전조건부사업화지원사업 수혜기업 추가 모집 공고",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12131&amode=view&"
+    },
+    "e376727e53623dc9817f118435772665456e8da06ab85b7f21e95c4c542b0d60": {
+      "seen_at": "2026-09-17T20:49:27.431873+09:00",
+      "title": "[연구혁신본부] 융합바이오소재기업 경쟁력 강화사업 수혜기업 모집 공고(3차)",
+      "url": "https://www.kicet.re.kr/00020/00117/00120.web?gcode=1015&idx=12120&amode=view&"
+    },
+    "04233804e3b7485bf93b28a45dad88b313d22a893c07173f65bda8d07213d8a4": {
+      "seen_at": "2026-09-17T20:49:27.431879+09:00",
+      "title": "국제식물검역인증원 2026년 부패방지 의무교육 이행현황 알림",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=8131"
+    },
+    "26586175488b04e26fbc7077d9322af7c898de2ac3fd8f13aa1f4bb93bc8764f": {
+      "seen_at": "2026-09-17T20:49:27.431882+09:00",
+      "title": "2025년 가을철「산불조심기간」알림",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7432"
+    },
+    "52c30b54a123b4f034b3128875ee97ef13d63b11751a21bbf84e10d8c0fa950f": {
+      "seen_at": "2026-09-17T20:49:27.431885+09:00",
+      "title": "국제식물검역인증원 2025년 부패방지 의무교육 이행현황 알림",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7394"
+    },
+    "4c112ece8a7302ed44fe065c30818bad2aeae70e3d0a422798b2d70c98898346": {
+      "seen_at": "2026-09-17T20:49:27.431888+09:00",
+      "title": "2025년 국민참여 청렴콘텐츠 공모전 안내",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7278"
+    },
+    "f66177d2bd313f86a5f587acc5fe415760cc72afe134d8b54eb6f36ce49e35f3": {
+      "seen_at": "2026-09-17T20:49:27.431891+09:00",
+      "title": "2025년 이해충돌 한마디 공모전 알림",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7246"
+    },
+    "a9bc3d9edbeb48490a100a5ba9a90237773c30a64230e031bb887b6a535de0ad": {
+      "seen_at": "2026-09-17T20:49:27.431894+09:00",
+      "title": "2025년 아시아매미나방 선박 검역 수수료 25% 인하 알림(2024년과 동일)",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=7165"
+    },
+    "2027ed655c50d8c06d0d28e0152f670825158b037e6c54a3c99da009b5880a75": {
+      "seen_at": "2026-09-17T20:49:27.431897+09:00",
+      "title": "국제식물검역인증원 2024년 부패방지 의무교육 이행현황 알림",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=6991"
+    },
+    "7e32805ef3fda30032202f50e58e1c3cc72bfcbfa039e799394731a420f11829": {
+      "seen_at": "2026-09-17T20:49:27.431900+09:00",
+      "title": "청렴시민감사관 모집 재공고",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=6499"
+    },
+    "88dcc68b01289fba9a554e57e97c57e43e954a1110897497b0132a0b62eced79": {
+      "seen_at": "2026-09-17T20:49:27.431902+09:00",
+      "title": "청렴시민감사관 모집 공고",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=6483"
+    },
+    "6916613dd571e960d62c96bbb3afa88c0fcf9871572401a482be6dcb3d6b52a1": {
+      "seen_at": "2026-09-17T20:49:27.431905+09:00",
+      "title": "2024년 선박 AGM 검사 수수료 25% 인하 알림('23년과 동일)",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068&mode=view&mgr_seq=4&board_seq=6466"
+    },
+    "3ec591af5ccfb8d3edf4a684667de9bfee1ec2bba262f7bf5dcf10a673beba53": {
+      "seen_at": "2026-09-17T20:49:27.431908+09:00",
+      "title": "새글 송전망 급한 정부…송전탑 덜 짓고 주거지 주변은 지중화(종합)",
+      "url": "https://www.keei.re.kr/board.es?mid=a10202010000&bid=0007&act=view&list_no=128203&tag=&nPage=1"
+    },
+    "b5e4c8dfb8b4aa3be8b279fe7741c436582705160e94ff0d3d7ca6eeae4815d6": {
+      "seen_at": "2026-09-17T20:49:27.431911+09:00",
+      "title": "새글 유가 급등 속 美 G20 에너지회의 개최…러시아 참석도 논란",
+      "url": "https://www.keei.re.kr/board.es?mid=a10202010000&bid=0007&act=view&list_no=128199&tag=&nPage=1"
+    },
+    "5b23ab14ec5c5844c6864a1c4d580f57a6d44abe475c08f921f702d8d538fd1f": {
+      "seen_at": "2026-09-17T20:49:27.431915+09:00",
+      "title": "[한국지식재산보호원] 2026년 영업비밀·기술보호 컨설팅 모집 공고",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=129162&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "46abd674d4817a0903880643bf4ff238bb7d430025177cfd9e6b9462bf7c7b33": {
+      "seen_at": "2026-09-17T20:49:27.431918+09:00",
+      "title": "[한국지식재산보호원] 2026년 K-브랜드 정부인증제도 참여기업 2차 모집",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=129158&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "2ff7a1eabb1ef2297b0e43b7f97723bd9eb7e9407a822caaa4ac00cb159230bd": {
+      "seen_at": "2026-09-17T20:49:27.431921+09:00",
+      "title": "[안내/한국산업기술진흥원] 2026년 에너지공기업 기술나눔 공고",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=129079&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "23b6dd6148b9ed73155123ac9e0ddd63926f9174fdb70f74143565c3a05fb516": {
+      "seen_at": "2026-09-17T20:49:27.431924+09:00",
+      "title": "[안내/기술보증기금] 2026년 「기술거래 서포터즈」 시행계획 수정 공고",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=129078&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "7b1d9b6766f0e74e2c406e96622d3d8257993c3d53bdcb1e40c93d6919ed89de": {
+      "seen_at": "2026-09-17T20:49:27.431928+09:00",
+      "title": "[안내/기술보증기금] 2026년 「혁신중개 촉진 지원사업」 시행계획 수정 공고",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=129077&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "2a30a754be879ad3d3197eb8f0c301ac37e85a23c738224532e5b5a8b0d97da1": {
+      "seen_at": "2026-09-17T20:49:27.431931+09:00",
+      "title": "[한국지식재산보호원] 2026년 특허분쟁 대응전략 지원사업 안내",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=129052&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "ab9756b4f748bbbcf7f82409a9a53bfadb0cdca7b0bf1dfec99f1559712869eb": {
+      "seen_at": "2026-09-17T20:49:27.431934+09:00",
+      "title": "[지식재산단체총연합회] 「2026 국가지식재산네트워크(KIPnet) 컨퍼런스」 개최 안내",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=128940&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "ca2d2bb15d1bd7f148c30fcc9eadaa29c7d0a6eb214c37bc8325824826145460": {
+      "seen_at": "2026-09-17T20:49:27.431937+09:00",
+      "title": "[한국인공지능·소프트웨어산업협회] 제5회 2026 대한민국 고등학생 AI·SW 개발 공모전",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=127894&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "8a91fbc3f3e771918a3e627916e5b323a9678de1f8e23db92a7027fb53ed2194": {
+      "seen_at": "2026-09-17T20:49:27.431939+09:00",
+      "title": "[서울시립대학교] 혁신과 조세(i-Tax) 최고경영자과정(AMP) 2기 모집",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=127882&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "fc0c64dc8631584e582eb684f12996093a51d388f5c5063d0cfe01fd365ea7d4": {
+      "seen_at": "2026-09-17T20:49:27.431942+09:00",
+      "title": "[지식재산보호원] 2026년 하반기 「찾아가는 IP 분쟁닥터」 현장지원 안내",
+      "url": "https://www.kipa.org/kipa/notice/kw_0404.jsp?mode=view&article_no=126590&board_wrapper=%2Fkipa%2Fnotice%2Fkw_0404.jsp&pager.offset=0&board_no=85"
+    },
+    "627a8b0ef3416cb29768b4d0867ea2380f32daa9409aae9588034b8f53472bf7": {
+      "seen_at": "2026-09-17T20:49:27.431945+09:00",
+      "title": "2025 국가연구개발 우수성과 100선 선정 결과 발표 안내",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94482&nPage=1"
+    },
+    "24325688cdf2f65c76d2b601fb10318b131bffdc421896ef928d17ecad584b59": {
+      "seen_at": "2026-09-17T20:49:27.431970+09:00",
+      "title": "함께해요 을지연습! 든든한 대한민국! 2026 을지연습 홍보영상",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94824&tag=&nPage=1"
+    },
+    "da4cdaecad926613c8d6a32106fc40f902146dd7ca4bfc3d72427b61a11fd637": {
+      "seen_at": "2026-09-17T20:49:27.431974+09:00",
+      "title": "2026년 을지연습 국민참여 안보퀴즈",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94813&tag=&nPage=1"
+    },
+    "a34a3d2f566f696c3bb3b8ea453779a79823f1c554ca81097e587eca27b170b8": {
+      "seen_at": "2026-09-17T20:49:27.431976+09:00",
+      "title": "한국과학기술기획평가원 원장 초빙 공고",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94810&tag=&nPage=1"
+    },
+    "4c97a08bea2641e79f116c1dc8c85afbab72f14fc666a13d34a0b8efa3ead426": {
+      "seen_at": "2026-09-17T20:49:27.431979+09:00",
+      "title": "[자료] AI 에이전트 시대의 생존매뉴얼(2025년 기술영향평가 결과) 책자",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94792&tag=&nPage=1"
+    },
+    "8ceb619e727428f8484bc481ee4afdee29ed2f2f66586253891436489e579e2b": {
+      "seen_at": "2026-09-17T20:49:27.431982+09:00",
+      "title": "2026년도 7월 「국가연구개발혁신법 매뉴얼」 개정 안내",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94788&tag=&nPage=1"
+    },
+    "1a8d8c246f5f9e0cfcec6bdaaa6b6044ace9bd19aab9ffc77d5e4c3dad840838": {
+      "seen_at": "2026-09-17T20:49:27.431985+09:00",
+      "title": "[긴급/주의] 사칭피해 예방 안내문",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94768&tag=&nPage=1"
+    },
+    "d7c319006625581f7ad4033a44b70993049e34ad81ec8846dfad80d7e5e1581b": {
+      "seen_at": "2026-09-17T20:49:27.431988+09:00",
+      "title": "KISTEP 대표홈페이지 이용자 만족도조사 안내",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94766&tag=&nPage=1"
+    },
+    "f4147a24f829e8d7de28b4be99c521221f80cd238e6c5d1db32e52af9c7126b0": {
+      "seen_at": "2026-09-17T20:49:27.431990+09:00",
+      "title": "2026년도 국가연구개발혁신법 매뉴얼 개정 안내",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94702&tag=&nPage=1"
+    },
+    "2146113f481263dc498ab393cd3e65ea74f1d6084415f446684a119afa5aca61": {
+      "seen_at": "2026-09-17T20:49:27.431993+09:00",
+      "title": "‘2026년 KISTEP Fellowship Program’ 과제공모 선정결과 안내",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94673&tag=&nPage=1"
+    },
+    "e3655c7b48bbda3175310230f70985823413ccb8678bce41886e412719935d3e": {
+      "seen_at": "2026-09-17T20:49:27.431996+09:00",
+      "title": "2026년도 연구지원체계평가 및 간접비고시비율 산출 안내 공고",
+      "url": "https://www.kistep.re.kr/board.es?mid=a10402000000&bid=0003&act=view&list_no=94672&tag=&nPage=1"
+    },
+    "2bca9a75d272639e989e7069746384424363faffefb3144fdecc7c0660f83519": {
+      "seen_at": "2026-09-17T20:49:27.432003+09:00",
+      "title": "「형사정책연구」 2026·가을호 논문투고 안내",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18474&nPage=1"
+    },
+    "e38dc5a88267985fa929da021e4cb265f1ebaabe5219b87ba7b37d7f0fc004a4": {
+      "seen_at": "2026-09-17T20:49:27.432005+09:00",
+      "title": "도서 정리 2026 자원봉사자 모집 안내 (변경공지)",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18447&nPage=1"
+    },
+    "b9b4539d963778ef4ebf3de732cdd5c6187b1bef2065ac1ebd2d80e9936ad42b": {
+      "seen_at": "2026-09-17T20:49:27.432008+09:00",
+      "title": "한국형사·법무정책연구원 금리 제안 공모",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18437&nPage=1"
+    },
+    "d279250a527a9488b2ccb7a105c04d123f58cee9b151576d1b3c2de55e8f6492": {
+      "seen_at": "2026-09-17T20:49:27.432011+09:00",
+      "title": "2026년도 연구보고서 특별구독회원 신청 안내",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18362&nPage=1"
+    },
+    "ac4ca94e59299976ba6be4f24838c419778abbbe166932abe7e1ad49e8b86f03": {
+      "seen_at": "2026-09-17T20:49:27.432014+09:00",
+      "title": "Law Expo Seoul 2026 자원봉사자 모집안내",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18325&nPage=1"
+    },
+    "5ae2a57ca14792127f236085a5581bdf9601e381ca84d1362866fabe7f1e7550": {
+      "seen_at": "2026-09-17T20:49:27.432016+09:00",
+      "title": "2026년 하반기 연구과제 수요조사",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18280&nPage=1"
+    },
+    "362f227ba31e51137b6aaed55f0bb842a5057714a3996c5153e54665224ccf39": {
+      "seen_at": "2026-09-17T20:49:27.432019+09:00",
+      "title": "한국형사·법무정책연구원 국민을 위한 형사사법개혁 대토론회 패널 모집 공고(~6.5)",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18252&nPage=1"
+    },
+    "d009c505c6d3e44857962cc7515d073fec9e3d7f0ba49a5caa30595cfe7b6877": {
+      "seen_at": "2026-09-17T20:49:27.432022+09:00",
+      "title": "한국법제연구원 원장 초빙공고",
+      "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18253&nPage=1"
+    },
+    "215f67670617411778617f869f44cdca0266001c985c2c97fa7e92f11f8250b0": {
+      "seen_at": "2026-09-17T20:49:27.432025+09:00",
+      "title": "2026년 공공데이터 활용 아이디어 및 사례 공모전 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=600461&article.offset=0&articleLimit=10"
+    },
+    "61d98455ac5da4e880d2017fc1f86639e83867143f711747f43aefe9677db44b": {
+      "seen_at": "2026-09-17T20:49:27.432028+09:00",
+      "title": "공공데이터 활용 아이디어 공모전 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=599138&article.offset=0&articleLimit=10"
+    },
+    "cbb684c0e8671589353f1d7b57f0031933c76a6297511fcfce07e766dc8e0751": {
+      "seen_at": "2026-09-17T20:49:27.432030+09:00",
+      "title": "주택금융 체험수기 공모 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=599049&article.offset=0&articleLimit=10"
+    },
+    "bc9b790be6e2263ef213d63803a61e7f5e41f9b24fdeec8af028dd99fc9815c6": {
+      "seen_at": "2026-09-17T20:49:27.432033+09:00",
+      "title": "안전 아이디어 대국민 공모 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=598520&article.offset=0&articleLimit=10"
+    },
+    "2099a63f7a4f3d7f4e4a3f5ce5ff6006db61526e81f9813d5197f932aa8d809a": {
+      "seen_at": "2026-09-17T20:49:27.432036+09:00",
+      "title": "인구구조 변화 대응을 위한 대국민 정책제안 (9/30~11/29) 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=597442&article.offset=0&articleLimit=10"
+    },
+    "36b49fbaf1c16311194c6897911768200392ce583e8e2298ff54d3af2570fd3d": {
+      "seen_at": "2026-09-17T20:49:27.432039+09:00",
+      "title": "HF 대국민 혁신 아이디어 공모 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=596755&article.offset=0&articleLimit=10"
+    },
+    "528f7c7cf7abb584a6727605f1e46f3c6df4967e05a442bee857ca1bab67264e": {
+      "seen_at": "2026-09-17T20:49:27.432041+09:00",
+      "title": "HF ESG 경영 대국민 아이디어 공모 (7/12~7/31) 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=594549&article.offset=0&articleLimit=10"
+    },
+    "756fe0bb915a9d9b619c500285928a86c9d2c78cc1ebe37a1d361d111eb8b699": {
+      "seen_at": "2026-09-17T20:49:27.432044+09:00",
+      "title": "주택연금 이용고객 체험수기 공모 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=593789&article.offset=0&articleLimit=10"
+    },
+    "fcc910dad58bae31ba23d8faee7cb18bcebd5aab7d2b55581c6ee83862e2bb97": {
+      "seen_at": "2026-09-17T20:49:27.432047+09:00",
+      "title": "HF 대국민 혁신 아이디어 공모 (~5.24까지 연장) 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=593426&article.offset=0&articleLimit=10"
+    },
+    "5c13da9b24f4f79f8acba27f84f174a0cd5faf37a4f4262875890ccfaeca07f4": {
+      "seen_at": "2026-09-17T20:49:27.432050+09:00",
+      "title": "청년 전월세 체험수기 공모전 자세히 보기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=568488&article.offset=0&articleLimit=10"
+    },
+    "879787546408a716e7c6d9fd669df2fa9154451f79d03e63343aa746b0631180": {
+      "seen_at": "2026-09-17T20:49:27.432053+09:00",
+      "title": "2026년 주택금융 및 보금자리론 실태조사 고객 안내 2026-09-07",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600572"
+    },
+    "03d4a701f87308331b8fdabd56ce2193bdc5f58c05adfd8ff2355b6dea9c50d5": {
+      "seen_at": "2026-09-17T20:49:27.432056+09:00",
+      "title": "2026년 주택금융 콘퍼런스 개최 안내 2026-08-31",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600525"
+    },
+    "ef742a22bd408237b09d9af8280a28fa07e07d5253b59112ad840d577db5f178": {
+      "seen_at": "2026-09-17T20:49:27.432059+09:00",
+      "title": "2026년 주택연금 수요실태조사 고객 안내 2026-08-24",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600486"
+    },
+    "3e5f9570faa684dd186e74a7e3c5e40d41edc3936718eea3bc45e8c0c505b5fb": {
+      "seen_at": "2026-09-17T20:49:27.432063+09:00",
+      "title": "2026 을지연습 연계 공습대비 민방위 훈련 전국 동시 실시 2026-08-18",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600470"
+    },
+    "914745ec7e4bfe8e983d74acedab67bd1dfa18616b1ca98bcbfb8b772887d68b": {
+      "seen_at": "2026-09-17T20:49:27.432067+09:00",
+      "title": "2026년 을지연습에 동참해 주세요 2026-08-18",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600469"
+    },
+    "80bb239781c2ade716560ae0791558797cbdb92f8fb38c6922fb9bface0dcea3": {
+      "seen_at": "2026-09-17T20:49:27.432070+09:00",
+      "title": "2026년도 주택연금 명예홍보대사 모집 2026-08-10",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600454"
+    },
+    "e483fdda947f6e649337b1c306b272d34cda8a232bf5e6e67cbcdfccd31c968b": {
+      "seen_at": "2026-09-17T20:49:27.432072+09:00",
+      "title": "주택금융공사, 부산 광안리서 체험형 반짝매장으로 만난다 2026-09-10",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600580"
+    },
+    "8a3b748113395cf9ba0411493d05bbe23aa2cf57f9f64721daf5923031df97da": {
+      "seen_at": "2026-09-17T20:49:27.432075+09:00",
+      "title": "주택금융공사, 공공기관 최초 국제기후채권기구(CBI) 본상 수상 2026-09-10",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600579"
+    },
+    "cbbbac670747dbf8e9a4537dfc108b953a5b1be427b285dd36c8a9dd94b7d6ea": {
+      "seen_at": "2026-09-17T20:49:27.432078+09:00",
+      "title": "주택금융공사, 지역사회와 함께 부산도시철도 시민 편의 높여 2026-09-09",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600578"
+    },
+    "5134b7e2f109b61fd685d09cabbefeb74eedf9f83faa52a88407ac93a470c3c5": {
+      "seen_at": "2026-09-17T20:49:27.432081+09:00",
+      "title": "보증기관 3사, 전세보증금 미반환 임대인 정보 공유한다 2026-09-07",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600570"
+    },
+    "8473aad4de63eeab1fdf95d54192c015343c9cdf11d2aa51e6c9475d9ce64669": {
+      "seen_at": "2026-09-17T20:49:27.432084+09:00",
+      "title": "주택금융공사, 일본주택금융지원기구와 ‘2026 국제 주택금융 콘퍼런스’ 공동 개최 2026-09-04",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600568"
+    },
+    "8698c930d6884363b93b11669b2b0bb119d33144195a66ac0048d99a0c526529": {
+      "seen_at": "2026-09-17T20:49:27.432087+09:00",
+      "title": "주택금융공사, 8억 유로 커버드본드 성공적 발행 2026-09-01",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600558"
+    },
+    "cc1fff7f61c5f90187ee73f3625d8dd9539ac88ff7ca59ca47fd8850e35597f8": {
+      "seen_at": "2026-09-17T20:49:27.432090+09:00",
+      "title": "「HF AI 기반 지원시스템 통합 고도화 사업」 제안서 평가결과 2026-09-02",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_06.do?mode=view&articleNo=600563"
+    },
+    "c4492fde98475f97bdbd03b14223a4fefabf50bb09caa4bc919b4a3a2998e261": {
+      "seen_at": "2026-09-17T20:49:27.432093+09:00",
+      "title": "「직무중심 인사 보수체계 고도화 용역」 제안서 평가결과 2026-08-21",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_06.do?mode=view&articleNo=600484"
+    },
+    "3083fa7485b3cf98595abe77c5b057eed5357ae12b0dd5046a889c0b5c4d392d": {
+      "seen_at": "2026-09-17T20:49:27.432096+09:00",
+      "title": "「주택연금 안심자산보호서비스」 상품개발 연구용역 제안서 평가결과 2026-08-19",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_06.do?mode=view&articleNo=600474"
+    },
+    "1e0eb7ba7283eba3932676fb68aa7199937fd970a0ef699ad6e86df265f4afb6": {
+      "seen_at": "2026-09-17T20:49:27.432098+09:00",
+      "title": "[KIEP Webzine Vol.20 No.12] 디지털 전환 투자와 지역 노동시장 변화: EU Digital Europe Programme을 중심으로 / 북한 제9차 당대회 이후 북한의 경제 정책 및 대외전략 변화에 대한 평가 / 중동 전쟁에 따른 비료..",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=24944&nPage=1"
+    }
+  },
+  "initialized": true,
+  "last_run": "2026-09-17T20:49:27.432101+09:00"
 }
