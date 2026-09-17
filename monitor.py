@@ -1,4 +1,4 @@
-VERSION = "V8.11"
+VERSION = "V8.11.1"
 import os, re, json, time, html, warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin, urlparse, parse_qs
@@ -22,7 +22,7 @@ HTTP_RETRIES = int(os.getenv("HTTP_RETRIES", "2"))
 TELEGRAM_MAX_SEND = int(os.getenv("TELEGRAM_MAX_SEND", "20"))
 MAX_PENDING = int(os.getenv("MAX_PENDING", "10000"))
 
-UA = "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.10)"
+UA = "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.11.1)"
 
 NOISE = ["script","style","noscript","svg","header","footer","nav","aside","form","iframe","canvas","template"]
 BOARD_WORDS = ["공지사항","공지","알림마당","알림","소식","새소식","기관소식","게시판","뉴스","보도자료"]
@@ -34,63 +34,6 @@ session.headers.update({
     "User-Agent": UA,
     "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.5"
 })
-
-
-# =========================
-# V8.11 board discovery enhancement
-# =========================
-BOARD_TEXT_PATTERNS = [
-    "공지사항", "공지", "알림마당", "알림", "소식", "새소식",
-    "게시판", "참여", "소통", "뉴스", "자료실", "고시", "공고",
-    "입찰", "채용", "보도자료", "고객참여", "국민참여", "시민참여",
-]
-BOARD_URL_PATTERNS = [
-    "notice", "notic", "news", "board", "bbs", "community", "comm",
-    "webzine", "article", "list", "view", "contents", "sub",
-]
-NON_BOARD_URL_PATTERNS = [
-    "login", "logout", "member", "privacy", "sitemap", "search",
-    "filedownload", "download", "javascript:", "mailto:"
-]
-
-
-# V8.11 settings
-BOARD_DISCOVERY_DEPTH = 2
-BOARD_DISCOVERY_MAX_LINKS = 80
-BOARD_DISCOVERY_TIMEOUT = 12
-BOARD_DISCOVERY_MIN_SCORE = 4
-
-def _v811_norm(s):
-    try:
-        return re.sub(r"\s+", " ", str(s or "")).strip().lower()
-    except Exception:
-        return str(s or "").strip().lower()
-
-def _v811_is_candidate_link(text, href):
-    t = _v811_norm(text)
-    h = _v811_norm(href)
-    if not h or any(x in h for x in NON_BOARD_URL_PATTERNS):
-        return False
-    text_hit = any(p.lower() in t for p in BOARD_TEXT_PATTERNS)
-    url_hit = any(p in h for p in BOARD_URL_PATTERNS)
-    # Prefer links whose visible label or URL looks like a public notice board.
-    return text_hit or url_hit
-
-def _v811_score_link(text, href):
-    t = _v811_norm(text)
-    h = _v811_norm(href)
-    score = 0
-    for p in BOARD_TEXT_PATTERNS:
-        if p.lower() in t:
-            score += 8 if p in ("공지사항", "새소식", "알림마당", "게시판") else 4
-    for p in BOARD_URL_PATTERNS:
-        if p in h:
-            score += 2
-    if any(x in h for x in ("view", "article")):
-        score -= 2
-    if len(t) > 40:
-        score -= 1
-    return score
 
 
 def norm(s):
@@ -237,6 +180,131 @@ def discover_board_v811(home_url, fetch_html_func):
 
     verified.sort(key=lambda x: (-x[0], -x[4], -x[3], x[1]))
     return verified[0][1]
+
+
+# =========================
+# V8.11.1: targeted board-discovery diagnostics
+# =========================
+V8111_MAX_NAV_PAGES = int(os.getenv("V8111_MAX_NAV_PAGES", "8"))
+V8111_MAX_CANDIDATES = int(os.getenv("V8111_MAX_CANDIDATES", "25"))
+V8111_MIN_SCORE = int(os.getenv("V8111_MIN_SCORE", "4"))
+V8111_DIAG_FILE = "board_discovery_log.json"
+
+V8111_BOARD_TEXT = [
+    "공지사항", "공지", "알림마당", "알림", "소식", "새소식", "기관소식",
+    "게시판", "뉴스", "보도자료", "자료실", "고시", "공고", "참여", "소통",
+    "국민참여", "시민참여", "고객참여"
+]
+V8111_BOARD_URL = [
+    "notice", "noti", "board", "bbs", "news", "announcement", "community",
+    "particip", "engage", "citizen", "people", "plaza", "article", "list"
+]
+V8111_BAD_TEXT = ["채용", "입찰", "계약", "로그인", "회원", "사이트맵", "개인정보", "이용약관"]
+
+
+def v8111_score(url, text):
+    u, t = url.lower(), norm(text).lower()
+    score = 0
+    for w in V8111_BOARD_TEXT:
+        if w.lower() in t:
+            score += 7 if w in ("공지사항", "새소식", "알림마당", "게시판") else 3
+    for h in V8111_BOARD_URL:
+        if h in u:
+            score += 2
+    for b in V8111_BAD_TEXT:
+        if b.lower() in t:
+            score -= 5
+    if detail_signal(url):
+        score -= 4
+    return score
+
+
+def discover_board_v8111(home):
+    """Targeted fallback for institutions still marked NO_BOARD.
+    Returns (board_url, recent_detail_urls, diagnostic_record).
+    It is deliberately bounded so the daily 355-site run does not balloon.
+    """
+    diag = {
+        "home": home, "result": "HOME_ERROR", "nav_pages": 0,
+        "candidates": 0, "verified": 0, "best_score": 0,
+        "best_url": None, "candidate_samples": []
+    }
+    r = get(home)
+    if not r:
+        return None, [], diag
+
+    visited_pages = {r.url}
+    queue = []
+    candidates = []
+    first_links = extract_links(r.url, BeautifulSoup(r.text, "html.parser"))
+
+    def add_candidate(u, tx):
+        if not u.startswith(("http://", "https://")) or not same_domain(home, u):
+            return
+        sc = v8111_score(u, tx)
+        if sc >= V8111_MIN_SCORE:
+            candidates.append((sc, u, tx))
+
+    # Home page: collect board candidates and a small number of navigation pages.
+    for u, tx in first_links:
+        add_candidate(u, tx)
+        nt = norm(tx).lower()
+        if any(k in nt for k in ("알림", "소식", "참여", "소통", "게시", "정보", "고객")):
+            queue.append(u)
+
+    # One bounded navigation hop. This catches sites where the board is behind a top menu.
+    for nav in list(dict.fromkeys(queue))[:V8111_MAX_NAV_PAGES]:
+        if nav in visited_pages:
+            continue
+        rr = get(nav)
+        visited_pages.add(nav)
+        diag["nav_pages"] += 1
+        if not rr:
+            continue
+        for u, tx in extract_links(rr.url, BeautifulSoup(rr.text, "html.parser")):
+            add_candidate(u, tx)
+
+    # Deduplicate and verify candidate pages as actual list boards.
+    unique = {}
+    for sc, u, tx in candidates:
+        if u not in unique or sc > unique[u][0]:
+            unique[u] = (sc, u, tx)
+    ranked = sorted(unique.values(), key=lambda x: (-x[0], x[1]))[:V8111_MAX_CANDIDATES]
+    diag["candidates"] = len(unique)
+    diag["candidate_samples"] = [
+        {"score": sc, "url": u, "text": norm(tx)[:80]} for sc, u, tx in ranked[:8]
+    ]
+
+    verified = []
+    for sc, u, tx in ranked:
+        rr = get(u)
+        if not rr:
+            continue
+        ss = BeautifulSoup(rr.text, "html.parser")
+        details = list(dict.fromkeys([x for x, _ in extract_links(rr.url, ss) if detail_url(x)]))
+        # The same criterion as the proven V8.10/11 board detector: >=2 detail links.
+        if len(details) >= 2:
+            verified.append((sc, rr.url, details[:RECENT_POSTS], tx))
+
+    diag["verified"] = len(verified)
+    if verified:
+        verified.sort(key=lambda x: (-x[0], -len(x[2]), x[1]))
+        sc, board, details, tx = verified[0]
+        diag["result"] = "VERIFIED"
+        diag["best_score"] = sc
+        diag["best_url"] = board
+        return board, details, diag
+
+    diag["result"] = "CANDIDATE_NOT_VERIFIED" if unique else "NO_CANDIDATE"
+    return None, [], diag
+
+
+def write_v8111_diag(records):
+    try:
+        with open(V8111_DIAG_FILE, "w", encoding="utf-8") as f:
+            json.dump(records, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
 
 def discover_board(home):
@@ -398,10 +466,11 @@ def priority(m):
 def process(t, state, deadline):
     name, home, seed = t["name"], t["home"], t["board"]
     if time.time() >= deadline:
-        return {"name": name, "status": "DEADLINE", "posts": 0, "matches": []}
+        return {"name": name, "status": "DEADLINE", "posts": 0, "matches": [], "diag": None}
 
     board = seed or state["boards"].get(name, "")
     details = []
+    diag = None
 
     if board:
         rr = get(board)
@@ -413,14 +482,16 @@ def process(t, state, deadline):
         else:
             board = ""
 
+    # Proven discovery first. V8.11.1 fallback is called ONLY when the proven
+    # one fails, so normal sites keep the previous runtime characteristics.
     if not board and home:
         board, details, status = discover_board(home)
-        if board:
-            # 동일 기관명이 중복되는 경우에도 기존 구조를 유지
-            state["boards"][name] = board
+
+    if not board and home and time.time() < deadline:
+        board, details, diag = discover_board_v8111(home)
 
     if not board:
-        return {"name": name, "status": "NO_BOARD", "posts": 0, "matches": []}
+        return {"name": name, "status": "NO_BOARD", "posts": 0, "matches": [], "diag": diag}
 
     matches = []
     for u in details:
@@ -436,7 +507,8 @@ def process(t, state, deadline):
         "status": "OK",
         "posts": len(details),
         "matches": matches,
-        "board": board
+        "board": board,
+        "diag": diag
     }
 
 def telegram_send(m):
@@ -496,6 +568,26 @@ def main():
             results.append(r)
             discovered.extend(r.get("matches", []))
 
+    # Persist newly discovered boards for future runs.
+    for r in results:
+        if r.get("status") == "OK" and r.get("board"):
+            state["boards"][r["name"]] = r["board"]
+
+    # V8.11.1 diagnostics: only fallback attempts are recorded.
+    diag_records = []
+    for r in results:
+        d = r.get("diag")
+        if d:
+            d = dict(d)
+            d["institution"] = r.get("name")
+            diag_records.append(d)
+    write_v8111_diag(diag_records)
+    diag_counts = {}
+    for d in diag_records:
+        k = d.get("result", "UNKNOWN")
+        diag_counts[k] = diag_counts.get(k, 0) + 1
+    print("BOARD_DISCOVERY_DIAG", json.dumps(diag_counts, ensure_ascii=False))
+
     # 신규 매칭을 queue에 넣는다. 이미 seen 또는 pending이면 중복 삽입하지 않는다.
     seen_keys = set(state.get("seen", {}).keys())
     pending_keys = {match_key(m) for m in pending}
@@ -545,7 +637,8 @@ def main():
         "pending_after": len(pending),
         "errors": sum(r["status"] == "ERROR" for r in results),
         "elapsed_seconds": round(time.time() - start, 1),
-        "timed_out": time.time() >= deadline
+        "timed_out": time.time() >= deadline,
+        "board_discovery_diag": diag_counts
     }
 
     with open("monitor_log.json", "w", encoding="utf-8") as f:
