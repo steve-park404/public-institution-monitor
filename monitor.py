@@ -35,15 +35,10 @@ HEADERS = {
 }
 
 def load_keywords():
-    if not os.path.exists(KEYWORD_FILE):
-        return []
-    out = []
-    with open(KEYWORD_FILE, "r", encoding="utf-8-sig") as f:
-        for line in f:
-            s = line.strip()
-            if s and not s.startswith("#"):
-                out.append(s)
-    return list(dict.fromkeys(out))
+    # 프로젝트의 검색 키워드는 아래 4개로 고정합니다.
+    # keywords.txt에 다른 단어가 들어 있어도 검색하지 않습니다.
+    allowed = ["설문조사", "시민참여", "국민참여", "공모전"]
+    return allowed
 
 def normalize_state():
     if not os.path.exists(STATE_FILE):
@@ -212,7 +207,7 @@ def format_alert(m):
 async def main():
     started = time.time()
     df = pd.read_excel(TARGET_FILE).fillna("")
-    keywords = load_keywords()
+    keywords = load_keywords()  # 정확히 4개: 설문조사/시민참여/국민참여/공모전
     state = normalize_state()
     first_run = not bool(state.get("initialized"))
 
