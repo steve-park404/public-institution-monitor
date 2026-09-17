@@ -53,17 +53,20 @@ LIST_WORDS = [
     "recruit", "news", "press", "community", "notification"
 ]
 
+# 일반적인 상세 URL 패턴
 DETAIL_PATTERNS = [
     r"(^|/)(view|detail|read|article|readView|boardView)(/|$)",
     r"([?&])(idx|id|seq|no|articleNo|bbsNo|nttId|boardId|list_no)=",
     r"([?&])act=(view|read|detail)",
 ]
 
+# 목록 URL에서 흔히 발견되는 구조
 LIST_PATTERNS = [
     r"(^|/)(list|boardList|bbsList|list\.do|list\.asp|board\.do|index\.do)(/|$)",
     r"([?&])(page|pageNo|pageIndex|p)=",
 ]
 
+# 모니터링 목적상 자동확정에서 제외할 가능성이 높은 자료 성격
 LOW_PRIORITY_WORDS = [
     "사진", "포토", "photo", "gallery", "갤러리", "영상", "동영상",
     "자료", "archive", "ebook", "간행물", "홍보물", "행사사진"
@@ -92,6 +95,7 @@ def norm_url(url, base=None):
         if p.scheme not in ("http", "https") or not p.netloc:
             return ""
 
+        # fragment 제거
         p = p._replace(fragment="")
 
         return urlunparse(p)
@@ -129,7 +133,11 @@ def soup_from_response(r):
         return None
 
     try:
-        return BeautifulSoup(r.text, "html.parser")
+        return BeautifulSoup(
+            r.text,
+            "html.parser"
+        )
+
     except Exception:
         return None
 
@@ -151,6 +159,7 @@ def classify_url(url):
         if re.search(pat, path) or re.search(pat, query):
             return "목록"
 
+    # path/query에 board/bbs/notice/list 등이 명확하면 후보 목록
     if any(
         w in path
         for w in [
@@ -182,6 +191,7 @@ def is_probable_detail(href, text=""):
         if re.search(pat, u):
             return True
 
+    # 쿼리의 식별자 + 짧은 텍스트는 상세 가능성이 높음
     q = parse_qs(urlparse(u).query)
 
     ids = {
@@ -241,15 +251,7 @@ def extract_candidate_links(soup, page_url):
             page_url
         )
 
-        if not href:
-            continue
-
-        if not same_host(href, page_url):
-            continue
-
-        if href.lower().startswith(
-            ("javascript:", "mailto:", "tel:")
-        ):
+        if not href or not same_host(href, page_url):
             continue
 
         text = clean_text(
@@ -265,18 +267,41 @@ def extract_candidate_links(soup, page_url):
         )
 
         label = " ".join(
-            x for x in [text, title, aria]
+            x
+            for x in [
+                text,
+                title,
+                aria
+            ]
             if x
         )
 
+        # javascript / mailto 등 제거
+        if href.lower().startswith(
+            (
+                "javascript:",
+                "mailto:",
+                "tel:"
+            )
+        ):
+            continue
+
         out.append(
-            (href, label)
+            (
+                href,
+                label
+            )
         )
 
     return out
 
 
 def extract_post_candidates(soup, page_url):
+    """
+    게시물 후보 URL을 폭넓게 수집.
+    제목 추출은 여기서 확정하지 않는다.
+    """
+
     candidates = []
 
     if not soup:
@@ -289,10 +314,7 @@ def extract_post_candidates(soup, page_url):
             page_url
         )
 
-        if not href:
-            continue
-
-        if not same_host(href, page_url):
+        if not href or not same_host(href, page_url):
             continue
 
         text = clean_text(
@@ -326,6 +348,7 @@ def extract_post_candidates(soup, page_url):
         ):
             continue
 
+        # 너무 명백한 UI 링크 제외
         if label in {
             "수정",
             "삭제",
@@ -338,9 +361,13 @@ def extract_post_candidates(soup, page_url):
             continue
 
         candidates.append(
-            (href, label)
+            (
+                href,
+                label
+            )
         )
 
+    # URL 자체가 상세 패턴인 링크 중 중복 제거
     seen = set()
     result = []
 
@@ -354,7 +381,10 @@ def extract_post_candidates(soup, page_url):
         seen.add(key)
 
         result.append(
-            (href, label)
+            (
+                href,
+                label
+            )
         )
 
         if len(result) >= MAX_DISCOVERY_LINKS:
@@ -364,6 +394,11 @@ def extract_post_candidates(soup, page_url):
 
 
 def extract_title(soup, response_url=""):
+    """
+    다중 방식 제목 추출.
+    하나가 실패해도 다른 소스를 사용한다.
+    """
+
     if not soup:
         return ""
 
@@ -445,8 +480,14 @@ def extract_title(soup, response_url=""):
         if t:
             return t
 
+    # body 상단에서 긴 메뉴가 아닌 텍스트 후보
     for x in soup.find_all(
-        ["td", "div", "p", "span"]
+        [
+            "td",
+            "div",
+            "p",
+            "span"
+        ]
     ):
 
         t = clean_text(
@@ -505,6 +546,7 @@ def extract_body_length(soup):
     if not soup:
         return 0
 
+    # script/style/nav/footer 제거 후 본문 후보 계산
     s = BeautifulSoup(
         str(soup),
         "html.parser"
@@ -562,12 +604,16 @@ def list_structure_score(
         if w.lower() in all_text
     )
 
+    # 행 구조 추정
     rows = 0
 
     for tr in soup.find_all("tr"):
 
         cells = tr.find_all(
-            ["td", "th"]
+            [
+                "td",
+                "th"
+            ]
         )
 
         if len(cells) >= 2:
@@ -582,6 +628,7 @@ def list_structure_score(
             if len(txt) >= 4:
                 rows += 1
 
+    # li 기반 게시판
     if rows < 3:
 
         for li in soup.find_all("li"):
@@ -689,6 +736,11 @@ def discover_list_from_page(
     soup,
     page_url
 ):
+    """
+    홈페이지/상세 페이지에서 같은 호스트의 목록 후보를 발견.
+    우선순위는 명시적인 board/notice/list 경로.
+    """
+
     candidates = []
 
     for href, label in extract_candidate_links(
@@ -765,7 +817,11 @@ def discover_list_from_page(
     )
 
     return [
-        (u, label, score)
+        (
+            u,
+            label,
+            score
+        )
         for score, u, label
         in candidates[:30]
     ]
@@ -802,14 +858,16 @@ def verify_post(
         soup
     )
 
+    # 상세 페이지의 제목은 너무 일반적인 사이트 title보다 본문 제목이 우선되도록 보정
     if title:
-
         title = re.sub(
             r"\s*[\|\-–—]\s*(홈페이지|한국.*|공공기관.*)$",
             "",
             title
         ).strip()
 
+    # 실제 게시물 판단:
+    # URL이 상세형이고 제목 또는 날짜 또는 충분한 본문이 있으면 인정
     detail_like = (
         is_probable_detail(
             r.url,
@@ -852,6 +910,7 @@ def validate_row(row):
         )
     )
 
+    # V6.7 컬럼명이 다를 경우 대비
     if not candidate:
 
         for c in [
@@ -921,7 +980,10 @@ def validate_row(row):
     if (
         not candidate
         or not candidate.startswith(
-            ("http://", "https://")
+            (
+                "http://",
+                "https://"
+            )
         )
     ):
 
@@ -938,3 +1000,632 @@ def validate_row(row):
         r = fetch(
             candidate,
             session
+        )
+
+        if r is None or r.status_code >= 400:
+
+            result["V6.8사유"] = (
+                "후보 URL 접속 실패"
+            )
+
+            return result
+
+        final_url = norm_url(
+            r.url
+        )
+
+        soup = soup_from_response(
+            r
+        )
+
+        if soup is None:
+
+            result["V6.8사유"] = (
+                "HTML 파싱 실패"
+            )
+
+            return result
+
+        final_type = classify_url(
+            final_url
+        )
+
+        # 1차: 후보 자체가 목록이면 반드시 후보 자체를 우선 검증
+        list_url = ""
+        list_soup = None
+
+        if final_type == "목록":
+
+            list_url = final_url
+            list_soup = soup
+
+        else:
+
+            # 2차: 후보가 상세/홈페이지면 목록 후보 탐색
+            discovered = discover_list_from_page(
+                soup,
+                final_url
+            )
+
+            # 후보의 기존 V6.7 목록 URL도 보존하여 검토
+            old_list = clean_text(
+                row.get(
+                    "V6.7최종목록URL",
+                    ""
+                )
+            )
+
+            if old_list:
+
+                discovered.insert(
+                    0,
+                    (
+                        old_list,
+                        "V6.7기존목록URL",
+                        100
+                    )
+                )
+
+            seen = set()
+
+            for u, label, score in discovered:
+
+                u = norm_url(
+                    u
+                )
+
+                if not u or u in seen:
+                    continue
+
+                seen.add(u)
+
+                rr = fetch(
+                    u,
+                    session
+                )
+
+                if rr is None or rr.status_code >= 400:
+                    continue
+
+                ss = soup_from_response(
+                    rr
+                )
+
+                if ss is None:
+                    continue
+
+                typ = classify_url(
+                    rr.url
+                )
+
+                st = list_structure_score(
+                    ss,
+                    rr.url
+                )
+
+                # 목록 후보는 실제 구조가 있는 경우에만 인정
+                if (
+                    typ == "목록"
+                    and (
+                        len(st["links"]) >= 2
+                        or st["rows"] >= 3
+                        or st["keywords"] >= 2
+                    )
+                ):
+
+                    list_url = norm_url(
+                        rr.url
+                    )
+
+                    list_soup = ss
+
+                    break
+
+        if not list_url or list_soup is None:
+
+            result["V6.8사유"] = (
+                "검증 가능한 목록 URL을 확보하지 못함"
+            )
+
+            return result
+
+        st = list_structure_score(
+            list_soup,
+            list_url
+        )
+
+        post_links = st["links"]
+
+        unique_urls = []
+        seen = set()
+
+        for href, label in post_links:
+
+            if href.rstrip("/") not in seen:
+
+                seen.add(
+                    href.rstrip("/")
+                )
+
+                unique_urls.append(
+                    (
+                        href,
+                        label
+                    )
+                )
+
+        verified = []
+
+        with ThreadPoolExecutor(
+            max_workers=MAX_POST_CHECK
+        ) as ex:
+
+            futs = [
+                ex.submit(
+                    verify_post,
+                    session,
+                    href,
+                    label
+                )
+                for href, label
+                in unique_urls[:MAX_POST_CHECK]
+            ]
+
+            for f in as_completed(futs):
+
+                try:
+
+                    x = f.result()
+
+                    if x and x["actual"]:
+                        verified.append(x)
+
+                except Exception:
+                    pass
+
+        # URL 순서 안정화
+        verified.sort(
+            key=lambda x: x["url"]
+        )
+
+        titles = []
+
+        for x in verified:
+
+            t = clean_text(
+                x["title"]
+            )
+
+            if t and t not in titles:
+                titles.append(t)
+
+        # 게시판 성격 판정
+        page_text = clean_text(
+            list_soup.get_text(
+                " ",
+                strip=True
+            )
+        ).lower()
+
+        path_text = (
+            list_url
+            + " "
+            + page_text
+        ).lower()
+
+        low_priority_hits = sum(
+            1
+            for w in LOW_PRIORITY_WORDS
+            if w.lower() in path_text
+        )
+
+        strong_structure = (
+            len(unique_urls) >= 5
+            and len(verified) >= 3
+            and st["keywords"] >= 2
+            and st["rows"] >= 3
+        )
+
+        very_strong = (
+            len(unique_urls) >= 8
+            and len(verified) >= 4
+            and st["keywords"] >= 3
+            and st["rows"] >= 5
+        )
+
+        # 제목 파싱 실패는 탈락 사유가 아니라 감점/수동확인 사유
+        if (
+            very_strong
+            and len(titles) >= 2
+            and low_priority_hits < 4
+        ):
+
+            decision = "자동확정"
+
+            reason = (
+                "목록 URL + 다수 게시물 URL + "
+                "실제 상세페이지 + 구조 반복 확인"
+            )
+
+        elif strong_structure:
+
+            decision = "수동확인"
+
+            if len(titles) < 2:
+
+                reason = (
+                    "게시판 구조와 실제 게시물은 확인되나 "
+                    "제목 파싱 신뢰도가 낮음"
+                )
+
+            elif low_priority_hits >= 4:
+
+                reason = (
+                    "게시판 구조는 확인되나 자료/사진 등 "
+                    "모니터링 목적 적합성 추가 확인 필요"
+                )
+
+            else:
+
+                reason = (
+                    "게시판 구조와 실제 게시물은 확인되나 "
+                    "자동확정 기준 미충족"
+                )
+
+        elif (
+            len(unique_urls) >= 3
+            and len(verified) >= 2
+        ):
+
+            decision = "수동확인"
+
+            reason = (
+                "실제 게시물은 확인되나 "
+                "목록 구조 증거가 부족함"
+            )
+
+        else:
+
+            decision = "제외"
+
+            reason = (
+                "게시판 구조 또는 실제 게시물 증거 부족"
+            )
+
+        result.update({
+
+            "V6.8최종목록URL": list_url,
+
+            "V6.8최종유형":
+                classify_url(list_url),
+
+            "V6.8목록접속":
+                "성공",
+
+            "V6.8게시물링크수":
+                len(post_links),
+
+            "V6.8고유게시물링크수":
+                len(unique_urls),
+
+            "V6.8실제게시물수":
+                len(verified),
+
+            "V6.8고유게시물제목수":
+                len(titles),
+
+            "V6.8목록키워드수":
+                st["keywords"],
+
+            "V6.8목록행수":
+                st["rows"],
+
+            "V6.8페이지네이션":
+                "있음"
+                if st["pagination"]
+                else "없음",
+
+            "V6.8구조점수":
+                st["score"],
+
+            "V6.8결과":
+                decision,
+
+            "V6.8사유":
+                reason,
+        })
+
+        if verified:
+
+            # 가장 내용이 풍부한 검증 게시물 1건 기록
+            best = sorted(
+                verified,
+                key=lambda x: (
+                    x["body_len"],
+                    len(x["title"])
+                ),
+                reverse=True
+            )[0]
+
+            result.update({
+
+                "V6.8검증게시물URL":
+                    best["url"],
+
+                "V6.8검증게시물제목":
+                    best["title"],
+
+                "V6.8검증게시물날짜":
+                    best["date"],
+
+                "V6.8검증본문길이":
+                    best["body_len"],
+            })
+
+        return result
+
+    except Exception as e:
+
+        result["V6.8결과"] = "오류"
+
+        result["V6.8오류"] = (
+            f"{type(e).__name__}: "
+            f"{str(e)[:500]}"
+        )
+
+        return result
+
+
+def main():
+
+    print("==============================================")
+    print("V6.8 Deep Board Re-validation")
+    print(f"입력파일 : {INPUT_FILE}")
+    print(f"출력파일 : {OUTPUT_FILE}")
+    print("boards.xlsx는 수정하지 않습니다.")
+    print("==============================================")
+
+    df = pd.read_excel(
+        INPUT_FILE,
+        dtype=object
+    ).fillna("")
+
+    # 전체 행을 유지하되,
+    # 실제 검증 대상은 V6.7에서 후보/수동확인/자동확정으로 남은 행
+    target_mask = pd.Series(
+        False,
+        index=df.index
+    )
+
+    if "V6.7결과" in df.columns:
+
+        target_mask = (
+            df["V6.7결과"]
+            .astype("string")
+            .isin(
+                [
+                    "자동확정",
+                    "수동확인"
+                ]
+            )
+        )
+
+    elif "V6.7후보URL" in df.columns:
+
+        target_mask = (
+            df["V6.7후보URL"]
+            .astype(str)
+            .str.startswith(
+                (
+                    "http://",
+                    "https://"
+                )
+            )
+        )
+
+    # 만약 V6.7 결과 컬럼이 없어도 URL이 있는 행만 검증
+    targets = df[
+        target_mask
+    ].copy()
+
+    print(
+        f"전체 행       : {len(df)}"
+    )
+
+    print(
+        f"정밀 검증 대상 : {len(targets)}"
+    )
+
+    if len(targets) == 0:
+
+        print(
+            "검증 대상이 없습니다."
+        )
+
+        return
+
+    records = []
+
+    with ThreadPoolExecutor(
+        max_workers=CONCURRENCY
+    ) as ex:
+
+        futures = {
+            ex.submit(
+                validate_row,
+                row.to_dict()
+            ): idx
+
+            for idx, row
+            in targets.iterrows()
+        }
+
+        done = 0
+
+        for f in as_completed(futures):
+
+            idx = futures[f]
+
+            done += 1
+
+            try:
+
+                rr = f.result()
+
+                records.append(
+                    (
+                        idx,
+                        rr
+                    )
+                )
+
+                print(
+                    f"[V6.8] {done}/{len(targets)} | "
+                    f"{df.loc[idx, '기관명'] if '기관명' in df.columns else ''} | "
+                    f"{rr.get('V6.8결과', '')} | "
+                    f"점수 {rr.get('V6.8구조점수', 0)} | "
+                    f"링크 {rr.get('V6.8고유게시물링크수', 0)} | "
+                    f"실제게시물 {rr.get('V6.8실제게시물수', 0)}"
+                )
+
+            except Exception as e:
+
+                records.append(
+                    (
+                        idx,
+                        {
+                            "V6.8결과": "오류",
+                            "V6.8오류":
+                                f"{type(e).__name__}: "
+                                f"{str(e)[:500]}"
+                        }
+                    )
+                )
+
+    # V6.8 컬럼을 원본에 추가/갱신
+    new_cols = [
+
+        "V6.8후보URL",
+        "V6.8후보유형",
+        "V6.8최종목록URL",
+        "V6.8최종유형",
+
+        "V6.8목록접속",
+
+        "V6.8게시물링크수",
+        "V6.8고유게시물링크수",
+        "V6.8실제게시물수",
+        "V6.8고유게시물제목수",
+
+        "V6.8목록키워드수",
+        "V6.8목록행수",
+        "V6.8페이지네이션",
+        "V6.8구조점수",
+
+        "V6.8검증게시물URL",
+        "V6.8검증게시물제목",
+        "V6.8검증게시물날짜",
+        "V6.8검증본문길이",
+
+        "V6.8결과",
+        "V6.8사유",
+        "V6.8오류"
+    ]
+
+    # V6.8 컬럼은 처음부터 object/string 계열로 만들어
+    # 기존 Excel에서 자동 추론된 StringDtype 컬럼과의 대입 충돌을 방지한다.
+    for c in new_cols:
+
+        if c not in df.columns:
+
+            df[c] = pd.Series(
+                [""] * len(df),
+                index=df.index,
+                dtype="object"
+            )
+
+        else:
+
+            df[c] = df[c].astype(
+                "object"
+            )
+
+    for idx, rr in records:
+
+        for c in new_cols:
+
+            if c in rr:
+
+                value = rr[c]
+
+                # DataFrame 대입 단계에서는 모두 문자열/None으로 통일
+                if value is None:
+                    value = ""
+
+                df.at[idx, c] = str(
+                    value
+                )
+
+    # 숫자형 컬럼은 Excel 저장 직전에 명시적으로 변환
+    numeric_cols = [
+
+        "V6.8게시물링크수",
+        "V6.8고유게시물링크수",
+        "V6.8실제게시물수",
+        "V6.8고유게시물제목수",
+
+        "V6.8목록키워드수",
+        "V6.8목록행수",
+        "V6.8구조점수",
+
+        "V6.8검증본문길이"
+    ]
+
+    for c in numeric_cols:
+
+        df[c] = (
+            pd.to_numeric(
+                df[c],
+                errors="coerce"
+            )
+            .fillna(0)
+            .astype(int)
+        )
+
+    df.to_excel(
+        OUTPUT_FILE,
+        index=False
+    )
+
+    print("----------------------------------------------")
+    print("V6.8 결과")
+
+    print(
+        f"자동확정 : "
+        f"{(df['V6.8결과'] == '자동확정').sum()}"
+    )
+
+    print(
+        f"수동확인 : "
+        f"{(df['V6.8결과'] == '수동확인').sum()}"
+    )
+
+    print(
+        f"제외     : "
+        f"{(df['V6.8결과'] == '제외').sum()}"
+    )
+
+    print(
+        f"오류     : "
+        f"{(df['V6.8결과'] == '오류').sum()}"
+    )
+
+    print(
+        f"결과파일 : {OUTPUT_FILE}"
+    )
+
+    print("----------------------------------------------")
+
+
+if __name__ == "__main__":
+    main()
