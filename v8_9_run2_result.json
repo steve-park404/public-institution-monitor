@@ -1,0 +1,14 @@
+{
+  "version": "V8.9",
+  "run": 2,
+  "targets": 355,
+  "completed": 167,
+  "no_board": 188,
+  "posts_checked": 852,
+  "new_matches": 61,
+  "telegram_sent": 20,
+  "errors": 0,
+  "elapsed_seconds": 620.8,
+  "timed_out": false,
+  "queue_note": "V8.9 did not retain the 41 unsent matches; V8.10 fixes this with pending.json."
+}
