@@ -591,7 +591,7 @@ async def main():
         json.dump(log, f, ensure_ascii=False, indent=2)
 
     print(
-        f"[V8.6.5] targets={len(targets)} completed={completed} "
+        f"[V8.7] targets={len(targets)} completed={completed} "
         f"posts_checked={posts_checked} candidate_links={candidate_links} "
         f"detail_links={detail_links} new_matches={len(all_matches)} "
         f"errors={len(errors)} timed_out={timed_out}"
