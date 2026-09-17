@@ -1,252 +1,471 @@
-import os, re, json, time, asyncio, html
-from urllib.parse import urljoin, urlparse
+import asyncio
+import json
+import os
+import re
+import time
+from pathlib import Path
+from urllib.parse import urljoin, urlparse, parse_qs
+
 import aiohttp
-from bs4 import BeautifulSoup
-import openpyxl
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
+import warnings
+
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 KEYWORDS = ["설문조사", "시민참여", "국민참여", "공모전"]
+
+TARGET_FILE = "monitor_targets.xlsx"
 STATE_FILE = "state.json"
 LOG_FILE = "monitor_log.json"
 
-TIMEOUT_SECONDS = int(os.getenv("TIMEOUT_SECONDS", "15"))
 MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "12"))
+TIMEOUT_SECONDS = int(os.getenv("TIMEOUT_SECONDS", "15"))
 RECENT_POSTS = int(os.getenv("RECENT_POSTS", "15"))
 MAX_TOTAL_SECONDS = int(os.getenv("MAX_TOTAL_SECONDS", "600"))
 HTTP_RETRIES = int(os.getenv("HTTP_RETRIES", "2"))
 TELEGRAM_MAX_SEND = int(os.getenv("TELEGRAM_MAX_SEND", "20"))
 
-def load_targets():
-    wb = openpyxl.load_workbook("monitor_targets.xlsx", data_only=True)
-    ws = wb.active
-    headers = [c.value for c in ws[1]]
-    name_i = headers.index("기관명")
-    url_i = headers.index("URL")
-    rows=[]
-    for r in ws.iter_rows(min_row=2, values_only=True):
-        if r[url_i]:
-            rows.append({"institution": str(r[name_i] or "").strip(),
-                         "board": str(r[url_i]).strip()})
-    return rows
+LIST_PARAM_NAMES = {
+    "page", "pageno", "pageNo", "pageIndex", "offset", "article.offset",
+    "articleLimit", "limit", "size", "rows"
+}
 
-def normalize_state():
+def load_targets():
+    import openpyxl
+    wb = openpyxl.load_workbook(TARGET_FILE, read_only=True, data_only=True)
+    ws = wb.active
+    rows = list(ws.iter_rows(values_only=True))
+    if not rows:
+        return []
+    header = [str(x).strip() if x is not None else "" for x in rows[0]]
+    idx = {h: i for i, h in enumerate(header)}
+    out = []
+    for row in rows[1:]:
+        if not row:
+            continue
+        institution = row[idx.get("기관명", 0)]
+        board = row[idx.get("게시판", idx.get("URL", 1))]
+        if institution and board:
+            out.append({"institution": str(institution).strip(), "board": str(board).strip()})
+    return out
+
+def normalize_state(raw):
+    if isinstance(raw, dict):
+        seen = raw.get("seen", {})
+        if isinstance(seen, list):
+            seen = {str(x): True for x in seen}
+        elif not isinstance(seen, dict):
+            seen = {}
+        return {"version": 863, "initialized": bool(raw.get("initialized", False)), "seen": seen}
+    if isinstance(raw, list):
+        return {"version": 863, "initialized": True, "seen": {str(x): True for x in raw}}
+    return {"version": 863, "initialized": False, "seen": {}}
+
+def load_state():
+    p = Path(STATE_FILE)
+    if not p.exists():
+        return normalize_state({})
     try:
-        with open(STATE_FILE, "r", encoding="utf-8") as f:
-            s=json.load(f)
+        return normalize_state(json.loads(p.read_text(encoding="utf-8")))
     except Exception:
-        s={}
-    if isinstance(s, list):
-        s={"version":862, "initialized": True, "seen": {str(x): True for x in s}}
-    if not isinstance(s, dict):
-        s={}
-    if not isinstance(s.get("seen"), dict):
-        s["seen"]={}
-    s["version"]=8621
-    return s
+        return normalize_state({})
+
+def save_state(state):
+    seen = state["seen"]
+    if len(seen) > 10000:
+        keys = list(seen.keys())[-10000:]
+        state["seen"] = {k: True for k in keys}
+    Path(STATE_FILE).write_text(
+        json.dumps(state, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+
+def is_probable_list_url(url):
+    q = parse_qs(urlparse(url).query)
+    path = urlparse(url).path.lower()
+    if any(k.lower() in {x.lower() for x in q.keys()} for k in LIST_PARAM_NAMES):
+        # offset/page parameters can also appear on detail pages, so don't reject
+        # when a clear detail marker exists.
+        if any(marker in q for marker in ["mode", "articleNo", "seq", "nttId", "idx", "no", "num", "view", "wr_id"]):
+            return False
+        return True
+    if re.search(r"/(list|search|index|board/list|notice/list)(/|\.|$)", path):
+        return True
+    return False
 
 def clean_text(s):
-    s=html.unescape(s or "")
-    return re.sub(r"\s+", " ", s).strip()
+    return re.sub(r"\s+", " ", s or "").strip()
 
-def is_listing_url(url):
-    p=urlparse(url)
-    q=p.query.lower()
-    path=p.path.lower()
-    bad=["list","search","page","offset","boardlist","selectnoticelist"]
-    return any(x in q or x in path for x in bad) and "view" not in q and "article" not in q
+def tag_classes(tag):
+    try:
+        attrs = getattr(tag, "attrs", None)
+        if not isinstance(attrs, dict):
+            return ""
+        cls = attrs.get("class", [])
+        if isinstance(cls, str):
+            return cls.lower()
+        if isinstance(cls, (list, tuple)):
+            return " ".join(str(x) for x in cls).lower()
+        return ""
+    except Exception:
+        return ""
 
-def extract_candidates(base_url, soup):
-    base_host=urlparse(base_url).netloc
-    out=[]
-    seen=set()
-    for a in soup.find_all("a"):
-        attrs = getattr(a, "attrs", None) or {}
-        href = str(attrs.get("href") or "").strip()
-        if not href:
-            continue
-        text=clean_text(a.get_text(" ", strip=True))
-        if not href or href.startswith(("javascript:", "#","mailto:")):
-            continue
-        u=urljoin(base_url, href)
-        pu=urlparse(u)
-        if pu.netloc != base_host:
-            continue
-        if is_listing_url(u):
-            continue
-        if len(text) < 2 or len(text) > 250:
-            continue
-        # likely detail links: query has article/id/no/seq/view or href contains view/detail
-        marker=(pu.query+" "+pu.path).lower()
-        if not re.search(r"(article(no)?|board(no)?|seq|ntt|bbs|idx|no=|view|detail|read|viewpage)", marker):
-            continue
-        key=(u,text)
-        if key not in seen:
-            seen.add(key); out.append({"url":u,"title":text})
-    return out[:RECENT_POSTS]
+def tag_id(tag):
+    try:
+        attrs = getattr(tag, "attrs", None)
+        if not isinstance(attrs, dict):
+            return ""
+        return str(attrs.get("id", "")).lower()
+    except Exception:
+        return ""
+
+EXCLUDE_RE = re.compile(
+    r"(header|footer|gnb|lnb|nav|menu|breadcrumb|sitemap|"
+    r"related|relation|recommend|popular|search|comment|reply|"
+    r"share|sns|banner|quick|skip|pagination|pager|"
+    r"prev|next|previous|attach|file|download|login|"
+    r"popup|layer|aside|sidebar)",
+    re.I
+)
+
+CONTENT_HINT_RE = re.compile(
+    r"(view|read|content|contents|article|board|bbs|notice|"
+    r"detail|detailview|post|body|cont|txt|editor|articleview)",
+    re.I
+)
+
+def strip_common_noise(soup):
+    for tag in soup(["script", "style", "noscript", "template", "svg", "canvas",
+                     "form", "iframe", "header", "footer", "nav", "aside"]):
+        try:
+            tag.decompose()
+        except Exception:
+            pass
+
+    for tag in list(soup.find_all(True)):
+        if tag_classes(tag) and EXCLUDE_RE.search(tag_classes(tag)):
+            try:
+                tag.decompose()
+            except Exception:
+                pass
+        elif tag_id(tag) and EXCLUDE_RE.search(tag_id(tag)):
+            try:
+                tag.decompose()
+            except Exception:
+                pass
+    return soup
+
+def extract_title(soup):
+    candidates = []
+    for selector in [
+        "h1", "h2", "h3",
+        ".tit", ".title", ".subject", ".bbs-title", ".board-title",
+        ".view-title", ".article-title", "[class*='title']",
+        "[class*='subject']"
+    ]:
+        try:
+            for x in soup.select(selector):
+                t = clean_text(x.get_text(" ", strip=True))
+                if 2 <= len(t) <= 300:
+                    candidates.append(t)
+        except Exception:
+            pass
+    if candidates:
+        # Prefer longer, meaningful candidates; avoid generic page headings.
+        candidates.sort(key=lambda x: (len(x) >= 5, len(x)), reverse=True)
+        return candidates[0]
+    if soup.title:
+        return clean_text(soup.title.get_text(" ", strip=True))[:300]
+    return ""
 
 def likely_content(soup):
-    # Remove site-wide and non-content areas first.
-    for tag in soup(["script","style","noscript","template","svg","header","footer","nav","aside","form"]):
-        tag.decompose()
-    # Remove obvious lists/menus/related/search areas.
-    for tag in soup.find_all(["ul","ol"]):
-        attrs = getattr(tag, "attrs", None) or {}
-        cls_val = attrs.get("class", [])
-        if isinstance(cls_val, str):
-            cls_val = [cls_val]
-        cls=" ".join(str(x) for x in cls_val).lower()
-        tid=str(attrs.get("id") or "").lower()
-        if any(x in (cls+" "+tid) for x in ["menu","nav","gnb","lnb","related","recommend","search","list"]):
-            tag.decompose()
-    selectors=[
-        "[class*='view']", "[class*='content']", "[class*='detail']",
-        "[id*='view']", "[id*='content']", "[id*='detail']",
-        "article", "main"
-    ]
-    candidates=[]
-    for sel in selectors:
-        for x in soup.select(sel):
-            t=clean_text(x.get_text(" ", strip=True))
-            if len(t)>=40:
-                candidates.append((len(t),t))
-    if candidates:
-        candidates.sort(reverse=True)
-        return candidates[0][1]
-    return clean_text(soup.get_text(" ", strip=True))
+    # Work on a copy so title extraction can still inspect the original cleaned tree.
+    soup = strip_common_noise(soup)
 
-def keyword_hits(title, body):
-    # Title/body are the only searchable content. Exclude page chrome by extraction.
-    hits=[]
-    for kw in KEYWORDS:
-        if kw in title or kw in body:
-            hits.append(kw)
-    return hits
+    candidates = []
+    for tag in soup.find_all(["article", "main", "div", "section", "td"]):
+        try:
+            attrs = getattr(tag, "attrs", None)
+            if not isinstance(attrs, dict):
+                attrs = {}
+            cls = tag_classes(tag)
+            tid = tag_id(tag)
+            marker = f"{cls} {tid}"
+            if marker and CONTENT_HINT_RE.search(marker):
+                txt = clean_text(tag.get_text(" ", strip=True))
+                if 80 <= len(txt) <= 200000:
+                    score = 0
+                    if re.search(r"(content|contents|article|view|detail|body|cont)", marker, re.I):
+                        score += 5
+                    if tag.name == "article":
+                        score += 4
+                    if tag.name == "main":
+                        score += 3
+                    score += min(len(txt) / 50000, 3)
+                    candidates.append((score, txt))
+        except Exception:
+            continue
+
+    if candidates:
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        best = candidates[0][1]
+    else:
+        # Conservative fallback: visible body text after noise removal.
+        best = clean_text(soup.get_text(" ", strip=True))
+
+    # Remove repeated UI fragments that often survive DOM filtering.
+    lines = [clean_text(x) for x in re.split(r"[\r\n]+", best)]
+    lines = [x for x in lines if x]
+    return clean_text(" ".join(lines))[:250000]
+
+def extract_links(board_url, soup):
+    links = []
+    seen = set()
+    for a in soup.find_all("a"):
+        try:
+            attrs = getattr(a, "attrs", None)
+            if not isinstance(attrs, dict):
+                continue
+            href = attrs.get("href")
+            if not href or not isinstance(href, str):
+                continue
+            href = href.strip()
+            if href.lower().startswith(("javascript:", "mailto:", "#")):
+                continue
+            url = urljoin(board_url, href)
+            if urlparse(url).scheme not in ("http", "https"):
+                continue
+            text = clean_text(a.get_text(" ", strip=True))
+            if not text:
+                continue
+            key = url.split("#")[0]
+            if key in seen:
+                continue
+            seen.add(key)
+            links.append((text, key))
+        except Exception:
+            continue
+    return links
+
+def detail_score(board_url, url, text):
+    score = 0
+    q = parse_qs(urlparse(url).query)
+    path = urlparse(url).path.lower()
+    lowtext = text.lower()
+
+    if is_probable_list_url(url):
+        score -= 8
+    if any(k.lower() in {x.lower() for x in q.keys()} for k in
+           ["articleNo", "nttId", "seq", "idx", "wr_id", "num", "no"]):
+        score += 7
+    if any(k.lower() in {x.lower() for x in q.keys()} for k in ["mode", "view"]):
+        score += 4
+    if re.search(r"/view|/detail|/read|/article", path):
+        score += 4
+    if len(text) >= 4:
+        score += 1
+    if re.fullmatch(r"\d{1,5}", text):
+        score -= 6
+    if text in {"더보기", "목록", "이전글", "다음글", "검색"}:
+        score -= 8
+    if url.rstrip("/") == board_url.rstrip("/"):
+        score -= 10
+    return score
+
+def find_post_links(board_url, soup):
+    raw = extract_links(board_url, soup)
+    scored = [(detail_score(board_url, u, t), t, u) for t, u in raw]
+    scored = [x for x in scored if x[0] >= 1]
+    scored.sort(key=lambda x: x[0], reverse=True)
+    # Keep a reasonable number; duplicates are removed by URL.
+    out, seen = [], set()
+    for score, text, url in scored:
+        if url in seen:
+            continue
+        seen.add(url)
+        out.append({"title_hint": text, "url": url, "score": score})
+        if len(out) >= RECENT_POSTS * 3:
+            break
+    return out
 
 async def fetch(session, url):
-    last=None
-    for attempt in range(HTTP_RETRIES+1):
+    last_error = None
+    for attempt in range(HTTP_RETRIES + 1):
         try:
-            timeout=aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
-            async with session.get(url, timeout=timeout, allow_redirects=True,
-                                   headers={"User-Agent":"Mozilla/5.0 public-institution-monitor/8.6.2"}) as r:
+            timeout = aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
+            async with session.get(
+                url, timeout=timeout, allow_redirects=True,
+                headers={"User-Agent": "Mozilla/5.0 public-institution-monitor/8.6.3"}
+            ) as r:
+                body = await r.text(errors="ignore")
                 if r.status >= 400:
-                    last=f"HTTP {r.status}"
-                else:
-                    return r.status, await r.text(errors="ignore")
+                    raise RuntimeError(f"HTTP {r.status}")
+                return body, str(r.url)
         except Exception as e:
-            last=f"HTTP 0"
-        if attempt < HTTP_RETRIES:
-            await asyncio.sleep(0.7*(attempt+1))
-    return 0, ""
+            last_error = e
+            if attempt < HTTP_RETRIES:
+                await asyncio.sleep(0.5 * (attempt + 1))
+    raise RuntimeError(str(last_error) if last_error else "HTTP 0")
 
-async def process_target(session, sem, target, state):
-    async with sem:
-        try:
-            return await _process_target_inner(session, target, state)
-        except Exception as e:
-            return {"institution":target["institution"],"board":target["board"],"url":target["board"],
-                    "posts":0,"matches":[],"error":f"{type(e).__name__}: {e}"}
+def stable_key(institution, url):
+    return f"{institution}|{url.split('#')[0]}"
 
-async def _process_target_inner(session, target, state):
-        board=target["board"]
-        status, raw=await fetch(session, board)
-        if not raw:
-            return {"institution":target["institution"],"board":board,"url":board,
-                    "posts":0,"matches":[],"error":f"HTTP {status}"}
-        soup=BeautifulSoup(raw,"html.parser")
-        candidates=extract_candidates(board,soup)
-        matches=[]
-        checked=0
-        for c in candidates:
-            status2, raw2=await fetch(session,c["url"])
-            if not raw2:
+def match_post(institution, board_url, title, content, url, state):
+    title = clean_text(title)
+    content = clean_text(content)
+    # Reject obviously invalid/list-like pages.
+    if len(title) < 2 or re.fullmatch(r"\d{1,5}", title):
+        return None
+    if is_probable_list_url(url):
+        return None
+
+    hits = [kw for kw in KEYWORDS if kw in title or kw in content]
+    if not hits:
+        return None
+
+    key = stable_key(institution, url)
+    if key in state["seen"]:
+        return None
+
+    return {
+        "institution": institution,
+        "board": board_url,
+        "keyword": hits,
+        "title": title[:300],
+        "url": url
+    }
+
+async def process_target(target, session, state):
+    institution, board_url = target["institution"], target["board"]
+    try:
+        html, final_board = await fetch(session, board_url)
+        soup = BeautifulSoup(html, "html.parser")
+        posts = find_post_links(final_board, soup)
+
+        # If the board itself is a detail page, treat it as a single candidate.
+        if not posts and not is_probable_list_url(final_board):
+            posts = [{"title_hint": "", "url": final_board, "score": 1}]
+
+        posts = posts[:RECENT_POSTS]
+        matches = []
+        checked = 0
+
+        for p in posts:
+            try:
+                ph, final_url = await fetch(session, p["url"])
+                if is_probable_list_url(final_url):
+                    continue
+                psoup = BeautifulSoup(ph, "html.parser")
+                title = extract_title(psoup) or p["title_hint"]
+                content = likely_content(psoup)
+                checked += 1
+                m = match_post(institution, board_url, title, content, final_url, state)
+                if m:
+                    matches.append(m)
+            except Exception:
                 continue
-            checked+=1
-            ds=BeautifulSoup(raw2,"html.parser")
-            title=clean_text(ds.title.get_text(" ",strip=True) if ds.title else c["title"])
-            # Prefer link text when page title is generic.
-            if c["title"] and len(c["title"]) >= 2 and not re.search(r"(홈|공지사항|목록|사이트)", c["title"]):
-                if len(c["title"]) <= 180:
-                    title=c["title"]
-            body=likely_content(ds)
-            hits=keyword_hits(title,body)
-            if not hits:
-                continue
-            key=f"{target['institution']}|{c['url']}"
-            if key not in state["seen"]:
-                matches.append({"institution":target["institution"],"board":board,
-                                "keyword":hits,"title":title,"url":c["url"]})
-        return {"institution":target["institution"],"board":board,"url":board,
-                "posts":checked,"matches":matches,"error":None}
 
-async def main_async():
-    targets=load_targets()
-    state=normalize_state()
-    initialized=bool(state.get("initialized"))
-    state["initialized"]=True
-    sem=asyncio.Semaphore(MAX_CONCURRENCY)
-    connector=aiohttp.TCPConnector(limit=MAX_CONCURRENCY, ssl=False)
-    started=time.time()
-    results=[]
-    async with aiohttp.ClientSession(connector=connector) as session:
-        tasks=[asyncio.create_task(process_target(session,sem,t,state)) for t in targets]
-        try:
-            results=await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=False),
-                                           timeout=MAX_TOTAL_SECONDS)
-        except asyncio.TimeoutError:
-            for t in tasks:
-                if not t.done(): t.cancel()
-            results=[x for x in await asyncio.gather(*tasks, return_exceptions=True) if isinstance(x,dict)]
-    new_matches=[]
-    errors=[]
-    posts=0
-    for r in results:
-        posts += r.get("posts",0)
-        new_matches.extend(r.get("matches",[]))
-        if r.get("error"): errors.append(r)
-    # On first run, seed matches but don't alert.
-    if not initialized:
-        for m in new_matches:
-            state["seen"][f"{m['institution']}|{m['url']}"]=True
-        alert_matches=[]
-    else:
-        alert_matches=new_matches[:TELEGRAM_MAX_SEND]
-        for m in new_matches:
-            state["seen"][f"{m['institution']}|{m['url']}"]=True
-    state["seen"]=dict(list(state["seen"].items())[-10000:])
-    log={"version":"8.6.2","timestamp":time.strftime("%Y-%m-%dT%H:%M:%S"),
-         "targets":len(targets),"completed":len(results),"posts_checked":posts,
-         "new_matches":len(new_matches),"errors":len(errors),
-         "timed_out": len(results)<len(targets),"first_run":not initialized,
-         "matches":new_matches,"error_details":errors}
-    tg=await send_telegram(alert_matches)
-    log["telegram"]=tg
-    with open(STATE_FILE,"w",encoding="utf-8") as f: json.dump(state,f,ensure_ascii=False,indent=2)
-    with open(LOG_FILE,"w",encoding="utf-8") as f: json.dump(log,f,ensure_ascii=False,indent=2)
-    print(json.dumps(log,ensure_ascii=False,indent=2))
+        return {"institution": institution, "board": board_url,
+                "checked": checked, "matches": matches, "error": None}
+    except Exception as e:
+        return {"institution": institution, "board": board_url,
+                "checked": 0, "matches": [], "error": str(e)}
 
 async def send_telegram(matches):
-    token=os.getenv("TELEGRAM_BOT_TOKEN","").strip()
-    chat=os.getenv("TELEGRAM_CHAT_ID","").strip()
-    if not matches:
-        return {"ok":True,"sent":0,"attempted":0,"errors":[],"truncated":False}
-    if not token or not chat:
-        return {"ok":False,"sent":0,"attempted":0,"errors":["missing Telegram secret"],"truncated":False}
-    url=f"https://api.telegram.org/bot{token}/sendMessage"
-    sent=0; errs=[]
-    async with aiohttp.ClientSession() as s:
-        for m in matches:
-            text=f"🔔 {m['institution']}\n키워드: {', '.join(m['keyword'])}\n{m['title']}\n{m['url']}"
-            try:
-                async with s.post(url,json={"chat_id":chat,"text":text},timeout=15) as r:
-                    data=await r.json(content_type=None)
-                    if data.get("ok"):
-                        sent+=1
-                    else:
-                        errs.append(str(data.get("description","Telegram API error")))
-            except Exception as e:
-                errs.append(str(e))
-    return {"ok":len(errs)==0,"sent":sent,"attempted":len(matches),
-            "errors":errs,"truncated":len(matches)>TELEGRAM_MAX_SEND}
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if not token or not chat_id:
+        return {"ok": False, "sent": 0, "attempted": 0, "errors": ["missing secret"]}
 
-if __name__=="__main__":
-    asyncio.run(main_async())
+    selected = matches[:TELEGRAM_MAX_SEND]
+    errors = []
+    sent = 0
+    async with aiohttp.ClientSession() as s:
+        for m in selected:
+            text = (
+                f"📢 공공기관 참여정보\n"
+                f"기관: {m['institution']}\n"
+                f"키워드: {', '.join(m['keyword'])}\n"
+                f"제목: {m['title']}\n"
+                f"링크: {m['url']}"
+            )
+            try:
+                url = f"https://api.telegram.org/bot{token}/sendMessage"
+                async with s.post(url, data={"chat_id": chat_id, "text": text},
+                                  timeout=aiohttp.ClientTimeout(total=15)) as r:
+                    data = await r.json(content_type=None)
+                    if data.get("ok"):
+                        sent += 1
+                    else:
+                        errors.append(str(data.get("description", f"HTTP {r.status}")))
+            except Exception as e:
+                errors.append(str(e))
+    return {"ok": sent == len(selected) and not errors,
+            "sent": sent, "attempted": len(selected),
+            "errors": errors, "truncated": len(matches) > len(selected)}
+
+async def main():
+    start = time.monotonic()
+    targets = load_targets()
+    state = load_state()
+    all_matches = []
+    results = []
+    errors = 0
+    completed = 0
+    checked = 0
+
+    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENCY, ssl=False)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        sem = asyncio.Semaphore(MAX_CONCURRENCY)
+
+        async def one(t):
+            async with sem:
+                return await process_target(t, session, state)
+
+        tasks = [asyncio.create_task(one(t)) for t in targets]
+        try:
+            for fut in asyncio.as_completed(tasks, timeout=MAX_TOTAL_SECONDS):
+                res = await fut
+                results.append(res)
+                completed += 1
+                checked += res["checked"]
+                if res["error"]:
+                    errors += 1
+                    print(f"[ERROR] {res['institution']} | {res['board']} | {res['error']}")
+                for m in res["matches"]:
+                    all_matches.append(m)
+                    print(f"[NEW MATCH {len(all_matches)}]")
+                    print(f"기관: {m['institution']}")
+                    print(f"키워드: {', '.join(m['keyword'])}")
+                    print(f"제목: {m['title']}")
+                    print(f"URL: {m['url']}")
+        except asyncio.TimeoutError:
+            print("[TIMEOUT] MAX_TOTAL_SECONDS reached")
+
+    # Mark only newly detected matches as seen.
+    for m in all_matches:
+        state["seen"][stable_key(m["institution"], m["url"])] = True
+    state["initialized"] = True
+    save_state(state)
+
+    telegram = await send_telegram(all_matches)
+
+    log = {
+        "version": "8.6.3",
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "targets": len(targets),
+        "completed": completed,
+        "posts_checked": checked,
+        "new_matches": len(all_matches),
+        "errors": errors,
+        "timed_out": completed < len(targets),
+        "runtime_seconds": round(time.monotonic() - start, 2),
+        "keywords": KEYWORDS,
+        "matches": all_matches,
+        "telegram": telegram
+    }
+    Path(LOG_FILE).write_text(json.dumps(log, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(log, ensure_ascii=False, indent=2))
+
+if __name__ == "__main__":
+    asyncio.run(main())
