@@ -1,15 +1,15 @@
 {
   "version": "8.6.6",
-  "timestamp": "2026-09-17 14:30:14",
+  "timestamp": "2026-09-17 14:34:49",
   "targets": 100,
   "completed": 100,
-  "posts_checked": 388,
+  "posts_checked": 386,
   "candidate_links": 589,
   "detail_links": 589,
   "new_matches": 0,
-  "errors": 3,
+  "errors": 1,
   "timed_out": false,
-  "elapsed_seconds": 78.8,
+  "elapsed_seconds": 131.9,
   "keywords": [
     "설문조사",
     "시민참여",
@@ -18,19 +18,9 @@
   "matches": [],
   "error_details": [
     {
-      "institution": "한국고전번역원",
-      "board_url": "https://www.itkc.or.kr/bbs/board.do?id=76&menuId=86",
-      "error": "HTTP 0"
-    },
-    {
-      "institution": "대외경제정책연구원",
-      "board_url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
-      "error": "HTTP 0"
-    },
-    {
       "institution": "대한법률구조공단",
       "board_url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
-      "error": "Cannot connect to host www.klac.or.kr:443 ssl:default [Temporary failure in name resolution]"
+      "error": "HTTP 0"
     }
   ],
   "telegram": {
