@@ -15,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -31,10 +30,20 @@ jobs:
         run: |
           python validate_v6_8.py
 
+      - name: Check V6.8 result
+        run: |
+          if [ ! -f "boards_v6_8_validation.xlsx" ]; then
+            echo "ERROR: boards_v6_8_validation.xlsx not found."
+            exit 1
+          fi
+
+          echo "V6.8 result file:"
+          ls -lh boards_v6_8_validation.xlsx
+
       - name: Upload V6.8 result
         uses: actions/upload-artifact@v4
         with:
-          name: boards-v6-8-validation
+          name: v6-8-validation-result
           path: boards_v6_8_validation.xlsx
           if-no-files-found: error
 
@@ -43,9 +52,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add validate_v6_8.py validate_v6_8.yml boards_v6_8_validation.xlsx
-          git diff --cached --quiet || git commit -m "Add V6.8 deep board re-validation result"
+          git add boards_v6_8_validation.xlsx
 
-      - name: Push result
-        run: |
-          git push origin HEAD:main
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Add V6.8 validation result"
+            git push origin HEAD:main
+          fi
