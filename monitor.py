@@ -1,5 +1,7 @@
-VERSION = "V8.11.1"
+VERSION = "V8.12"
 import os, re, json, time, html, warnings
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin, urlparse, parse_qs
 import requests
@@ -15,6 +17,7 @@ EXCLUDE_TITLE = ["공모전"]
 MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "20"))
 TIMEOUT_SECONDS = int(os.getenv("TIMEOUT_SECONDS", "15"))
 RECENT_POSTS = int(os.getenv("RECENT_POSTS", "15"))
+RECENT_DAYS = int(os.getenv("RECENT_DAYS", "30"))
 MAX_TOTAL_SECONDS = int(os.getenv("MAX_TOTAL_SECONDS", "1200"))
 HTTP_RETRIES = int(os.getenv("HTTP_RETRIES", "2"))
 
@@ -25,9 +28,13 @@ MAX_PENDING = int(os.getenv("MAX_PENDING", "10000"))
 UA = "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.11.1)"
 
 NOISE = ["script","style","noscript","svg","header","footer","nav","aside","form","iframe","canvas","template"]
-BOARD_WORDS = ["공지사항","공지","알림마당","알림","소식","새소식","기관소식","게시판","뉴스","보도자료"]
-URL_HINTS = ["notice","noti","board","bbs","news","announcement","community","plaza","inform","particip"]
+BOARD_WORDS = ["공지사항","공지","알림마당","알림","소식","새소식","기관소식","게시판","뉴스","보도자료","공고"]
+URL_HINTS = ["notice","noti","board","bbs","news","announcement","plaza","inform"]
 BAD = ["채용","입찰","계약","로그인","회원","사이트맵","개인정보","이용약관"]
+PARTICIPATION_BOARD_WORDS = ["국민참여","시민참여","참여마당","고객참여","소통","설문","이벤트","공모전","동반성장","사회공헌"]
+NOTICE_STRONG_WORDS = ["공지사항","새소식","알림마당","기관소식","보도자료","공고"]
+PARTICIPATION_CONTEXT = ["설문","의견수렴","의견조사","만족도","조사","응답","설문지","참여단","시민의견","국민의견"]
+KST = ZoneInfo("Asia/Seoul")
 
 session = requests.Session()
 session.headers.update({
@@ -105,6 +112,120 @@ def board_score(u, t):
         s -= 4
     return s
 
+
+
+DATE_PATTERNS = [
+    re.compile(r"(?P<y>20\d{2})[-./년]\s*(?P<m>\d{1,2})[-./월]\s*(?P<d>\d{1,2})일?"),
+    re.compile(r"(?P<y>\d{2})[-./]\s*(?P<m>\d{1,2})[-./]\s*(?P<d>\d{1,2})"),
+]
+
+def parse_date_text(text):
+    text = norm(text)
+    for pat in DATE_PATTERNS:
+        m = pat.search(text)
+        if not m:
+            continue
+        y, mo, d = int(m.group("y")), int(m.group("m")), int(m.group("d"))
+        if y < 100:
+            y += 2000
+        try:
+            return datetime(y, mo, d, tzinfo=KST)
+        except ValueError:
+            pass
+    return None
+
+def recent_cutoff():
+    return datetime.now(KST) - timedelta(days=RECENT_DAYS)
+
+def is_recent_date(dt):
+    return bool(dt and dt >= recent_cutoff())
+
+def row_context(a):
+    # Prefer the nearest table/list row; fall back to a small parent container.
+    for tag_name in ("tr", "li"):
+        x = a.find_parent(tag_name)
+        if x:
+            return norm(x.get_text(" ", strip=True))
+    x = a.parent
+    for _ in range(3):
+        if x is None:
+            break
+        txt = norm(x.get_text(" ", strip=True))
+        if len(txt) >= 20:
+            return txt
+        x = x.parent
+    return norm(a.get_text(" ", strip=True))
+
+def extract_post_candidates(list_url, soup):
+    """Return detail candidates with best-effort list-row date/title evidence."""
+    out, seen = [], set()
+    for a in soup.find_all("a", href=True):
+        href = a.get("href", "").strip()
+        if not href:
+            continue
+        u = urljoin(list_url, href)
+        if not u.startswith(("http://", "https://")) or not same_domain(list_url, u):
+            continue
+        if not detail_url(u) or u in seen:
+            continue
+        text = norm(a.get_text(" ", strip=True)) or norm(a.get("aria-label") or a.get("title"))
+        if not text or text.lower() in {"prev","next","이전","다음","목록","검색","확인","닫기"}:
+            continue
+        ctx = row_context(a)
+        dt = parse_date_text(ctx)
+        seen.add(u)
+        out.append({"url": u, "anchor_title": text, "date": dt.isoformat() if dt else None, "row_text": ctx[:500]})
+    return out
+
+def notice_board_score(url, page_text="", page_title=""):
+    u = url.lower()
+    txt = norm(f"{page_title} {page_text}").lower()
+    score = 0
+    for w in NOTICE_STRONG_WORDS:
+        if w.lower() in txt:
+            score += 8
+    for h in URL_HINTS:
+        if h in u:
+            score += 2
+    for w in PARTICIPATION_BOARD_WORDS:
+        if w.lower() in txt:
+            score -= 8
+    for b in BAD:
+        if b.lower() in txt:
+            score -= 5
+    return score
+
+def board_identity_text(soup):
+    if not soup:
+        return ""
+    parts = []
+    if soup.title:
+        parts.append(soup.title.get_text(" ", strip=True))
+    for tag in soup.find_all(["h1", "h2", "h3"], limit=12):
+        parts.append(tag.get_text(" ", strip=True))
+    main = soup.find("main") or soup.find("article")
+    if main:
+        parts.append(main.get_text(" ", strip=True)[:1800])
+    return norm(" ".join(parts))
+
+def looks_like_wrong_board(url, soup):
+    identity = board_identity_text(soup)
+    score = notice_board_score(url, identity, title_of(soup) if soup else "")
+    low = identity.lower()
+    explicit_bad = any(w.lower() in low for w in PARTICIPATION_BOARD_WORDS)
+    strong_notice = any(w.lower() in low for w in NOTICE_STRONG_WORDS)
+    return explicit_bad and not strong_notice and score < 5
+
+def recent_detail_urls(list_url, soup):
+    items = extract_post_candidates(list_url, soup)
+    dated = [x for x in items if x.get("date") and is_recent_date(datetime.fromisoformat(x["date"]))]
+    # If dates are present, strictly enforce the 30-day window.
+    if dated:
+        dated.sort(key=lambda x: x["date"], reverse=True)
+        return dated[:RECENT_POSTS]
+    # No extractable dates: keep a very small bounded set. Detail-page date
+    # validation in match_post remains mandatory, preventing old alerts.
+    return items[:RECENT_POSTS]
 
 def discover_board_v811(home_url, fetch_html_func):
     """
@@ -196,8 +317,8 @@ V8111_BOARD_TEXT = [
     "국민참여", "시민참여", "고객참여"
 ]
 V8111_BOARD_URL = [
-    "notice", "noti", "board", "bbs", "news", "announcement", "community",
-    "particip", "engage", "citizen", "people", "plaza", "article", "list"
+    "notice", "noti", "board", "bbs", "news", "announcement",
+    "plaza", "article", "list"
 ]
 V8111_BAD_TEXT = ["채용", "입찰", "계약", "로그인", "회원", "사이트맵", "개인정보", "이용약관"]
 
@@ -211,6 +332,9 @@ def v8111_score(url, text):
     for h in V8111_BOARD_URL:
         if h in u:
             score += 2
+    for w in PARTICIPATION_BOARD_WORDS:
+        if w.lower() in t:
+            score -= 7
     for b in V8111_BAD_TEXT:
         if b.lower() in t:
             score -= 5
@@ -281,10 +405,11 @@ def discover_board_v8111(home):
         if not rr:
             continue
         ss = BeautifulSoup(rr.text, "html.parser")
-        details = list(dict.fromkeys([x for x, _ in extract_links(rr.url, ss) if detail_url(x)]))
-        # The same criterion as the proven V8.10/11 board detector: >=2 detail links.
+        details = recent_detail_urls(rr.url, ss)
+        if looks_like_wrong_board(rr.url, ss):
+            continue
         if len(details) >= 2:
-            verified.append((sc, rr.url, details[:RECENT_POSTS], tx))
+            verified.append((sc, rr.url, [x["url"] for x in details], tx))
 
     diag["verified"] = len(verified)
     if verified:
@@ -321,11 +446,11 @@ def discover_board(home):
         if not rr:
             continue
         ss = BeautifulSoup(rr.text, "html.parser")
-        details = list(dict.fromkeys(
-            [x for x, tx in extract_links(rr.url, ss) if detail_url(x)]
-        ))
+        details = recent_detail_urls(rr.url, ss)
+        if looks_like_wrong_board(rr.url, ss):
+            continue
         if len(details) >= 2:
-            return rr.url, details[:RECENT_POSTS], "DISCOVERED"
+            return rr.url, [x["url"] for x in details], "DISCOVERED"
     return None, [], "NO_BOARD"
 
 def visible_main_text(soup):
@@ -347,14 +472,32 @@ def visible_main_text(soup):
 
 def meaningful_body_match(body, kw):
     for m in re.finditer(re.escape(kw), body):
-        a = max(0, m.start() - 140)
-        b = min(len(body), m.end() + 180)
+        a = max(0, m.start() - 160)
+        b = min(len(body), m.end() + 220)
         ctx = body[a:b]
-        if len(ctx) >= 80 and any(
-            p in ctx for p in [".", "다.", "요.", "습니다", "한다", "안내", "실시", "모집", "참여", "응답", "기간"]
-        ):
+        if len(ctx) < 80:
+            continue
+        if kw in ("국민참여", "시민참여"):
+            if not any(x in ctx for x in PARTICIPATION_CONTEXT):
+                continue
+        if any(p in ctx for p in [".", "다.", "요.", "습니다", "한다", "안내", "실시", "모집", "참여", "응답", "기간"]):
             return True
     return False
+
+def extract_detail_date(soup):
+    # Look at common metadata/date containers first, then visible text.
+    selectors = [
+        "time", ".date", ".regdate", ".reg_date", ".view_date", ".board-date",
+        ".bbs-date", ".article-date", ".date-info", ".info", ".view_info"
+    ]
+    for sel in selectors:
+        for x in soup.select(sel):
+            dt = parse_date_text(x.get_text(" ", strip=True))
+            if dt:
+                return dt
+    # Search only a bounded head/body prefix to avoid dates in attachments/history.
+    txt = norm(soup.get_text(" ", strip=True))
+    return parse_date_text(txt[:5000])
 
 def match_post(u):
     r = get(u)
@@ -365,31 +508,29 @@ def match_post(u):
     if not title:
         return None
 
-    # 제목에 공모전이 포함되면 제외
+    # Hard date gate: old posts can never alert.
+    post_date = extract_detail_date(soup)
+    if not is_recent_date(post_date):
+        return None
+
     if any(x in title for x in EXCLUDE_TITLE):
         return None
 
-    # 제목 우선
     for kw in KEYWORDS:
         if kw in title:
             return {
-                "url": r.url,
-                "title": title,
-                "keyword": kw,
-                "where": "title"
+                "url": r.url, "title": title, "keyword": kw,
+                "where": "title", "date": post_date.strftime("%Y-%m-%d")
             }
 
-    # 본문은 V8.9의 엄격 조건 유지
     body = visible_main_text(soup)
     if len(body) < 120:
         return None
     for kw in KEYWORDS:
         if meaningful_body_match(body, kw):
             return {
-                "url": r.url,
-                "title": title,
-                "keyword": kw,
-                "where": "body"
+                "url": r.url, "title": title, "keyword": kw,
+                "where": "body", "date": post_date.strftime("%Y-%m-%d")
             }
     return None
 
@@ -476,9 +617,10 @@ def process(t, state, deadline):
         rr = get(board)
         if rr:
             ss = BeautifulSoup(rr.text, "html.parser")
-            details = list(dict.fromkeys(
-                [u for u, tx in extract_links(rr.url, ss) if detail_url(u)]
-            ))[:RECENT_POSTS]
+            if looks_like_wrong_board(rr.url, ss):
+                board = ""
+            else:
+                details = [x["url"] for x in recent_detail_urls(rr.url, ss)]
         else:
             board = ""
 
@@ -588,6 +730,21 @@ def main():
         diag_counts[k] = diag_counts.get(k, 0) + 1
     print("BOARD_DISCOVERY_DIAG", json.dumps(diag_counts, ensure_ascii=False))
 
+    # V8.12: revalidate legacy pending items so old/false alerts are purged.
+    cleaned_pending = []
+    pending_removed_invalid = 0
+    for old in pending:
+        try:
+            refreshed = match_post(old.get("url", ""))
+        except Exception:
+            refreshed = None
+        if refreshed:
+            refreshed["기관명"] = old.get("기관명", refreshed.get("기관명", ""))
+            cleaned_pending.append(refreshed)
+        else:
+            pending_removed_invalid += 1
+    pending = cleaned_pending
+
     # 신규 매칭을 queue에 넣는다. 이미 seen 또는 pending이면 중복 삽입하지 않는다.
     seen_keys = set(state.get("seen", {}).keys())
     pending_keys = {match_key(m) for m in pending}
@@ -633,6 +790,8 @@ def main():
         "posts_checked": sum(r.get("posts", 0) for r in results),
         "new_matches": len(new_matches),
         "pending_before": pending_before,
+        "pending_removed_invalid": pending_removed_invalid,
+        "recent_days": RECENT_DAYS,
         "telegram_sent": len(sent_items),
         "pending_after": len(pending),
         "errors": sum(r["status"] == "ERROR" for r in results),

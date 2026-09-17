@@ -23,3 +23,6 @@ V8.11 #1 결과(`completed=160`, `no_board=195`)를 기준으로 실제 코드 �
 - `CANDIDATE_NOT_VERIFIED`: 후보는 있었지만 게시판 검증 실패
 - `NO_CANDIDATE`: 후보 자체를 찾지 못함
 - `HOME_ERROR`: 홈페이지 접근 실패
+
+
+> 이 디렉터리의 운영 버전은 V8.12입니다. 실제 Workflow는 `.github/workflows/v8_12_355_monitor.yml`입니다.
