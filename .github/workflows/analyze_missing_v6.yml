@@ -1,4 +1,4 @@
-name: Analyze Missing Institutions V6.1
+name: Analyze Missing Institutions V6.2
 
 on:
   workflow_dispatch:
@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -18,9 +19,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install pandas openpyxl aiohttp beautifulsoup4 lxml
 
-      - name: Run V6.1 analysis
+      - name: Check Python syntax
+        run: |
+          python -m py_compile analyze_missing_v6.py
+
+      - name: Run V6.2 analysis
         run: |
           python analyze_missing_v6.py
 
