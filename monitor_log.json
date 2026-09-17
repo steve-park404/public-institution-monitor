@@ -1,31 +1,31 @@
 {
   "version": "V8.6",
-  "timestamp_utc": "2026-09-17T12:37:58.310889+00:00",
+  "timestamp_utc": "2026-09-17T12:57:51.268983+00:00",
   "targets": 100,
   "completed": 100,
   "posts_checked": 1470,
-  "new_matches": 1078,
+  "new_matches": 10,
   "errors": 2,
-  "timed_out": 1,
+  "timed_out": 0,
   "first_run": false,
   "discovered_notice_boards": 0,
   "telegram": {
     "ok": false,
-    "sent": 1078
+    "sent": 10
   },
   "error_details": [
     {
-      "institution": "대한법률구조공단",
-      "board": "공지사항 더보기",
-      "url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
+      "institution": "대외경제정책연구원",
+      "board": "공지사항",
+      "url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
       "posts": 0,
       "matches": [],
       "error": "HTTP 0"
     },
     {
-      "institution": "대외경제정책연구원",
-      "board": "공지사항",
-      "url": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "institution": "대한법률구조공단",
+      "board": "공지사항 더보기",
+      "url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
       "posts": 0,
       "matches": [],
       "error": "HTTP 0"
