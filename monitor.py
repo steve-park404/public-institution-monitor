@@ -40,7 +40,7 @@ def normalize_state():
         s={}
     if not isinstance(s.get("seen"), dict):
         s["seen"]={}
-    s["version"]=862
+    s["version"]=8621
     return s
 
 def clean_text(s):
@@ -58,8 +58,11 @@ def extract_candidates(base_url, soup):
     base_host=urlparse(base_url).netloc
     out=[]
     seen=set()
-    for a in soup.find_all("a", href=True):
-        href=a.get("href","").strip()
+    for a in soup.find_all("a"):
+        attrs = getattr(a, "attrs", None) or {}
+        href = str(attrs.get("href") or "").strip()
+        if not href:
+            continue
         text=clean_text(a.get_text(" ", strip=True))
         if not href or href.startswith(("javascript:", "#","mailto:")):
             continue
@@ -86,8 +89,12 @@ def likely_content(soup):
         tag.decompose()
     # Remove obvious lists/menus/related/search areas.
     for tag in soup.find_all(["ul","ol"]):
-        cls=" ".join(tag.get("class",[])).lower()
-        tid=(tag.get("id") or "").lower()
+        attrs = getattr(tag, "attrs", None) or {}
+        cls_val = attrs.get("class", [])
+        if isinstance(cls_val, str):
+            cls_val = [cls_val]
+        cls=" ".join(str(x) for x in cls_val).lower()
+        tid=str(attrs.get("id") or "").lower()
         if any(x in (cls+" "+tid) for x in ["menu","nav","gnb","lnb","related","recommend","search","list"]):
             tag.decompose()
     selectors=[
@@ -133,6 +140,13 @@ async def fetch(session, url):
 
 async def process_target(session, sem, target, state):
     async with sem:
+        try:
+            return await _process_target_inner(session, target, state)
+        except Exception as e:
+            return {"institution":target["institution"],"board":target["board"],"url":target["board"],
+                    "posts":0,"matches":[],"error":f"{type(e).__name__}: {e}"}
+
+async def _process_target_inner(session, target, state):
         board=target["board"]
         status, raw=await fetch(session, board)
         if not raw:
