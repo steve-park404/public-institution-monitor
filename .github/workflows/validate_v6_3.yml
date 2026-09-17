@@ -1,0 +1,107 @@
+name: V6.3 Board Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+
+  validate:
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 15
+
+    steps:
+
+      # --------------------------------------------------
+      # Checkout
+      # --------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # --------------------------------------------------
+      # Python
+      # --------------------------------------------------
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # --------------------------------------------------
+      # Packages
+      # --------------------------------------------------
+
+      - name: Install packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install aiohttp beautifulsoup4 pandas openpyxl
+
+      # --------------------------------------------------
+      # Input 확인
+      # --------------------------------------------------
+
+      - name: Check input
+        run: |
+          echo "===== 파일 확인 ====="
+          ls -lh
+          echo ""
+          echo "===== V6.3 분석 결과 확인 ====="
+
+          if [ ! -f "boards_v6_3_analysis.xlsx" ]; then
+            echo "ERROR: boards_v6_3_analysis.xlsx 없음"
+            exit 1
+          fi
+
+          ls -lh boards_v6_3_analysis.xlsx
+
+      # --------------------------------------------------
+      # Validation
+      # --------------------------------------------------
+
+      - name: Run V6.3 Board Validation
+        run: |
+          python validate_v6_3.py
+
+      # --------------------------------------------------
+      # 결과 확인
+      # --------------------------------------------------
+
+      - name: Check result
+        run: |
+          echo "===== 결과 파일 ====="
+          ls -lh boards_v6_3_validation.xlsx
+
+      # --------------------------------------------------
+      # Artifact
+      # --------------------------------------------------
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: v6-3-board-validation
+          path: boards_v6_3_validation.xlsx
+          retention-days: 30
+
+      # --------------------------------------------------
+      # Git commit
+      # --------------------------------------------------
+
+      - name: Commit result
+        run: |
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add boards_v6_3_validation.xlsx
+
+          if git diff --cached --quiet; then
+            echo "변경사항 없음"
+          else
+            git commit -m "Add V6.3 board validation result"
+            git push
+          fi
