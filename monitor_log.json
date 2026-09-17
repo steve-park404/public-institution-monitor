@@ -1,73 +1,1282 @@
 {
-  "version": "V8.6.1",
-  "timestamp_utc": "2026-09-17T13:36:58.272610+00:00",
-  "keywords": [
-    "설문조사",
-    "시민참여",
-    "국민참여",
-    "공모전"
-  ],
+  "version": "8.6.2",
+  "timestamp": "2026-09-17T13:55:23",
   "targets": 100,
   "completed": 100,
-  "posts_checked": 1240,
-  "new_matches": 5,
-  "errors": 1,
+  "posts_checked": 900,
+  "new_matches": 133,
+  "errors": 2,
   "timed_out": false,
   "first_run": false,
-  "discovered_notice_boards": 0,
   "matches": [
     {
-      "institution": "(재)우체국시설관리단",
-      "board": "https://www.poma.or.kr/poma/notice.do",
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/menu.es?mid=a12101000000",
       "keyword": [
         "설문조사"
       ],
-      "title": "POMA 소식",
-      "url": "https://www.poma.or.kr/poma/notice.do"
+      "title": "2026년 NRC 대표 홈페이지 사용자 만족도조사 안내 | 공지사항 | NRC 소식 : NRC 경제인문사회연구회 - NRC 공식 홈페이지, NRC",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001&act=view&list_no=300669&nPage=1"
     },
     {
-      "institution": "(재)우체국시설관리단",
-      "board": "https://www.poma.or.kr/poma/notice.do",
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/menu.es?mid=a12101000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년「국가정책연구포털 AI 쇼츠 영상공모전」안내",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001&act=view&list_no=300647&tag=&nPage=1"
+    },
+    {
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/menu.es?mid=a12101000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "보도자료",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12102000000&bid=0015"
+    },
+    {
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001",
       "keyword": [
         "설문조사"
       ],
-      "title": "2026년 추석 명절 청탁금지법 선물 바로알기",
-      "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=973&article.offset=0&articleLimit=10"
+      "title": "2026년 NRC 대표 홈페이지 사용자 만족도조사 안내 | 공지사항 | NRC 소식 : NRC 경제인문사회연구회 - NRC 공식 홈페이지, NRC",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001&act=view&list_no=300669&nPage=1"
     },
     {
-      "institution": "(재)우체국시설관리단",
-      "board": "https://www.poma.or.kr/poma/notice.do",
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년「국가정책연구포털 AI 쇼츠 영상공모전」안내",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001&act=view&list_no=300647&tag=&nPage=1"
+    },
+    {
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/board.es?mid=a12101000000&bid=0001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "보도자료",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12102000000&bid=0015"
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "한국건강가정진흥원>알림마당>공지사항",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[유관기관 홍보] 2026년 디지털미디어 피해 청소년 회복 지원 사업 인식제고 홍보 이벤트",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115947&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 한가원 통합 공모전 - 「가족의 행복을 잇는 우수사례 이야기」 _ 기한연장",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115946&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "「2026 대한민국 다문화 어울림 엑스포」참관 안내",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/view.do?article_seq=1115945&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[안내] 2026년 추석 명절 금품등 제공 금지 안내",
+      "url": "https://www.kordi.or.kr/content.do?mode=view&page=&cid=686615&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[안내] 2026년 추석 명절 금품등 제공 금지 안내",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=686615&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[공모전 결과] 2026년 노인 일자리 및 사회활동 지원사업 수행기관 영상 공모전 1차 심사 결과 안내",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=685613&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년(2025년 실적) 우수 노인친화기업·기관 선정 결과",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=681618&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
       "keyword": [
         "설문조사"
       ],
-      "title": "AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 참여 안내",
-      "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964&article.offset=0&articleLimit=10"
+      "title": "AI 친화 및 고가치 데이터 발굴을 위한 대국민 데이터 수요 조사 참여 안내(8월 20일까지)",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=679613&cmsId=91"
     },
     {
-      "institution": "(재)우체국시설관리단",
-      "board": "https://www.poma.or.kr/poma/notice.do",
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
       "keyword": [
-        "설문조사"
+        "공모전"
       ],
-      "title": "개인정보 처리방침 개정 안내",
-      "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=963&article.offset=0&articleLimit=10"
+      "title": "2026년 2분기 노인친화기업·기관 공모 최종 심사 결과 공고",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=678625&cmsId=91"
     },
     {
-      "institution": "(재)우체국시설관리단",
-      "board": "https://www.poma.or.kr/poma/notice.do",
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[공모전] 2026년 노인 일자리 및 사회활동 지원사업 수행기관 안전관리 우수사례 공모전",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=678617&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[공모전 결과] 2026년 노인 일자리 및 사회활동 지원사업 참여노인 수기 공모전 최종 심사 결과 발표",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=675613&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[공모전 결과] 2027년 신규 노인일자리 개발을 위한 아이템 공모전 선정작 안내",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=674614&cmsId=91"
+    },
+    {
+      "institution": "한국노인인력개발원",
+      "board": "https://www.kordi.or.kr/content.do?cmsId=91",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 우수 고령자친화기업 재지정 공고",
+      "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=673615&cmsId=91"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "2026년 하반기 국가 K-테스트베드 통합공모 시행 알..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=308&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
       "keyword": [
         "국민참여",
         "공모전"
       ],
+      "title": "[한국석유공사]체감도조사 개인정보 제3자 제공사항",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=307&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "2026년 한국석유공사 짧은 영상 (숏폼) 공모전 수상..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=306&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "2026 한국석유공사 AI데이터 서포터즈 모집 공고",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=305&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "공공기관 종합청렴도 평가 관련 개인정보 제3자 제공사항..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=304&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "2026년 한국석유공사 짧은 영상(숏폼) 공모전(기간연..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=303&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "제14회 산업통상부 공공데이터 활용 아이디어 공모전 개..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=301&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "2026년 국가데이터 활용대회 개최 안내",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=300&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "자원안보위기 경보 발령에 따른 에너지절약 국민행동",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=299&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "자원안보위기 경보 발령에 따른 공공기관 승용차5부제 실..",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=298&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "한국석유공사 비상임이사 초빙 공고",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=297&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국석유공사",
+      "board": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "한국석유공사 퇴직연금사업자 추가선정 공고",
+      "url": "https://www.knoc.co.kr/sub05/sub05_5_5.jsp?page=1&num=296&mode=view&field=&text=&bid=DATA5&ses=USERSESSION&psize=12"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "2026년 주택금융 및 보금자리론 실태조사 고객 안내",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600572&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 주택금융 콘퍼런스 개최 안내",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600525&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "2026년 주택연금 수요실태조사 고객 안내",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600486&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026 을지연습 연계 공습대비 민방위 훈련 전국 동시 실시",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600470&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 을지연습에 동참해 주세요",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600469&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년도 주택연금 명예홍보대사 모집",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600454&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "대표 홈페이지 점검 안내 | 국민참여 | 한국주택금융공사",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600234&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "2026년 하반기 전월세전환율 안내",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600176&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "2026년 행정안전부 중앙우수제안 선정을 위한 공사 자체우수제안 추천 후보작 사전공시",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600135&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "2025년도 공공기관 안전관리등급 심사결과",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600126&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "국민참여"
+      ],
       "title": "10",
-      "url": "https://www.poma.or.kr/poma/notice.do?mode=list&&articleLimit=10&article.offset=90"
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=list&&articleLimit=10&article.offset=90"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "다음 페이지로 이동하기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=list&&articleLimit=10&article.offset=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "마지막 페이지로 이동하기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=list&&articleLimit=10&article.offset=630"
+    },
+    {
+      "institution": "한국환경연구원",
+      "board": "https://www.kei.re.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "설문조사",
+        "시민참여",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.kei.re.kr/rss/board.es?mid=a10301000000&bid=0001"
+    },
+    {
+      "institution": "한국환경연구원",
+      "board": "https://www.kei.re.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[원외] 2026 NKIS AI 영상 공모전",
+      "url": "https://www.kei.re.kr/board.es?mid=a10301000000&bid=0001&act=view&list_no=60524&tag=&nPage=1"
+    },
+    {
+      "institution": "한국환경연구원",
+      "board": "https://www.kei.re.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[원내] 2026 지속가능발전 숏폼 영상공모전(7.20~9.18)",
+      "url": "https://www.kei.re.kr/board.es?mid=a10301000000&bid=0001&act=view&list_no=60404&tag=&nPage=1"
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/S1T1C838/sublink.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "한국건강가정진흥원>알림마당>공지사항",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "2026년 주택금융 및 보금자리론 실태조사 고객 안내 2026-09-07",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600572"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 주택금융 콘퍼런스 개최 안내 2026-08-31",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600525"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "2026년 주택연금 수요실태조사 고객 안내 2026-08-24",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600486"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026 을지연습 연계 공습대비 민방위 훈련 전국 동시 실시 2026-08-18",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600470"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 을지연습에 동참해 주세요 2026-08-18",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600469"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년도 주택연금 명예홍보대사 모집 2026-08-10",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_08.do?mode=view&articleNo=600454"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "「HF AI 기반 지원시스템 통합 고도화 사업」 제안서 평가결과 2026-09-02",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_06.do?mode=view&articleNo=600563"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "「직무중심 인사 보수체계 고도화 용역」 제안서 평가결과 2026-08-21",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_06.do?mode=view&articleNo=600484"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub05/sub08.do",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "「주택연금 안심자산보호서비스」 상품개발 연구용역 제안서 평가결과 2026-08-19",
+      "url": "https://www.hf.go.kr/ko/sub05/sub05_06.do?mode=view&articleNo=600474"
+    },
+    {
+      "institution": "한국토지주택공사",
+      "board": "https://www.lh.or.kr/board.es?mid=a10601010000&bid=0033",
+      "keyword": [
+        "설문조사",
+        "시민참여",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.lh.or.kr/rss/board.es?mid=a10601010000&bid=0033"
+    },
+    {
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/menu.es?mid=a12105100000",
+      "keyword": [
+        "설문조사",
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.nrc.re.kr/rss/board.es?mid=a12105100000&bid=0012"
+    },
+    {
+      "institution": "서울요양원",
+      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[개인정보보호위원회]2023개인정보 위험 대응 공모전 홍보",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews?boardId=bbs_0000000000000020&mode=view&cntId=97&category=&pageIdx="
+    },
+    {
+      "institution": "서울요양원",
+      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2024년 상반기 강남소방서 서울요양원 합동소방훈련",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News?boardId=bbs_0000000000000020&mode=view&cntId=98&category=&pageIdx="
+    },
+    {
+      "institution": "서울요양원",
+      "board": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[개인정보보호위원회]2023개인정보 위험 대응 공모전 홍보",
+      "url": "https://www.xn--2i4bo5fgwadewe.kr/sgcf/SGCFNews/News?boardId=bbs_0000000000000020&mode=view&cntId=97&category=&pageIdx="
+    },
+    {
+      "institution": "한국환경연구원",
+      "board": "https://www.kei.re.kr/menu.es?mid=a10308010000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[한국환경연구원] 뉴스레터 제244호 작성일 2026-08-31",
+      "url": "https://www.kei.re.kr/letterList.es?mid=0308010000&act=view&seq=237"
+    },
+    {
+      "institution": "한국환경연구원",
+      "board": "https://www.kei.re.kr/menu.es?mid=a10308010000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[한국환경연구원] 뉴스레터 제243호 작성일 2026-07-31",
+      "url": "https://www.kei.re.kr/letterList.es?mid=0308010000&act=view&seq=235"
+    },
+    {
+      "institution": "경제인문사회연구회",
+      "board": "https://www.nrc.re.kr/menu.es?mid=a12001300000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "보도자료",
+      "url": "https://www.nrc.re.kr/board.es?mid=a12102000000&bid=0015"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[KIEP Webzine Vol.20 No.18] 쿠바의 국가 주도 경제개혁 추진과 주요 내용 / 가이아나 경제성장의 배경과 시사점: 석유 산업을 중심으로 / 일본 「배터리·전원산업전략」 개정의 주요 내용 및 시사점",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25843&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "뉴스레터 보기",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25843&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[KIEP Webzine Vol.20 No.17] 남미 3개국 순방의 주요 성과와 시사점 / 인도 해상 원유·가스 탐사지원제도(사무드라 만탄)의 주요 내용과 시사점 / 러시아의 글로벌 사우스 원자력 외교 동향과 시사점",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25719&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[KIEP Webzine Vol.20 No.16] 2026 APEC 통상장관회의 결과와 평가 / 인도의 제조업 육성 동향: 스마트폰, 반도체, 선박을 중심으로 / EU 디지털 유로 도입의 주요 내용과 전망",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25592&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "뉴스레터 보기",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25592&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[KIEP Webzine Vol.20 No.15] 베트남 FDI 정책 전환의 의미와 시사점: 정치국 결의안 제10호를 중심으로 / 2026년 NATO 정상회의 주요 내용과 평가 / 2026년 아프리카-프랑스 정상회의 주요 내용과 시사점",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25483&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "뉴스레터 보기",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25483&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[KIEP Webzine Vol.20 No.13] 트럼프 2기 반도체 수출통제 정책 동향과 시사점 / 중국 「국무원 대외투자 규정」의 주요 내용 및 시사점 / 러·우 전쟁 이후 러시아 운송·물류 전략의 구조적 전환과 시..",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25169&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "뉴스레터 보기",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=25169&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&cg_code=C01",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "[KIEP Webzine Vol.20 No.12] 디지털 전환 투자와 지역 노동시장 변화: EU Digital Europe Programme을 중심으로 / 북한 제9차 당대회 이후 북한의 경제 정책 및 대외전략 변화에 대한 평가 / 중동 전쟁에 따른 비료..",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10508010000&bid=0032&act=view&list_no=24944&nPage=1"
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/list.do?rows=10&page_unit=0",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "한국건강가정진흥원>알림마당>공지사항",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국건강가정진흥원",
+      "board": "https://www.kihf.or.kr/web/lay1/program/S1T81C297/public/list.do?rows=10&page_unit=0",
+      "keyword": [
+        "설문조사"
+      ],
+      "title": "육아도우미 신원확인 증명서 발급 신청",
+      "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T81C97/A/3/view.do?article_seq=1115061&cpage=1&rows=10&condition=TITLE&keyword="
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "2026년 공공데이터 활용 아이디어 및 사례 공모전",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=600461&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "공공데이터 활용 아이디어 공모전",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=599138&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "주택금융 체험수기 공모",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=599049&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "안전 아이디어 대국민 공모",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=598520&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "인구구조 변화 대응을 위한 대국민 정책제안 (9/30~11/29)",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=597442&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "HF 대국민 혁신 아이디어 공모",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=596755&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "HF ESG 경영 대국민 아이디어 공모 (7/12~7/31)",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=594549&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "주택연금 이용고객 체험수기 공모",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=593789&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "HF 대국민 혁신 아이디어 공모 (~5.24까지 연장)",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=593426&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "청년 전월세 체험수기 공모전",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=view&articleNo=568488&article.offset=0&articleLimit=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "다음 페이지로 이동하기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=list&&articleLimit=10&article.offset=10"
+    },
+    {
+      "institution": "한국주택금융공사",
+      "board": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "마지막 페이지로 이동하기",
+      "url": "https://www.hf.go.kr/ko/sub04/sub04_05_02.do?mode=list&&articleLimit=10&article.offset=10"
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "진행 2026-09-15 ~ 2026-09-28 2026년도 ON 고객 · 국민소통 참여고객 모집 2026-09-01",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=8025&nPage=1&vlist_no_npage=1&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "종료 2026-06-16 ~ 2026-06-29 2026년 대국민참여 희망종목 선호도 조사 2026-06-15",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7956&nPage=1&vlist_no_npage=1&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "종료 2026-05-13 ~ 2026-06-01 2026년 공공데이터 개방 및 활용개선 설문조사 2026-05-12 2",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7919&nPage=1&vlist_no_npage=1&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "종료 2025-12-22 ~ 2025-12-28 올림픽공원 공연장 인지도 조사 2025-12-22",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7776&nPage=1&vlist_no_npage=1&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "종료 2025-11-26 ~ 2025-12-08 2025년도 2차 ON 고객 · 국민소통 참여고객 모집 2025-11-24",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7757&nPage=1&vlist_no_npage=1&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "2025년도 한국체육산업개발(주) 홈페이지 만족도 설문조사 | 설문참여 | 국민소통 | 국민참여 | 한국체육산업개발",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7740&nPage=1&vlist_no_npage=2&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "종료 2025-07-28 ~ 2025-08-10 2025년 생활체육 이용 실태 및 희망종목 설문조사 2025-07-24",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7614&nPage=1&vlist_no_npage=2&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "종료 2025-07-07 ~ 2025-07-16 2025년도 1차 ON 고객 · 국민소통 참여고객 모집 2025-07-07",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7594&nPage=1&vlist_no_npage=2&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "한국체육산업개발(주)",
+      "board": "https://www.ksponco.or.kr/menu.es?mid=a10201020000",
+      "keyword": [
+        "설문조사",
+        "국민참여"
+      ],
+      "title": "종료 2025-06-18 ~ 2025-06-30 2025년 1차 올림픽스포츠센터 홍보효과성 설문조사 2025-06-18",
+      "url": "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&b_list_cnt=10&act=view&list_no=7581&nPage=1&vlist_no_npage=2&keyField=&keyWord=&ord="
+    },
+    {
+      "institution": "(재)한국보건의료정보원",
+      "board": "https://www.khis.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.khis.kr/rss/board.es?mid=a10301000000&bid=0001"
+    },
+    {
+      "institution": "(재)한국보건의료정보원",
+      "board": "https://www.khis.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "설문조사"
+      ],
+      "title": "한국보건의료정보원 공공데이터 이용 및 신규 개방 수요 설문조사 안내",
+      "url": "https://www.khis.kr/board.es?mid=a10301000000&bid=0001&act=view&list_no=2669&tag=&nPage=1"
+    },
+    {
+      "institution": "건축공간연구원",
+      "board": "https://www.auri.re.kr/menu.es?mid=a10401010000",
+      "keyword": [
+        "설문조사",
+        "시민참여",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.auri.re.kr/rss/board.es?mid=a10401010000&bid=0001"
+    },
+    {
+      "institution": "국가생명윤리정책원",
+      "board": "https://nibp.kr/board/notice",
+      "keyword": [
+        "국민참여"
+      ],
+      "title": "알림 > 공지사항",
+      "url": "https://nibp.kr/board/notice"
+    },
+    {
+      "institution": "국제식물검역인증원",
+      "board": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "알림광장",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068"
+    },
+    {
+      "institution": "국제식물검역인증원",
+      "board": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068",
+      "keyword": [
+        "국민참여",
+        "공모전"
+      ],
+      "title": "국제식물검역인증원>알림광장>공지사항",
+      "url": "https://www.ipab.or.kr/kor/CMS/Board/Board.do?mCode=MN068"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "전체",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10501000000&bid=0023"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "원내",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10501000000&bid=0023&data01=GB01"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "기타",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10501000000&bid=0023&data01=GB02"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "새글 [경제인문사회연구회] 2026년 국가정책연구포털 AI 쇼츠 영상공모전 개최",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10501000000&bid=0023&act=view&list_no=25857&tag=&nPage=1"
+    },
+    {
+      "institution": "대외경제정책연구원",
+      "board": "https://www.kiep.go.kr/menu.es?mid=a10501000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "제1회 글로벌 사우스 지역연구 청년학자 논문 공모전",
+      "url": "https://www.kiep.go.kr/board.es?mid=a10501000000&bid=0023&act=view&list_no=24432&tag=&nPage=1"
+    },
+    {
+      "institution": "대한석탄공사",
+      "board": "https://www.kocoal.or.kr/board/board_list.php?board_name=news&search_category=공지사항",
+      "keyword": [
+        "설문조사"
+      ],
+      "title": "2024년도 공공기관 청렴도 측정 관련 개인정보 제3자 제공사항 알림",
+      "url": "https://www.kocoal.or.kr/board/board_view.php?view_id=1103&board_name=news&page=1&search_category=%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD"
+    },
+    {
+      "institution": "대한석탄공사",
+      "board": "https://www.kocoal.or.kr/board/board_list.php?board_name=news&search_category=공지사항",
+      "keyword": [
+        "설문조사"
+      ],
+      "title": "2023년 공공기관 고객만족도조사 관련 개인정보 제3자 제공사항 알림",
+      "url": "https://www.kocoal.or.kr/board/board_view.php?view_id=1097&board_name=news&page=1&search_category=%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD"
+    },
+    {
+      "institution": "대한석탄공사",
+      "board": "https://www.kocoal.or.kr/board/board_list.php?board_name=news&search_category=공지사항",
+      "keyword": [
+        "설문조사"
+      ],
+      "title": "2022년 공공기관 고객만족도조사 관련 개인정보 제3자 제공사항 알림",
+      "url": "https://www.kocoal.or.kr/board/board_view.php?view_id=1094&board_name=news&page=1&search_category=%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstInfo.do?mi=1009&pstSn=504310&bbsId=1001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "주요연혁",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=2428&contsId=1062"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstInfo.do?mi=1009&pstSn=504310&bbsId=1001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "정보공개",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=1133&contsId=1023"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstInfo.do?mi=1009&pstSn=504310&bbsId=1001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "정보공개제도안내",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=1133&contsId=1023"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstList.do?mi=1009&bbsId=1001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "주요연혁",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=2428&contsId=1062"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstList.do?mi=1009&bbsId=1001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "정보공개",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=1133&contsId=1023"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstList.do?mi=1009&bbsId=1001",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "정보공개제도안내",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=1133&contsId=1023"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstList.do?mi=2524&bbsId=1513",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "주요연혁",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=2428&contsId=1062"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstList.do?mi=2524&bbsId=1513",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "정보공개",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=1133&contsId=1023"
+    },
+    {
+      "institution": "대한적십자사",
+      "board": "https://www.redcross.or.kr/main/pt/pst/selectPstList.do?mi=2524&bbsId=1513",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "정보공개제도안내",
+      "url": "https://www.redcross.or.kr/main/cm/conts/contsView.do?mi=1133&contsId=1023"
+    },
+    {
+      "institution": "동북아역사재단",
+      "board": "https://www.nahf.or.kr/web/portal/bbs/1978/list",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "홍보콘텐츠",
+      "url": "https://www.nahf.or.kr/web/portal/bbs/2460"
+    },
+    {
+      "institution": "동북아역사재단",
+      "board": "https://www.nahf.or.kr/web/portal/bbs/1978/list",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "웹툰 - '최초'의 여성들",
+      "url": "https://www.nahf.or.kr/web/portal/bbs/2460"
+    },
+    {
+      "institution": "동북아역사재단",
+      "board": "https://www.nahf.or.kr/web/portal/bbs/1978/list",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "온라인 문의(Contact Us)",
+      "url": "https://www.nahf.or.kr/web/portal/bbs/2004/new"
+    },
+    {
+      "institution": "산업연구원",
+      "board": "https://www.kiet.re.kr/communicate/ntcList",
+      "keyword": [
+        "설문조사"
+      ],
+      "title": "산업연구원 대국민 연구수요조사(2026년 제2차) 2026-09-08",
+      "url": "https://www.kiet.re.kr/communicate/ntcView?ntc_no=10735&skey=&sval=&pg=1&pp=10"
+    },
+    {
+      "institution": "선박해양플랜트연구소",
+      "board": "https://www.kriso.re.kr/menu.es?mid=a10401000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.kriso.re.kr/rss/board.es?mid=a10401000000&bid=0010"
+    },
+    {
+      "institution": "선박해양플랜트연구소",
+      "board": "https://www.kriso.re.kr/menu.es?mid=a10401000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "새글 제7회 KRISO 미래바다 아이디어 공모전 개최",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=942&tag=&nPage=1"
+    },
+    {
+      "institution": "선박해양플랜트연구소",
+      "board": "https://www.kriso.re.kr/menu.es?mid=a10401000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "새글 해양 PNT(위치정보) 통합연구단 채용공고",
+      "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=941&tag=&nPage=1"
+    },
+    {
+      "institution": "에너지경제연구원",
+      "board": "https://www.keei.re.kr/menu.es?mid=a10201010000",
+      "keyword": [
+        "설문조사",
+        "국민참여",
+        "공모전"
+      ],
+      "title": "RSS",
+      "url": "https://www.keei.re.kr/rss/board.es?mid=a10201010000&bid=0005"
+    },
+    {
+      "institution": "에너지경제연구원",
+      "board": "https://www.keei.re.kr/menu.es?mid=a10201010000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026 『에너지 통계 활용 사례』 숏폼 공모전 개최",
+      "url": "https://www.keei.re.kr/board.es?mid=a10201010000&bid=0005&act=view&list_no=127725&tag=&nPage=1"
+    },
+    {
+      "institution": "오송첨단의료산업진흥재단",
+      "board": "https://www.kbiohealth.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "2026년 기관경영혁신 국민아이디어 공모전",
+      "url": "https://www.kbiohealth.kr/board.es?mid=a10301000000&bid=0002&act=view&list_no=12358&tag=&nPage=1"
+    },
+    {
+      "institution": "오송첨단의료산업진흥재단",
+      "board": "https://www.kbiohealth.kr/menu.es?mid=a10301000000",
+      "keyword": [
+        "공모전"
+      ],
+      "title": "(홍보협조) 청년들이 만드는 첨단 공공서비스 AI 영상 공모전",
+      "url": "https://www.kbiohealth.kr/board.es?mid=a10301000000&bid=0002&act=view&list_no=12311&tag=&nPage=1"
     }
   ],
   "error_details": [
     {
-      "institution": "대한법률구조공단",
-      "board": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
-      "url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
+      "institution": "국방기술품질원",
+      "board": "https://www.dtaq.re.kr/ko/notice/seminar.jsp",
+      "url": "https://www.dtaq.re.kr/ko/notice/seminar.jsp",
+      "posts": 0,
+      "matches": [],
+      "error": "HTTP 0"
+    },
+    {
+      "institution": "(재)우체국시설관리단",
+      "board": "https://www.poma.or.kr/poma/notice.do",
+      "url": "https://www.poma.or.kr/poma/notice.do",
       "posts": 0,
       "matches": [],
       "error": "HTTP 0"
@@ -75,8 +1284,8 @@
   ],
   "telegram": {
     "ok": true,
-    "sent": 5,
-    "attempted": 5,
+    "sent": 20,
+    "attempted": 20,
     "errors": [],
     "truncated": false
   }
