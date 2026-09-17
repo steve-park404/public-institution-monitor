@@ -1,16 +1,1 @@
-{
-  "run_at": "2026-09-17T19:00:33.968218+09:00",
-  "targets": 43,
-  "completed": 43,
-  "posts_checked": 341,
-  "new_matches": 0,
-  "errors": 0,
-  "timed_out": 0,
-  "first_run": true,
-  "discovered_notice_boards": 0,
-  "telegram": {
-    "ok": true,
-    "skipped": true
-  },
-  "errors_detail": []
-}
+{}
