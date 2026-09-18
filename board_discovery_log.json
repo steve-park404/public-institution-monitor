@@ -22,6 +22,17 @@
     "institution": "(재)한국통계정보원"
   },
   {
+    "home": "https://www.stat.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "(재)한국통계진흥원"
+  },
+  {
     "home": "https://www.gongyoung.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -33,7 +44,7 @@
     "institution": "(주)공영홈쇼핑"
   },
   {
-    "home": "https://www.stat.or.kr/",
+    "home": "https://www.hira.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -41,7 +52,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "(재)한국통계진흥원"
+    "institution": "건강보험심사평가원"
   },
   {
     "home": "http://knuh.kr/",
@@ -55,7 +66,7 @@
     "institution": "경북대학교병원"
   },
   {
-    "home": "https://www.hira.or.kr/",
+    "home": "https://www.knudh.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -63,7 +74,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "건강보험심사평가원"
+    "institution": "경북대학교치과병원"
   },
   {
     "home": "https://www.cw.or.kr/",
@@ -108,17 +119,6 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "과학기술사업화진흥원"
-  },
-  {
-    "home": "https://www.spacen.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "공간정보산업진흥원"
   },
   {
     "home": "https://www.88countryclub.co.kr/",
@@ -173,15 +173,26 @@
     "institution": "88관광개발(주)"
   },
   {
-    "home": "https://www.stepi.re.kr/",
-    "result": "NO_CANDIDATE",
+    "home": "http://www.gnuh.co.kr/",
+    "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "과학기술정책연구원"
+    "institution": "경상국립대학교병원"
+  },
+  {
+    "home": "https://www.spacen.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "공간정보산업진흥원"
   },
   {
     "home": "https://www.ncrc.or.kr/",
@@ -193,6 +204,28 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "국가아동권리보장원"
+  },
+  {
+    "home": "https://www.knps.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국립공원공단"
+  },
+  {
+    "home": "https://namuk.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국립농업박물관"
   },
   {
     "home": "https://www.g-airport.or.kr/",
@@ -247,39 +280,6 @@
     "institution": "가덕도신공항건설공단"
   },
   {
-    "home": "http://www.gnuh.co.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "경상국립대학교병원"
-  },
-  {
-    "home": "https://www.knps.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국립공원공단"
-  },
-  {
-    "home": "https://namuk.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국립농업박물관"
-  },
-  {
     "home": "https://www.nmf.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -291,6 +291,17 @@
     "institution": "국립박물관문화재단"
   },
   {
+    "home": "https://www.stepi.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "과학기술정책연구원"
+  },
+  {
     "home": "https://www.dnsm.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -300,6 +311,28 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "국립대구과학관"
+  },
+  {
+    "home": "https://www.kosm.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국립울진해양과학관"
+  },
+  {
+    "home": "http://www.sciport.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국립부산과학관"
   },
   {
     "home": "https://www.posid.or.kr/",
@@ -339,28 +372,6 @@
     "institution": "(재)우체국금융개발원"
   },
   {
-    "home": "https://www.kosm.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국립울진해양과학관"
-  },
-  {
-    "home": "http://www.sciport.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국립부산과학관"
-  },
-  {
     "home": "https://wwww.aviation.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
@@ -372,93 +383,37 @@
     "institution": "국립항공박물관"
   },
   {
-    "home": "https://www.nile.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 5,
+    "home": "https://www.nhis.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11626&listAll=Y&lang=ko",
-        "text": "알림마당"
-      },
-      {
-        "score": 14,
-        "url": "https://www.nile.or.kr/usr/wap/detail.do?app=13309&seq=57&lang=ko",
-        "text": "국민소통"
-      },
-      {
-        "score": 8,
-        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11303&listAll=Y&lang=ko",
-        "text": "카드뉴스"
-      },
-      {
-        "score": 8,
-        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11662&listAll=Y&lang=ko",
-        "text": "보도자료"
-      },
-      {
-        "score": 8,
-        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11762&listAll=Y&lang=ko",
-        "text": "NILE 소식"
-      }
-    ],
-    "institution": "국가평생교육진흥원"
+    "candidate_samples": [],
+    "institution": "국민건강보험공단"
   },
   {
-    "home": "https://www.ncc.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 1,
-    "candidates": 11,
+    "home": "https://www.sciencecenter.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.ncc.re.kr/volunteerList.ncc?searchKey=total&searchValue=&pageNum=1",
-        "text": "자원봉사활동 공지사항"
-      },
-      {
-        "score": 24,
-        "url": "https://www.ncc.re.kr/board.ncc?uri=notice07&searchKey=total&searchValue=&pageNum=1",
-        "text": "기타공지"
-      },
-      {
-        "score": 18,
-        "url": "https://www.ncc.re.kr/researcher.ncc?uri=ri_cell_03&in_dept_nm=DOIM",
-        "text": "인공지능빅데이터암연구사업단"
-      },
-      {
-        "score": 12,
-        "url": "https://www.ncc.re.kr/board.ncc?uri=notice04&searchKey=total&searchValue=&pageNum=1",
-        "text": "입찰공지"
-      },
-      {
-        "score": 6,
-        "url": "https://ncc.re.kr/boardView.ncc?uri=notice07&ntcId=7471&searchKey=total&searchValue=&pageNum=1",
-        "text": ""
-      },
-      {
-        "score": 6,
-        "url": "https://ncc.re.kr/boardView.ncc?uri=notice07&ntcId=7472&searchKey=total&searchValue=&pageNum=1",
-        "text": ""
-      },
-      {
-        "score": 6,
-        "url": "https://www.ncc.re.kr/board.ncc?uri=notice01&searchKey=total&searchValue=&pageNum=1",
-        "text": "학술행사"
-      },
-      {
-        "score": 6,
-        "url": "https://www.ncc.re.kr/board.ncc?uri=notice02&searchKey=total&searchValue=&pageNum=1",
-        "text": ""
-      }
-    ],
-    "institution": "국립암센터"
+    "candidate_samples": [],
+    "institution": "국립광주과학관"
+  },
+  {
+    "home": "https://www.kogas-tech.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "(주)한국가스기술공사"
   },
   {
     "home": "https://www.inmm.or.kr/",
@@ -513,6 +468,28 @@
     "institution": "국립인천해양박물관"
   },
   {
+    "home": "https://www.add.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국방과학연구소"
+  },
+  {
+    "home": "https://www.arirang.com/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국제방송교류재단"
+  },
+  {
     "home": "https://www.nrc.re.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 8,
@@ -565,146 +542,6 @@
     "institution": "경제인문사회연구회"
   },
   {
-    "home": "https://www.add.re.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국방과학연구소"
-  },
-  {
-    "home": "https://www.igbf.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국악방송"
-  },
-  {
-    "home": "https://www.moti.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국방전직교육원"
-  },
-  {
-    "home": "https://www.arirang.com/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국제방송교류재단"
-  },
-  {
-    "home": "https://www.kaia.re.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국토교통과학기술진흥원"
-  },
-  {
-    "home": "http://www.kalis.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국토안전관리원"
-  },
-  {
-    "home": "https://www.grandkorea.com/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "그랜드코리아레저(주)"
-  },
-  {
-    "home": "https://www.mabik.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 16,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 40,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000345/list.do",
-        "text": "공지사항 더보기"
-      },
-      {
-        "score": 40,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000354/list.do",
-        "text": "공지사항 더보기"
-      },
-      {
-        "score": 20,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000361.do",
-        "text": "참여마당"
-      },
-      {
-        "score": 10,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000347/list.do",
-        "text": "보도자료 더보기"
-      },
-      {
-        "score": 10,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000348/list.do",
-        "text": "포토뉴스 더보기"
-      },
-      {
-        "score": 8,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000345.do",
-        "text": "소식"
-      },
-      {
-        "score": 8,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000347.do",
-        "text": "보도자료"
-      },
-      {
-        "score": 8,
-        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000348.do",
-        "text": "포토뉴스"
-      }
-    ],
-    "institution": "국립해양생물자원관"
-  },
-  {
-    "home": "https://www.krit.re.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국방기술진흥연구소"
-  },
-  {
     "home": "https://www.nmc.or.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 5,
@@ -737,7 +574,7 @@
     "institution": "국립중앙의료원"
   },
   {
-    "home": "https://www.comwel.or.kr/",
+    "home": "https://www.moti.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -745,7 +582,88 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "근로복지공단"
+    "institution": "국방전직교육원"
+  },
+  {
+    "home": "https://www.kaia.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국토교통과학기술진흥원"
+  },
+  {
+    "home": "https://www.nile.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 5,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 38,
+        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11626&listAll=Y&lang=ko",
+        "text": "알림마당"
+      },
+      {
+        "score": 14,
+        "url": "https://www.nile.or.kr/usr/wap/detail.do?app=13309&seq=57&lang=ko",
+        "text": "국민소통"
+      },
+      {
+        "score": 8,
+        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11303&listAll=Y&lang=ko",
+        "text": "카드뉴스"
+      },
+      {
+        "score": 8,
+        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11662&listAll=Y&lang=ko",
+        "text": "보도자료"
+      },
+      {
+        "score": 8,
+        "url": "https://www.nile.or.kr/usr/wap/list.do?app=11762&listAll=Y&lang=ko",
+        "text": "NILE 소식"
+      }
+    ],
+    "institution": "국가평생교육진흥원"
+  },
+  {
+    "home": "https://www.igbf.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국악방송"
+  },
+  {
+    "home": "http://www.kalis.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국토안전관리원"
+  },
+  {
+    "home": "https://www.grandkorea.com/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "그랜드코리아레저(주)"
   },
   {
     "home": "https://www.epis.or.kr/",
@@ -759,7 +677,7 @@
     "institution": "농림수산식품교육문화정보원"
   },
   {
-    "home": "https://www.kogas-tech.or.kr/",
+    "home": "https://www.comwel.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -767,7 +685,18 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "(주)한국가스기술공사"
+    "institution": "근로복지공단"
+  },
+  {
+    "home": "https://www.krit.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국방기술진흥연구소"
   },
   {
     "home": "http://www.krihs.re.kr/",
@@ -820,6 +749,110 @@
       }
     ],
     "institution": "국토연구원"
+  },
+  {
+    "home": "https://www.ncc.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 1,
+    "candidates": 11,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 38,
+        "url": "https://www.ncc.re.kr/volunteerList.ncc?searchKey=total&searchValue=&pageNum=1",
+        "text": "자원봉사활동 공지사항"
+      },
+      {
+        "score": 24,
+        "url": "https://www.ncc.re.kr/board.ncc?uri=notice07&searchKey=total&searchValue=&pageNum=1",
+        "text": "기타공지"
+      },
+      {
+        "score": 18,
+        "url": "https://www.ncc.re.kr/researcher.ncc?uri=ri_cell_03&in_dept_nm=DOIM",
+        "text": "인공지능빅데이터암연구사업단"
+      },
+      {
+        "score": 12,
+        "url": "https://www.ncc.re.kr/board.ncc?uri=notice04&searchKey=total&searchValue=&pageNum=1",
+        "text": "입찰공지"
+      },
+      {
+        "score": 6,
+        "url": "https://ncc.re.kr/boardView.ncc?uri=notice07&ntcId=7471&searchKey=total&searchValue=&pageNum=1",
+        "text": ""
+      },
+      {
+        "score": 6,
+        "url": "https://ncc.re.kr/boardView.ncc?uri=notice07&ntcId=7472&searchKey=total&searchValue=&pageNum=1",
+        "text": ""
+      },
+      {
+        "score": 6,
+        "url": "https://www.ncc.re.kr/board.ncc?uri=notice01&searchKey=total&searchValue=&pageNum=1",
+        "text": "학술행사"
+      },
+      {
+        "score": 6,
+        "url": "https://www.ncc.re.kr/board.ncc?uri=notice02&searchKey=total&searchValue=&pageNum=1",
+        "text": ""
+      }
+    ],
+    "institution": "국립암센터"
+  },
+  {
+    "home": "http://www.poma.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 40,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 78,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964",
+        "text": "공지사항 AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 참여 안내 과학기술정보통신부에서는 공공데이터의 실수요자 기반 AI 친화·고가치"
+      },
+      {
+        "score": 48,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=979",
+        "text": "공지사항 노사협의회 선거관리위원 선출관련 공고 안내 (재)우체국시설관리단은 노사협의회의 근본취지에 따라 현장의 소리를 더욱 적극적으로 청취하기 "
+      },
+      {
+        "score": 42,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=download&articleNo=964&attachNo=3734",
+        "text": "AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 시안.png"
+      },
+      {
+        "score": 42,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964&article.offset=0&articleLimit=10",
+        "text": "AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 참여 안내"
+      },
+      {
+        "score": 42,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=973",
+        "text": "공지사항 2026년 추석 명절 청탁금지법 선물 바로알기 2026.09.03"
+      },
+      {
+        "score": 42,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=974",
+        "text": "공지사항 생성형 AI 서비스 이용자를 위한 개인정보 보호 가이드 2026.09.04"
+      },
+      {
+        "score": 32,
+        "url": "https://www.poma.or.kr/poma/sidewalk.do?mode=view&articleNo=585",
+        "text": "보도자료 [뉴스1, 24.7]우체국시설관리단 제13회 정보보호 날 기념식 유공자 표창 수상 과학기술정보통신부·행정안전부·국가정보원은 한국정보보호"
+      },
+      {
+        "score": 24,
+        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=13&article.offset=0&articleLimit=10",
+        "text": "[공지] 우정수련원 신청 양식(수정)"
+      }
+    ],
+    "institution": "(재)우체국시설관리단"
   },
   {
     "home": "https://www.kibo.or.kr/",
@@ -921,17 +954,6 @@
     "institution": "국립아시아문화전당재단"
   },
   {
-    "home": "https://www.sciencecenter.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국립광주과학관"
-  },
-  {
     "home": "https://www.ipet.re.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 8,
@@ -984,6 +1006,58 @@
     "institution": "농림식품기술기획평가원"
   },
   {
+    "home": "https://www.mabik.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 16,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 40,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000345/list.do",
+        "text": "공지사항 더보기"
+      },
+      {
+        "score": 40,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000354/list.do",
+        "text": "공지사항 더보기"
+      },
+      {
+        "score": 20,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000361.do",
+        "text": "참여마당"
+      },
+      {
+        "score": 10,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000347/list.do",
+        "text": "보도자료 더보기"
+      },
+      {
+        "score": 10,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000348/list.do",
+        "text": "포토뉴스 더보기"
+      },
+      {
+        "score": 8,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000345.do",
+        "text": "소식"
+      },
+      {
+        "score": 8,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000347.do",
+        "text": "보도자료"
+      },
+      {
+        "score": 8,
+        "url": "https://www.mabik.re.kr/bbs/BBSMSTR_000000000348.do",
+        "text": "포토뉴스"
+      }
+    ],
+    "institution": "국립해양생물자원관"
+  },
+  {
     "home": "https://www.dirams.re.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -993,6 +1067,17 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "동남권원자력의학원"
+  },
+  {
+    "home": "http://www.koreanpc.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "대한장애인체육회"
   },
   {
     "home": "https://www.kdemo.or.kr/",
@@ -1006,7 +1091,7 @@
     "institution": "민주화운동기념사업회"
   },
   {
-    "home": "http://www.koreanpc.kr/",
+    "home": "https://www.pnudh.co.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1014,7 +1099,18 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "대한장애인체육회"
+    "institution": "부산대학교치과병원"
+  },
+  {
+    "home": "https://www.tp.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "사립학교교직원연금공단"
   },
   {
     "home": "https://www.ipab.or.kr/",
@@ -1069,7 +1165,7 @@
     "institution": "국제식물검역인증원"
   },
   {
-    "home": "https://www.koreahana.or.kr/",
+    "home": "https://www.kinfa.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1077,10 +1173,10 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "북한이탈주민지원재단"
+    "institution": "서민금융진흥원"
   },
   {
-    "home": "https://www.tp.or.kr/",
+    "home": "http://snuh.org/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1088,7 +1184,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "사립학교교직원연금공단"
+    "institution": "서울대학교병원"
   },
   {
     "home": "https://www.kiet.re.kr/",
@@ -1133,102 +1229,6 @@
     "institution": "산업연구원"
   },
   {
-    "home": "https://www.knudh.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "경북대학교치과병원"
-  },
-  {
-    "home": "https://www.kinfa.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "서민금융진흥원"
-  },
-  {
-    "home": "http://snuh.org/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "서울대학교병원"
-  },
-  {
-    "home": "http://www.poma.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 40,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 78,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964",
-        "text": "공지사항 AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 참여 안내 과학기술정보통신부에서는 공공데이터의 실수요자 기반 AI 친화·고가치"
-      },
-      {
-        "score": 48,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=979",
-        "text": "공지사항 노사협의회 선거관리위원 선출관련 공고 안내 (재)우체국시설관리단은 노사협의회의 근본취지에 따라 현장의 소리를 더욱 적극적으로 청취하기 "
-      },
-      {
-        "score": 42,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=download&articleNo=964&attachNo=3734",
-        "text": "AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 시안.png"
-      },
-      {
-        "score": 42,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=964&article.offset=0&articleLimit=10",
-        "text": "AI 친화·고가치 데이터 개방·활용 확대를 위한 설문조사 참여 안내"
-      },
-      {
-        "score": 42,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=973",
-        "text": "공지사항 2026년 추석 명절 청탁금지법 선물 바로알기 2026.09.03"
-      },
-      {
-        "score": 42,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=974",
-        "text": "공지사항 생성형 AI 서비스 이용자를 위한 개인정보 보호 가이드 2026.09.04"
-      },
-      {
-        "score": 32,
-        "url": "https://www.poma.or.kr/poma/sidewalk.do?mode=view&articleNo=585",
-        "text": "보도자료 [뉴스1, 24.7]우체국시설관리단 제13회 정보보호 날 기념식 유공자 표창 수상 과학기술정보통신부·행정안전부·국가정보원은 한국정보보호"
-      },
-      {
-        "score": 24,
-        "url": "https://www.poma.or.kr/poma/notice.do?mode=view&articleNo=13&article.offset=0&articleLimit=10",
-        "text": "[공지] 우정수련원 신청 양식(수정)"
-      }
-    ],
-    "institution": "(재)우체국시설관리단"
-  },
-  {
-    "home": "https://www.pnudh.co.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "부산대학교치과병원"
-  },
-  {
     "home": "http://www.snudh.org/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 0,
@@ -1257,69 +1257,6 @@
     "institution": "세종학당재단"
   },
   {
-    "home": "http://www.slc.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "수도권매립지관리공사"
-  },
-  {
-    "home": "https://www.grac.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 17,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.grac.or.kr/Board/Inform.aspx",
-        "text": "공지사항"
-      },
-      {
-        "score": 38,
-        "url": "https://www.grac.or.kr/board/Inform.aspx",
-        "text": "알림마당"
-      },
-      {
-        "score": 20,
-        "url": "https://www.grac.or.kr/Board/OnlinePoll.aspx",
-        "text": "온라인 설문"
-      },
-      {
-        "score": 18,
-        "url": "https://www.grac.or.kr/Participation/ComplaintGuide.aspx",
-        "text": "참여마당"
-      },
-      {
-        "score": 10,
-        "url": "https://www.grac.or.kr/Board/NewsData.aspx",
-        "text": "보도자료"
-      },
-      {
-        "score": 8,
-        "url": "https://www.grac.or.kr/Board/Inform.aspx?depth=0&type=view&bno=802",
-        "text": "음란물 및 사행성게임물 차단 프로그램 또는 장치 선정사업 재공고"
-      },
-      {
-        "score": 8,
-        "url": "https://www.grac.or.kr/Board/Inform.aspx?depth=0&type=view&bno=804",
-        "text": "자체등급분류사업자 재지정 공고"
-      },
-      {
-        "score": 8,
-        "url": "https://www.grac.or.kr/board/Inform.aspx?searchtype=001&type=view&bno=887&searchtext=",
-        "text": "자체등급분류사업자 재지정 공고"
-      }
-    ],
-    "institution": "게임물관리위원회"
-  },
-  {
     "home": "http://www.nie.re.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
@@ -1331,7 +1268,7 @@
     "institution": "국립생태원"
   },
   {
-    "home": "http://www.koreg.or.kr/",
+    "home": "http://www.slc.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1339,144 +1276,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "신용보증재단중앙회"
-  },
-  {
-    "home": "https://www.sdco.or.kr/",
-    "result": "VERIFIED",
-    "nav_pages": 8,
-    "candidates": 42,
-    "verified": 3,
-    "best_score": 4,
-    "best_url": "https://www.sdco.or.kr/board.es?mid=a10302010000&bid=0002&act=view&list_no=1027&tag=&nPage=1",
-    "candidate_samples": [
-      {
-        "score": 64,
-        "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0006&list_no=1835&act=view",
-        "text": "새소식 2026년 새만금개발공사 공공데이터 대국민 설문조사 안내 새만금개발공사는 국민의 공공데이터에 대한 이용권을 보장하고 공공데이터의 활용을 "
-      },
-      {
-        "score": 46,
-        "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0006&list_no=1577&act=view",
-        "text": "새소식 클린업 새만금 - 플로깅 Before & After 콘테스트 클린업 새만금 - 플로깅 Before & After 콘테스트를 아래와 같이 "
-      },
-      {
-        "score": 36,
-        "url": "https://www.sdco.or.kr/menu.es?mid=a10601010000",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://www.sdco.or.kr/menu.es?mid=a10607000000",
-        "text": "설문조사"
-      },
-      {
-        "score": 28,
-        "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0006&list_no=1623&act=view",
-        "text": "새소식 2025년 새만금개발공사 「공공데이터 활용 가이드북」 배포 새만금개발공사에서는 공공데이터 이용 활성화를 위해 「공공데이터 활용 가이드북」"
-      },
-      {
-        "score": 28,
-        "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0006&list_no=1744&act=view",
-        "text": "새소식 새만금개발공사 제8기 정기주주총회 개최 2026-03-12"
-      },
-      {
-        "score": 28,
-        "url": "https://www.sdco.or.kr/board.es?mid=a10601010000&bid=0006&list_no=1868&act=view",
-        "text": "새소식 2026년도 전북 유관기관 합동 새만금지역 투자설명회 개최 및 사전수요조사 안내 새만금개발공사에서는 전북 지역 기업을 대상으로 「2026"
-      },
-      {
-        "score": 28,
-        "url": "https://www.sdco.or.kr/board.es?mid=a10602000000&bid=0010&list_no=1878&act=view",
-        "text": "언론보도 [보도자료] 새만금개발공사, 전북 유관기관과 함께 새만금 투자기회 알려 새만금개발공사, 전북 유관기관과 함께 새만금 투자기회 알려﻿전북"
-      }
-    ],
-    "institution": "새만금개발공사"
-  },
-  {
-    "home": "http://www.kodit.co.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "신용보증기금"
-  },
-  {
-    "home": "https://www.kriso.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 7,
-    "candidates": 9,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 10,
-        "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=935&tag=&nPage=1",
-        "text": "2026년 세계 습지의 날 정부포상 후보자 공개검증 공고"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kriso.re.kr/menu.es?mid=a10400000000",
-        "text": "소식"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kriso.re.kr/menu.es?mid=a10401000000",
-        "text": "소식"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kriso.re.kr/menu.es?mid=a10403000000",
-        "text": "보도자료"
-      },
-      {
-        "score": 4,
-        "url": "https://kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=922&tag=&nPage=1",
-        "text": ""
-      },
-      {
-        "score": 4,
-        "url": "https://kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=942&tag=&nPage=1",
-        "text": ""
-      },
-      {
-        "score": 4,
-        "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=936&tag=&nPage=1",
-        "text": "2026년 UST-KRISO 학술제 개최 안내"
-      },
-      {
-        "score": 4,
-        "url": "https://www.kriso.re.kr/board.es?mid=a10401000000&bid=0010&act=view&list_no=938&tag=&nPage=1",
-        "text": "(수정)\"빙해공학연구동 연구시설 고도화사업 설계 용역\" 제안공모 서면질의.."
-      }
-    ],
-    "institution": "선박해양플랜트연구소"
-  },
-  {
-    "home": "https://www.ygpa.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "여수광양항만공사"
-  },
-  {
-    "home": "https://www.kmrb.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "영상물등급위원회"
+    "institution": "수도권매립지관리공사"
   },
   {
     "home": "https://www.semas.or.kr/",
@@ -1490,7 +1290,7 @@
     "institution": "소상공인시장진흥공단"
   },
   {
-    "home": "https://www.kicce.re.kr/",
+    "home": "http://www.koreg.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1498,7 +1298,18 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "육아정책연구소"
+    "institution": "신용보증재단중앙회"
+  },
+  {
+    "home": "http://www.kodit.co.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "신용보증기금"
   },
   {
     "home": "http://hnibr.re.kr/",
@@ -1512,7 +1323,7 @@
     "institution": "국립호남권생물자원관"
   },
   {
-    "home": "https://www.kofic.or.kr/",
+    "home": "https://www.kmrb.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1520,282 +1331,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "영화진흥위원회"
-  },
-  {
-    "home": "https://www.koiha.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 6,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 42,
-        "url": "https://www.koiha.or.kr/web/kr/community/notice_board.do",
-        "text": "알림마당"
-      },
-      {
-        "score": 20,
-        "url": "https://www.koiha.or.kr/web/kr/information/privacy_board.do",
-        "text": "개인정보제공알림"
-      },
-      {
-        "score": 10,
-        "url": "https://www.koiha.or.kr/web/kr/koihaPR/newsLetterBoard_gallery.do",
-        "text": "소식지"
-      },
-      {
-        "score": 10,
-        "url": "https://www.koiha.or.kr/web/kr/koihaPR/news_board.do",
-        "text": "보도자료"
-      },
-      {
-        "score": 6,
-        "url": "https://www.koiha.or.kr/web/kr/community/notice_view.do?boardCd=notice&boardId=BRD_ID0036940",
-        "text": "기본 인증 제도 시행 안내"
-      },
-      {
-        "score": 6,
-        "url": "https://www.koiha.or.kr/web/kr/community/notice_view.do?boardCd=notice&boardId=BRD_ID0037119",
-        "text": "2026년 개인정보 보호주간 바로가기"
-      }
-    ],
-    "institution": "의료기관평가인증원"
-  },
-  {
-    "home": "https://www.nhis.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "국민건강보험공단"
-  },
-  {
-    "home": "https://www.kcesi.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "재단법인 대한건설기계안전관리원"
-  },
-  {
-    "home": "https://www.kicte.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "재단법인 건설기술교육원"
-  },
-  {
-    "home": "https://www.koref.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "재단법인 한국에너지재단"
-  },
-  {
-    "home": "https://www.okocc.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "재외동포협력센터"
-  },
-  {
-    "home": "https://www.jbuh.co.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "전북대학교병원"
-  },
-  {
-    "home": "https://www.fomo.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "(재)일제강제동원피해자지원재단"
-  },
-  {
-    "home": "http://www.iitp.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "정보통신기획평가원"
-  },
-  {
-    "home": "http://www.kisdi.re.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "정보통신정책연구원"
-  },
-  {
-    "home": "https://www.klac.or.kr/",
-    "result": "VERIFIED",
-    "nav_pages": 8,
-    "candidates": 21,
-    "verified": 1,
-    "best_score": 4,
-    "best_url": "https://www.klac.or.kr/notification/leafletList.do",
-    "candidate_samples": [
-      {
-        "score": 44,
-        "url": "https://www.klac.or.kr/notification/notice/selectNoticeList.do?boardCode=32",
-        "text": "공지사항"
-      },
-      {
-        "score": 28,
-        "url": "https://www.klac.or.kr/notification/news/selectNewsArticleList.do?boardCode=33",
-        "text": "알림광장"
-      },
-      {
-        "score": 14,
-        "url": "https://www.klac.or.kr/notification/hireNotice/selectHireNoticeList.do?boardCode=241",
-        "text": "채용공지"
-      },
-      {
-        "score": 12,
-        "url": "https://www.klac.or.kr/notification/newsletterList.do",
-        "text": "e-뉴스레터(구)"
-      },
-      {
-        "score": 12,
-        "url": "https://www.klac.or.kr/notification/pressRelease/selectPressReleaseList.do?boardCode=34",
-        "text": "보도자료"
-      },
-      {
-        "score": 6,
-        "url": "https://www.klac.or.kr/customer/compliment/selectComplimentArticleList.do?boardCode=22",
-        "text": "자유발언대"
-      },
-      {
-        "score": 6,
-        "url": "https://www.klac.or.kr/notification/responde/selectRespondeCaseList.do?boardCode=35",
-        "text": "법률구조 이야기"
-      },
-      {
-        "score": 6,
-        "url": "https://www.klac.or.kr/notification/upright/uprightList.do?boardCode=92",
-        "text": "청렴정책홍보자료"
-      }
-    ],
-    "institution": "대한법률구조공단"
-  },
-  {
-    "home": "http://www.kgls.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "정부법무공단"
-  },
-  {
-    "home": "https://www.jdcenter.com/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "제주국제자유도시개발센터"
-  },
-  {
-    "home": "http://www.cnuh.com/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 3,
-    "candidates": 3,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 26,
-        "url": "https://www.cnuh.com/board/B0011.cs?m=63",
-        "text": "공지/소식"
-      },
-      {
-        "score": 8,
-        "url": "https://www.cnuh.com/board/B0015.cs?m=41",
-        "text": "청렴게시판"
-      },
-      {
-        "score": 6,
-        "url": "https://www.cnuh.com/sub.cs?m=63",
-        "text": "병원소식"
-      }
-    ],
-    "institution": "전남대학교병원"
-  },
-  {
-    "home": "https://www.geps.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "공무원연금공단"
-  },
-  {
-    "home": "https://www.kcpass.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "중앙사회서비스원"
-  },
-  {
-    "home": "https://www.kosmes.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "중소벤처기업진흥공단"
+    "institution": "영상물등급위원회"
   },
   {
     "home": "https://www.nosa.or.kr/",
@@ -1850,7 +1386,7 @@
     "institution": "노사발전재단"
   },
   {
-    "home": "https://www.nnibr.re.kr/",
+    "home": "https://www.fomo.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -1858,10 +1394,21 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "국립낙동강생물자원관"
+    "institution": "(재)일제강제동원피해자지원재단"
   },
   {
-    "home": "https://www.khug.or.kr/",
+    "home": "https://www.sonosa.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "(사)남북교류협력지원협회"
+  },
+  {
+    "home": "https://www.kicce.re.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -1869,40 +1416,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "주택도시보증공사"
-  },
-  {
-    "home": "http://www.kotra.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "대한무역투자진흥공사"
-  },
-  {
-    "home": "https://www.kiaps.org/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 3,
-    "candidates": 2,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 18,
-        "url": "https://www.kiaps.org/biz/interCooperation.do",
-        "text": "과학소통"
-      },
-      {
-        "score": 4,
-        "url": "https://www.kiaps.org/front/bbsList.do?bbsId=BBS_0006&nttId=0&authFlag=&pageIndex=1&searchOp6=&searchCnd=1&searchWrd=3%EC%9E%90",
-        "text": "목적외 이용 및 제3자 제공 상세내용 바로가기"
-      }
-    ],
-    "institution": "차세대수치예보모델개발사업단"
+    "institution": "육아정책연구소"
   },
   {
     "home": "https://www.airport.kr/",
@@ -1916,7 +1430,7 @@
     "institution": "인천국제공항공사"
   },
   {
-    "home": "https://www.kiep.go.kr/",
+    "home": "https://www.geps.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -1924,92 +1438,326 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "대외경제정책연구원"
+    "institution": "공무원연금공단"
   },
   {
-    "home": "https://www.korailtech.com/",
-    "result": "NO_CANDIDATE",
+    "home": "https://www.nnibr.re.kr/",
+    "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "코레일테크(주)"
+    "institution": "국립낙동강생물자원관"
   },
   {
-    "home": "https://www.kinu.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "통일연구원"
-  },
-  {
-    "home": "https://www.korailtravel.com/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "코레일관광개발(주)"
-  },
-  {
-    "home": "https://www.koraillogis.com/",
-    "result": "VERIFIED",
+    "home": "https://www.koiha.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 8,
-    "candidates": 11,
-    "verified": 1,
-    "best_score": 6,
-    "best_url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2279&page=1&code=notice",
+    "candidates": 6,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
     "candidate_samples": [
       {
-        "score": 36,
-        "url": "https://www.koraillogis.com/",
-        "text": "공지사항 | 코레일로지스"
+        "score": 42,
+        "url": "https://www.koiha.or.kr/web/kr/community/notice_board.do",
+        "text": "알림마당"
+      },
+      {
+        "score": 20,
+        "url": "https://www.koiha.or.kr/web/kr/information/privacy_board.do",
+        "text": "개인정보제공알림"
+      },
+      {
+        "score": 10,
+        "url": "https://www.koiha.or.kr/web/kr/koihaPR/newsLetterBoard_gallery.do",
+        "text": "소식지"
+      },
+      {
+        "score": 10,
+        "url": "https://www.koiha.or.kr/web/kr/koihaPR/news_board.do",
+        "text": "보도자료"
       },
       {
         "score": 6,
-        "url": "https://www.koraillogis.com/support/cs.php",
-        "text": "게시판"
+        "url": "https://www.koiha.or.kr/web/kr/community/notice_view.do?boardCd=notice&boardId=BRD_ID0036940",
+        "text": "기본 인증 제도 시행 안내"
       },
       {
         "score": 6,
-        "url": "https://www.koraillogis.com/support/notice.php?ptype=list&code=notice&",
-        "text": "리스트"
-      },
-      {
-        "score": 6,
-        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2278&page=1&code=notice",
-        "text": "48 서울 중구, 곳곳서 폭염취약계층 후원 잇따라(보도자료) 2023-07-19"
-      },
-      {
-        "score": 6,
-        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2279&page=1&code=notice",
-        "text": "49 코레일로지스㈜, (사)한국미혼모가족협회에 신생아 양육물품 기부(보도자료) 2023-07-19"
-      },
-      {
-        "score": 6,
-        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2280&page=1&code=notice",
-        "text": "50 코레일로지스(주), NCS 기업활용 컨설팅 중간보고회가져(보도자료) 2023-07-19"
-      },
-      {
-        "score": 6,
-        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2283&page=1&code=notice",
-        "text": "53 2023 생활물류 스테이션 운영사업자 모집 공고 (~12.6) 2023-11-28"
-      },
-      {
-        "score": 4,
-        "url": "https://www.koraillogis.com/support/notice.php",
-        "text": "고객지원"
+        "url": "https://www.koiha.or.kr/web/kr/community/notice_view.do?boardCd=notice&boardId=BRD_ID0037119",
+        "text": "2026년 개인정보 보호주간 바로가기"
       }
     ],
-    "institution": "코레일로지스(주)"
+    "institution": "의료기관평가인증원"
+  },
+  {
+    "home": "http://www.kotra.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "대한무역투자진흥공사"
+  },
+  {
+    "home": "https://www.grac.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 17,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 38,
+        "url": "https://www.grac.or.kr/Board/Inform.aspx",
+        "text": "공지사항"
+      },
+      {
+        "score": 38,
+        "url": "https://www.grac.or.kr/board/Inform.aspx",
+        "text": "알림마당"
+      },
+      {
+        "score": 20,
+        "url": "https://www.grac.or.kr/Board/OnlinePoll.aspx",
+        "text": "온라인 설문"
+      },
+      {
+        "score": 18,
+        "url": "https://www.grac.or.kr/Participation/ComplaintGuide.aspx",
+        "text": "참여마당"
+      },
+      {
+        "score": 10,
+        "url": "https://www.grac.or.kr/Board/NewsData.aspx",
+        "text": "보도자료"
+      },
+      {
+        "score": 8,
+        "url": "https://www.grac.or.kr/Board/Inform.aspx?depth=0&type=view&bno=802",
+        "text": "음란물 및 사행성게임물 차단 프로그램 또는 장치 선정사업 재공고"
+      },
+      {
+        "score": 8,
+        "url": "https://www.grac.or.kr/Board/Inform.aspx?depth=0&type=view&bno=804",
+        "text": "자체등급분류사업자 재지정 공고"
+      },
+      {
+        "score": 8,
+        "url": "https://www.grac.or.kr/board/Inform.aspx?searchtype=001&type=view&bno=887&searchtext=",
+        "text": "자체등급분류사업자 재지정 공고"
+      }
+    ],
+    "institution": "게임물관리위원회"
+  },
+  {
+    "home": "https://www.kofic.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "영화진흥위원회"
+  },
+  {
+    "home": "https://www.mmk.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "국립해양박물관"
+  },
+  {
+    "home": "https://www.okocc.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "재외동포협력센터"
+  },
+  {
+    "home": "https://www.jbuh.co.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "전북대학교병원"
+  },
+  {
+    "home": "https://www.kcesi.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "재단법인 대한건설기계안전관리원"
+  },
+  {
+    "home": "https://www.koref.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "재단법인 한국에너지재단"
+  },
+  {
+    "home": "http://www.kisdi.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "정보통신정책연구원"
+  },
+  {
+    "home": "http://www.kgls.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "정부법무공단"
+  },
+  {
+    "home": "https://www.kicte.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "재단법인 건설기술교육원"
+  },
+  {
+    "home": "https://www.jdcenter.com/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "제주국제자유도시개발센터"
+  },
+  {
+    "home": "http://www.iitp.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "정보통신기획평가원"
+  },
+  {
+    "home": "https://www.koreahana.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "북한이탈주민지원재단"
+  },
+  {
+    "home": "https://www.kosmes.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "중소벤처기업진흥공단"
+  },
+  {
+    "home": "https://www.kcpass.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "중앙사회서비스원"
+  },
+  {
+    "home": "https://www.i815.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "독립기념관"
+  },
+  {
+    "home": "https://www.khug.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "주택도시보증공사"
+  },
+  {
+    "home": "http://www.cnuh.com/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 3,
+    "candidates": 3,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 26,
+        "url": "https://www.cnuh.com/board/B0011.cs?m=63",
+        "text": "공지/소식"
+      },
+      {
+        "score": 8,
+        "url": "https://www.cnuh.com/board/B0015.cs?m=41",
+        "text": "청렴게시판"
+      },
+      {
+        "score": 6,
+        "url": "https://www.cnuh.com/sub.cs?m=63",
+        "text": "병원소식"
+      }
+    ],
+    "institution": "전남대학교병원"
   },
   {
     "home": "https://www.keei.re.kr/",
@@ -2064,7 +1812,29 @@
     "institution": "에너지경제연구원"
   },
   {
-    "home": "http://www.kopo.ac.kr/",
+    "home": "https://www.kiaps.org/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 3,
+    "candidates": 2,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 18,
+        "url": "https://www.kiaps.org/biz/interCooperation.do",
+        "text": "과학소통"
+      },
+      {
+        "score": 4,
+        "url": "https://www.kiaps.org/front/bbsList.do?bbsId=BBS_0006&nttId=0&authFlag=&pageIndex=1&searchOp6=&searchCnd=1&searchWrd=3%EC%9E%90",
+        "text": "목적외 이용 및 제3자 제공 상세내용 바로가기"
+      }
+    ],
+    "institution": "차세대수치예보모델개발사업단"
+  },
+  {
+    "home": "https://www.korailtravel.com/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -2072,29 +1842,177 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "학교법인한국폴리텍"
+    "institution": "코레일관광개발(주)"
   },
   {
-    "home": "https://www.keli.kr/",
+    "home": "https://www.korailtech.com/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "코레일테크(주)"
+  },
+  {
+    "home": "https://www.kopri.re.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "극지연구소"
+  },
+  {
+    "home": "https://www.kinu.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "통일연구원"
+  },
+  {
+    "home": "https://www.koraillogis.com/",
+    "result": "VERIFIED",
+    "nav_pages": 8,
+    "candidates": 11,
+    "verified": 1,
+    "best_score": 6,
+    "best_url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2279&page=1&code=notice",
+    "candidate_samples": [
+      {
+        "score": 36,
+        "url": "https://www.koraillogis.com/",
+        "text": "공지사항 | 코레일로지스"
+      },
+      {
+        "score": 6,
+        "url": "https://www.koraillogis.com/support/cs.php",
+        "text": "게시판"
+      },
+      {
+        "score": 6,
+        "url": "https://www.koraillogis.com/support/notice.php?ptype=list&code=notice&",
+        "text": "리스트"
+      },
+      {
+        "score": 6,
+        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2278&page=1&code=notice",
+        "text": "48 서울 중구, 곳곳서 폭염취약계층 후원 잇따라(보도자료) 2023-07-19"
+      },
+      {
+        "score": 6,
+        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2279&page=1&code=notice",
+        "text": "49 코레일로지스㈜, (사)한국미혼모가족협회에 신생아 양육물품 기부(보도자료) 2023-07-19"
+      },
+      {
+        "score": 6,
+        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2280&page=1&code=notice",
+        "text": "50 코레일로지스(주), NCS 기업활용 컨설팅 중간보고회가져(보도자료) 2023-07-19"
+      },
+      {
+        "score": 6,
+        "url": "https://www.koraillogis.com/support/notice.php?ptype=view&idx=2283&page=1&code=notice",
+        "text": "53 2023 생활물류 스테이션 운영사업자 모집 공고 (~12.6) 2023-11-28"
+      },
+      {
+        "score": 4,
+        "url": "https://www.koraillogis.com/support/notice.php",
+        "text": "고객지원"
+      }
+    ],
+    "institution": "코레일로지스(주)"
+  },
+  {
+    "home": "https://www.kcmf.or.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 2,
-    "candidates": 2,
+    "nav_pages": 8,
+    "candidates": 44,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [
       {
-        "score": 40,
-        "url": "https://www.keli.kr/home/cmmn/bbs/228/list.do",
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
+        "text": "알림마당"
+      },
+      {
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050107.do",
         "text": "공지사항"
       },
       {
-        "score": 4,
-        "url": "https://www.keli.kr/home/cmmn/bbs/239/list.do",
-        "text": "자주하는질문"
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050207.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050307.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050407.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050507.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050607.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 36,
+        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050707.do",
+        "text": "공지사항"
       }
     ],
-    "institution": "한국고용노동교육원"
+    "institution": "시청자미디어재단"
+  },
+  {
+    "home": "https://www.tpf.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "태권도진흥재단"
+  },
+  {
+    "home": "https://www.kiep.go.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "대외경제정책연구원"
+  },
+  {
+    "home": "https://www.kriso.re.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "선박해양플랜트연구소"
   },
   {
     "home": "https://keis.or.kr/",
@@ -2135,26 +2053,26 @@
     "institution": "한국가스안전공사"
   },
   {
-    "home": "https://www.tpf.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
+    "home": "https://www.keli.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 2,
+    "candidates": 2,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
-    "candidate_samples": [],
-    "institution": "태권도진흥재단"
-  },
-  {
-    "home": "https://www.i815.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "독립기념관"
+    "candidate_samples": [
+      {
+        "score": 40,
+        "url": "https://www.keli.kr/home/cmmn/bbs/228/list.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 4,
+        "url": "https://www.keli.kr/home/cmmn/bbs/239/list.do",
+        "text": "자주하는질문"
+      }
+    ],
+    "institution": "한국고용노동교육원"
   },
   {
     "home": "https://www.warmemo.or.kr/",
@@ -2166,6 +2084,17 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "전쟁기념사업회"
+  },
+  {
+    "home": "http://www.kopo.ac.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "학교법인한국폴리텍"
   },
   {
     "home": "https://www.kofair.or.kr/",
@@ -2212,17 +2141,6 @@
     "institution": "한국교육과정평가원"
   },
   {
-    "home": "https://www.keris.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국교육학술정보원"
-  },
-  {
     "home": "https://www.kotsa.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -2234,54 +2152,7 @@
     "institution": "한국교통안전공단"
   },
   {
-    "home": "https://www.kosac.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 7,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.kosac.re.kr/menus/1215/boards/386/posts?category1=1197&searchField=&searchText=",
-        "text": "공지사항"
-      },
-      {
-        "score": 38,
-        "url": "https://www.kosac.re.kr/menus/1219/boards/386/posts?category1=1201&searchField=&searchText=",
-        "text": "공지사항"
-      },
-      {
-        "score": 38,
-        "url": "https://www.kosac.re.kr/menus/270/boards/386/posts",
-        "text": "공지사항"
-      },
-      {
-        "score": 24,
-        "url": "https://www.kosac.re.kr/menus/267/calendar/month",
-        "text": "공고/공지"
-      },
-      {
-        "score": 8,
-        "url": "https://www.kosac.re.kr/menus/257/boards/470/posts?category=475",
-        "text": "사진 뉴스"
-      },
-      {
-        "score": 8,
-        "url": "https://www.kosac.re.kr/menus/272/boards/394/posts",
-        "text": "보도자료"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kosac.re.kr/menus/274/bns",
-        "text": "사업공고"
-      }
-    ],
-    "institution": "한국과학창의재단"
-  },
-  {
-    "home": "https://www.lx.or.kr/",
+    "home": "https://www.keris.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -2289,54 +2160,10 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국국토정보공사"
+    "institution": "한국교육학술정보원"
   },
   {
-    "home": "https://www.koica.go.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국국제협력단"
-  },
-  {
-    "home": "https://www.koreatech.ac.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국기술교육대학교"
-  },
-  {
-    "home": "https://www.koenergy.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국남동발전(주)"
-  },
-  {
-    "home": "https://www.kanc.re.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국나노기술원"
-  },
-  {
-    "home": "https://www.kospo.co.kr/",
+    "home": "https://busanpa.com/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -2344,148 +2171,18 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국남부발전(주)"
+    "institution": "부산항만공사"
   },
   {
-    "home": "https://www.kordi.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 5,
+    "home": "https://www.ygpa.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 18,
-        "url": "https://www.kordi.or.kr/content.do?cmsId=91",
-        "text": "알림"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=673615&cmsId=91",
-        "text": "2026년 우수 고령자친화기업 재지정 공고"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=678625&cmsId=91",
-        "text": "2026년 2분기 노인친화기업·기관 공모 최종 심사 결과 공고"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kordi.or.kr/content.do?cmsId=168",
-        "text": "보도자료"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kordi.or.kr/content.do?cmsId=169",
-        "text": "개발원소식"
-      }
-    ],
-    "institution": "한국노인인력개발원"
-  },
-  {
-    "home": "https://www.posa.or.kr/",
-    "result": "VERIFIED",
-    "nav_pages": 8,
-    "candidates": 71,
-    "verified": 21,
-    "best_score": 40,
-    "best_url": "https://www.posa.or.kr/portal/bbs/B0000008/list.do?menuNo=200020",
-    "candidate_samples": [
-      {
-        "score": 40,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000008/list.do?menuNo=200020",
-        "text": "알림마당"
-      },
-      {
-        "score": 40,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000008/list.do?menuNo=200157",
-        "text": "공지사항"
-      },
-      {
-        "score": 34,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000008/view.do?menuNo=200157&nttId=15687",
-        "text": "공지사항 2026년 우체국쇼핑 창구전시판매 히트상품 공개... 2026.08.21"
-      },
-      {
-        "score": 34,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000008/view.do?menuNo=200157&nttId=15721",
-        "text": "공지사항 「2027 우체국 연하카드·연하엽서」 디자인 ... 2026.09.08"
-      },
-      {
-        "score": 34,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000008/view.do?menuNo=200157&nttId=15724",
-        "text": "공지사항 2026년 우체국쇼핑 특산물 2차 신규상품 모집... 2026.09.10"
-      },
-      {
-        "score": 34,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000008/view.do?menuNo=200157&nttId=15734",
-        "text": "공지사항 2026년 우체국쇼핑 창구전시판매 히트상품 공개... 2026.09.14"
-      },
-      {
-        "score": 28,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000071/view.do?menuNo=200170&nttId=15684",
-        "text": "채용정보 한국우편사업진흥원 원장 모집공고 과학기술정보통신부 우정사업본부 소속 기타공공기관한국우편사업진흥원 최고경영자(원장)를 모십니다. 2026"
-      },
-      {
-        "score": 22,
-        "url": "https://www.posa.or.kr/portal/bbs/B0000015/view.do?menuNo=200160&nttId=15730",
-        "text": "보도자료 우체국쇼핑, ‘추석 선물대전 연속 실시간 소통 판매’ 진행 2026.09.11"
-      }
-    ],
-    "institution": "(재)한국우편사업진흥원"
-  },
-  {
-    "home": "https://www.kli.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 43,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 36,
-        "url": "https://www.kli.re.kr/menu.es?mid=a10302000000",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://www.kli.re.kr/menu.es?mid=a10404000000",
-        "text": "설문조사"
-      },
-      {
-        "score": 22,
-        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=148654&act=view",
-        "text": "공지 한국법제연구원 원장 초빙 2026.05.19"
-      },
-      {
-        "score": 22,
-        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=148857&act=view",
-        "text": "공지 한국노동연구원 임직원 사칭 사기 피해 주의 안내 2026.06.09"
-      },
-      {
-        "score": 22,
-        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=149063&act=view",
-        "text": "공지 『노동정책연구』원고 모집 2026.07.02"
-      },
-      {
-        "score": 22,
-        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=149545&act=view",
-        "text": "공지 에너지경제연구원, 한국농촌경제연구원 원장 초빙 2026.08.24"
-      },
-      {
-        "score": 18,
-        "url": "https://www.kli.re.kr/menu.es?mid=a10300000000",
-        "text": "알림광장"
-      },
-      {
-        "score": 18,
-        "url": "https://www.kli.re.kr/menu.es?mid=a10301000000",
-        "text": "알림광장"
-      }
-    ],
-    "institution": "한국노동연구원"
+    "candidate_samples": [],
+    "institution": "여수광양항만공사"
   },
   {
     "home": "https://www.kdi.re.kr/",
@@ -2540,6 +2237,156 @@
     "institution": "한국개발연구원"
   },
   {
+    "home": "https://www.koica.go.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국국제협력단"
+  },
+  {
+    "home": "https://www.lx.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국국토정보공사"
+  },
+  {
+    "home": "https://www.koreatech.ac.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국기술교육대학교"
+  },
+  {
+    "home": "https://www.kanc.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국나노기술원"
+  },
+  {
+    "home": "https://www.kosac.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 7,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 38,
+        "url": "https://www.kosac.re.kr/menus/1215/boards/386/posts?category1=1197&searchField=&searchText=",
+        "text": "공지사항"
+      },
+      {
+        "score": 38,
+        "url": "https://www.kosac.re.kr/menus/1219/boards/386/posts?category1=1201&searchField=&searchText=",
+        "text": "공지사항"
+      },
+      {
+        "score": 38,
+        "url": "https://www.kosac.re.kr/menus/270/boards/386/posts",
+        "text": "공지사항"
+      },
+      {
+        "score": 24,
+        "url": "https://www.kosac.re.kr/menus/267/calendar/month",
+        "text": "공고/공지"
+      },
+      {
+        "score": 8,
+        "url": "https://www.kosac.re.kr/menus/257/boards/470/posts?category=475",
+        "text": "사진 뉴스"
+      },
+      {
+        "score": 8,
+        "url": "https://www.kosac.re.kr/menus/272/boards/394/posts",
+        "text": "보도자료"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kosac.re.kr/menus/274/bns",
+        "text": "사업공고"
+      }
+    ],
+    "institution": "한국과학창의재단"
+  },
+  {
+    "home": "https://www.koenergy.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국남동발전(주)"
+  },
+  {
+    "home": "https://www.kospo.co.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국남부발전(주)"
+  },
+  {
+    "home": "https://www.kordi.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 5,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 18,
+        "url": "https://www.kordi.or.kr/content.do?cmsId=91",
+        "text": "알림"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=673615&cmsId=91",
+        "text": "2026년 우수 고령자친화기업 재지정 공고"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kordi.or.kr/content.do?bid=254&mode=view&page=&cid=678625&cmsId=91",
+        "text": "2026년 2분기 노인친화기업·기관 공모 최종 심사 결과 공고"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kordi.or.kr/content.do?cmsId=168",
+        "text": "보도자료"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kordi.or.kr/content.do?cmsId=169",
+        "text": "개발원소식"
+      }
+    ],
+    "institution": "한국노인인력개발원"
+  },
+  {
     "home": "http://knto.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 8,
@@ -2560,6 +2407,17 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "전국재해구호협회"
+  },
+  {
+    "home": "https://www.exservice.co.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국도로공사서비스(주)"
   },
   {
     "home": "http://www.airport.co.kr/",
@@ -2614,15 +2472,56 @@
     "institution": "한국공항공사"
   },
   {
-    "home": "https://www.exservice.co.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
+    "home": "https://www.kli.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 43,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국도로공사서비스(주)"
+    "candidate_samples": [
+      {
+        "score": 36,
+        "url": "https://www.kli.re.kr/menu.es?mid=a10302000000",
+        "text": "공지사항"
+      },
+      {
+        "score": 36,
+        "url": "https://www.kli.re.kr/menu.es?mid=a10404000000",
+        "text": "설문조사"
+      },
+      {
+        "score": 22,
+        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=148654&act=view",
+        "text": "공지 한국법제연구원 원장 초빙 2026.05.19"
+      },
+      {
+        "score": 22,
+        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=148857&act=view",
+        "text": "공지 한국노동연구원 임직원 사칭 사기 피해 주의 안내 2026.06.09"
+      },
+      {
+        "score": 22,
+        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=149063&act=view",
+        "text": "공지 『노동정책연구』원고 모집 2026.07.02"
+      },
+      {
+        "score": 22,
+        "url": "https://www.kli.re.kr/board.es?mid=a10302000000&bid=0004&list_no=149545&act=view",
+        "text": "공지 에너지경제연구원, 한국농촌경제연구원 원장 초빙 2026.08.24"
+      },
+      {
+        "score": 18,
+        "url": "https://www.kli.re.kr/menu.es?mid=a10300000000",
+        "text": "알림광장"
+      },
+      {
+        "score": 18,
+        "url": "https://www.kli.re.kr/menu.es?mid=a10301000000",
+        "text": "알림광장"
+      }
+    ],
+    "institution": "한국노동연구원"
   },
   {
     "home": "https://www.kcgp.or.kr/",
@@ -2658,6 +2557,28 @@
     "institution": "한국문화예술위원회"
   },
   {
+    "home": "https://www.korailnetworks.com/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "코레일네트웍스(주)"
+  },
+  {
+    "home": "http://www.kcti.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국문화관광연구원"
+  },
+  {
     "home": "https://www.kwtc.or.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 0,
@@ -2673,17 +2594,6 @@
       }
     ],
     "institution": "한국물기술인증원"
-  },
-  {
-    "home": "https://www.korailnetworks.com/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "코레일네트웍스(주)"
   },
   {
     "home": "https://www.kosi.re.kr/",
@@ -2747,6 +2657,17 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "한국법무보호복지공단"
+  },
+  {
+    "home": "https://icpa.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "인천항만공사"
   },
   {
     "home": "https://www.kohi.or.kr/",
@@ -2823,69 +2744,6 @@
     "institution": "한국보건의료인국가시험원"
   },
   {
-    "home": "https://www.kasfo.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국사학진흥재단"
-  },
-  {
-    "home": "https://www.arte.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 7,
-    "candidates": 44,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 44,
-        "url": "https://arte.or.kr/information/notice/Notice_BoardList.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 10,
-        "url": "https://arte.or.kr/information/caremony/Caremony_BoardList.do",
-        "text": "유관기관 소식"
-      },
-      {
-        "score": 10,
-        "url": "https://arte.or.kr/information/report/ReportData_BoardList.do",
-        "text": "보도자료"
-      },
-      {
-        "score": 8,
-        "url": "https://arte.or.kr/information/report/ReportData_BoardView.do?board_id=BRD_ID0083713",
-        "text": "[문체부 보도자료] 청년 여러분, ‘청년인문교실’에서 마음을 회복하고 삶의 방향을 찾으세요"
-      },
-      {
-        "score": 8,
-        "url": "https://arte.or.kr/notice/business/notice/Business_BoardList.do",
-        "text": "사업공모"
-      },
-      {
-        "score": 6,
-        "url": "https://arte.or.kr/information/notice/Notice_BoardView.do?board_id=BRD_ID0083578",
-        "text": ""
-      },
-      {
-        "score": 6,
-        "url": "https://arte.or.kr/information/notice/Notice_BoardView.do?board_id=BRD_ID0083664",
-        "text": ""
-      },
-      {
-        "score": 6,
-        "url": "https://arte.or.kr/information/notice/Notice_BoardView.do?board_id=BRD_ID0083748",
-        "text": "2026 아르떼 아카데미 「Undo LAB(언두랩)」 최종 선정자 안내"
-      }
-    ],
-    "institution": "한국문화예술교육진흥원"
-  },
-  {
     "home": "http://www.ssis.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -2897,15 +2755,26 @@
     "institution": "한국사회보장정보원"
   },
   {
-    "home": "https://www.neca.re.kr/",
-    "result": "HOME_ERROR",
+    "home": "https://www.socialenterprise.or.kr/",
+    "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국보건의료연구원"
+    "institution": "한국사회적기업진흥원"
+  },
+  {
+    "home": "https://www.kasfo.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국사학진흥재단"
   },
   {
     "home": "https://www.kobaco.co.kr/",
@@ -2960,15 +2829,67 @@
     "institution": "한국방송광고진흥공사"
   },
   {
-    "home": "https://www.socialenterprise.or.kr/",
-    "result": "NO_CANDIDATE",
+    "home": "https://www.neca.re.kr/",
+    "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국사회적기업진흥원"
+    "institution": "한국보건의료연구원"
+  },
+  {
+    "home": "https://www.arte.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 7,
+    "candidates": 44,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 44,
+        "url": "https://arte.or.kr/information/notice/Notice_BoardList.do",
+        "text": "공지사항"
+      },
+      {
+        "score": 10,
+        "url": "https://arte.or.kr/information/caremony/Caremony_BoardList.do",
+        "text": "유관기관 소식"
+      },
+      {
+        "score": 10,
+        "url": "https://arte.or.kr/information/report/ReportData_BoardList.do",
+        "text": "보도자료"
+      },
+      {
+        "score": 8,
+        "url": "https://arte.or.kr/information/report/ReportData_BoardView.do?board_id=BRD_ID0083713",
+        "text": "[문체부 보도자료] 청년 여러분, ‘청년인문교실’에서 마음을 회복하고 삶의 방향을 찾으세요"
+      },
+      {
+        "score": 8,
+        "url": "https://arte.or.kr/notice/business/notice/Business_BoardList.do",
+        "text": "사업공모"
+      },
+      {
+        "score": 6,
+        "url": "https://arte.or.kr/information/notice/Notice_BoardView.do?board_id=BRD_ID0083578",
+        "text": ""
+      },
+      {
+        "score": 6,
+        "url": "https://arte.or.kr/information/notice/Notice_BoardView.do?board_id=BRD_ID0083664",
+        "text": ""
+      },
+      {
+        "score": 6,
+        "url": "https://arte.or.kr/information/notice/Notice_BoardView.do?board_id=BRD_ID0083748",
+        "text": "2026 아르떼 아카데미 「Undo LAB(언두랩)」 최종 선정자 안내"
+      }
+    ],
+    "institution": "한국문화예술교육진흥원"
   },
   {
     "home": "https://www.ktl.re.kr/",
@@ -2993,26 +2914,15 @@
     "institution": "한국산업안전보건공단"
   },
   {
-    "home": "https://drugfree.or.kr/",
-    "result": "HOME_ERROR",
+    "home": "https://www.iwest.co.kr/",
+    "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국마약퇴치운동본부"
-  },
-  {
-    "home": "https://www.kicox.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국산업단지공단"
+    "institution": "한국서부발전(주)"
   },
   {
     "home": "https://www.kfsp.or.kr/",
@@ -3026,15 +2936,15 @@
     "institution": "한국생명존중희망재단"
   },
   {
-    "home": "https://www.iwest.co.kr/",
-    "result": "NO_CANDIDATE",
+    "home": "https://www.kicox.or.kr/",
+    "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국서부발전(주)"
+    "institution": "한국산업단지공단"
   },
   {
     "home": "https://www.kwwa.or.kr/",
@@ -3046,6 +2956,50 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "한국상하수도협회"
+  },
+  {
+    "home": "https://www.khnp.co.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국수력원자력(주)"
+  },
+  {
+    "home": "https://www.kca.go.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국소비자원"
+  },
+  {
+    "home": "http://www.kpetro.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국석유관리원"
+  },
+  {
+    "home": "https://www.fowi.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국산림복지진흥원"
   },
   {
     "home": "https://www.ewp.co.kr/",
@@ -3100,7 +3054,59 @@
     "institution": "한국동서발전(주)"
   },
   {
-    "home": "https://www.fowi.or.kr/",
+    "home": "https://www.ekape.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 42,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 40,
+        "url": "https://www.ekape.or.kr/board/list.do?menuId=menu149208&boardInfoNo=0024",
+        "text": "공지사항"
+      },
+      {
+        "score": 28,
+        "url": "https://www.ekape.or.kr/board/list.do?menuId=menu149208",
+        "text": "알림소식"
+      },
+      {
+        "score": 20,
+        "url": "https://www.ekape.or.kr/contents/list.do?menuId=menu194570",
+        "text": "국민소통"
+      },
+      {
+        "score": 18,
+        "url": "https://www.ekape.or.kr/communication/authentication.do?menuId=menu123539",
+        "text": "안전소통창구"
+      },
+      {
+        "score": 18,
+        "url": "https://www.ekape.or.kr/sms/subscribe/authentication.do?menuId=menu131176",
+        "text": "가격정보 알림톡"
+      },
+      {
+        "score": 16,
+        "url": "https://www.ekape.or.kr/board/view.do?boardInfoNo=0025&boardNo=1412&menuId=menu160301",
+        "text": "2026-09-17 투명하고 신뢰할 수 있는 공공 인공지능(AI) 서비스 제공 다짐"
+      },
+      {
+        "score": 10,
+        "url": "https://www.ekape.or.kr/board/ebook/list.do",
+        "text": "소식지"
+      },
+      {
+        "score": 10,
+        "url": "https://www.ekape.or.kr/board/ebook/list.do?menuId=menu140656&boardInfoNo=0027",
+        "text": "소식지"
+      }
+    ],
+    "institution": "축산물품질평가원"
+  },
+  {
+    "home": "https://www.haccp.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -3108,32 +3114,10 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국산림복지진흥원"
+    "institution": "한국식품안전관리인증원"
   },
   {
-    "home": "https://www.khnp.co.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국수력원자력(주)"
-  },
-  {
-    "home": "http://www.kcti.re.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국문화관광연구원"
-  },
-  {
-    "home": "https://www.kca.go.kr/",
+    "home": "https://www.koreaexim.go.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -3141,10 +3125,73 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국소비자원"
+    "institution": "한국수출입은행"
   },
   {
-    "home": "http://www.kpetro.or.kr/",
+    "home": "https://www.koda1458.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 50,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 54,
+        "url": "https://www.koda1458.kr/communication/participation/events/Dik3GdQEbArPCkMOq1J7nK94A7OnjLiKsQCPfaU_F9s",
+        "text": "[이벤트] 2026년 생명나눔 희망의씨앗 캠페인 대국민 설문조사 이벤트"
+      },
+      {
+        "score": 36,
+        "url": "https://www.koda1458.kr/communication/participation/events/-1m8XFwN6qDVX6nn63-UyBTZD-eHAVFbFEyuKwqrrTA",
+        "text": "[이벤트] 한국장기조직기증원 누리집 설문하기 이벤트"
+      },
+      {
+        "score": 22,
+        "url": "https://www.koda1458.kr/communication/notices",
+        "text": "참여소통"
+      },
+      {
+        "score": 18,
+        "url": "https://www.koda1458.kr/communication/participation/events/-4J3NUU148jyYUbcQ7as47Qoj8wu7vU31xE3IFd_cdM",
+        "text": "[이벤트] ‘생명나눔 영상 시청 소감’ 이벤트 당첨 발표"
+      },
+      {
+        "score": 18,
+        "url": "https://www.koda1458.kr/communication/participation/events/-bo9d9_zv5aQsjSUJESQq3QLfcMNO_SQ_PTkJMIMsU8",
+        "text": "[이벤트] 생명나눔 주간 맞이 나눔이와 함께하는 희망의씨앗을 잡아라! 워크온 챌린지"
+      },
+      {
+        "score": 18,
+        "url": "https://www.koda1458.kr/communication/participation/events/FFp2jTUE9ti5GTFbWhFZucIcQI3E8BfsPrE7kMNXy_g",
+        "text": "[이벤트] 💙생명나눔 영상 시청 소감 이벤트💙"
+      },
+      {
+        "score": 18,
+        "url": "https://www.koda1458.kr/communication/participation/events/Llq1nz323SXbCFBPICzd9pgH7R5R7_vfoFHZZQT3KKE",
+        "text": "[이벤트] 📢'‘여름철 물놀이 안전수칙 지키기’ 이벤트 당첨자 발표! 🎉"
+      },
+      {
+        "score": 18,
+        "url": "https://www.koda1458.kr/communication/participation/events/TR0KdDrc00Xi1WkxNJh9G_cahDdtGoJVlbs4xbmvbfA",
+        "text": "[이벤트] 생명나눔 사례집 공유하기 이벤트 당첨자 발표"
+      }
+    ],
+    "institution": "재단법인 한국장기조직기증원"
+  },
+  {
+    "home": "https://www.kpf.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국언론진흥재단"
+  },
+  {
+    "home": "https://drugfree.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -3152,7 +3199,78 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국석유관리원"
+    "institution": "한국마약퇴치운동본부"
+  },
+  {
+    "home": "http://www.kdb.co.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국산업은행"
+  },
+  {
+    "home": "https://www.stop.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국여성인권진흥원"
+  },
+  {
+    "home": "https://www.kospole.co.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 2,
+    "candidates": 3,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 38,
+        "url": "https://www.kospole.co.kr/toto/board/pr",
+        "text": "공지사항"
+      },
+      {
+        "score": 4,
+        "url": "https://www.kospole.co.kr/toto/board/detail/4279",
+        "text": "한국스포츠레저(주) 임원(사외이사) 모집 공고"
+      },
+      {
+        "score": 4,
+        "url": "https://www.kospole.co.kr/toto/board/detail/4282",
+        "text": "2026년 추석 명절 청탁금지법 선물 카드뉴스 안내"
+      }
+    ],
+    "institution": "한국스포츠레저(주)"
+  },
+  {
+    "home": "https://www.kida.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 7,
+    "candidates": 2,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 8,
+        "url": "https://www.kida.re.kr/frt/board/frtNormalBoard.do?sidx=243&depth=2",
+        "text": "소식마당"
+      },
+      {
+        "score": 8,
+        "url": "https://www.kida.re.kr/frt/board/frtNormalBoard.do?sidx=2884&depth=2",
+        "text": "KIDA 소식"
+      }
+    ],
+    "institution": "한국국방연구원"
   },
   {
     "home": "https://www.koti.re.kr/",
@@ -3207,214 +3325,6 @@
     "institution": "한국교통연구원"
   },
   {
-    "home": "https://www.haccp.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국식품안전관리인증원"
-  },
-  {
-    "home": "https://www.kcmf.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 44,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
-        "text": "알림마당"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050107.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050207.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050307.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050407.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050507.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050607.do",
-        "text": "공지사항"
-      },
-      {
-        "score": 36,
-        "url": "https://kcmf.or.kr/KCMF/contents/KCMF050707.do",
-        "text": "공지사항"
-      }
-    ],
-    "institution": "시청자미디어재단"
-  },
-  {
-    "home": "https://www.koreaexim.go.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국수출입은행"
-  },
-  {
-    "home": "https://www.kpf.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국언론진흥재단"
-  },
-  {
-    "home": "https://www.koda1458.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 50,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 54,
-        "url": "https://www.koda1458.kr/communication/participation/events/ORc4-u6Lai8xnp1zTthE1508BhI9bjnow-WiR4wgMt8",
-        "text": "[이벤트] 2026년 생명나눔 희망의씨앗 캠페인 대국민 설문조사 이벤트"
-      },
-      {
-        "score": 36,
-        "url": "https://www.koda1458.kr/communication/participation/events/GiMZz3CTqZgcnPWemNVYdWQbR4OTxvhj4Lo0DqjPags",
-        "text": "[이벤트] 한국장기조직기증원 누리집 설문하기 이벤트"
-      },
-      {
-        "score": 22,
-        "url": "https://www.koda1458.kr/communication/notices",
-        "text": "참여소통"
-      },
-      {
-        "score": 18,
-        "url": "https://www.koda1458.kr/communication/participation/events/0iW_Ng80BaVpsDckLNysxaEWayRdGVRSyuFEocii0gM",
-        "text": "[이벤트] 2025년 기관 누리집 만족도 조사 당첨자 결과 발표"
-      },
-      {
-        "score": 18,
-        "url": "https://www.koda1458.kr/communication/participation/events/8Qke-Wxq9_jbpOny7WENWCAD8X-8zleGuBSya4-5xF8",
-        "text": "[이벤트] 생명나눔 문장 완성하기 이벤트 당첨자 발표"
-      },
-      {
-        "score": 18,
-        "url": "https://www.koda1458.kr/communication/participation/events/8aI1dqH-2aPWTUw59ZifhlmCPqjhqyAclwOn1We_6r4",
-        "text": "[이벤트] 💙생명나눔 영상 시청 소감 이벤트💙"
-      },
-      {
-        "score": 18,
-        "url": "https://www.koda1458.kr/communication/participation/events/99qlFYmkpPlT1EMKiTslbPmTh7tXyctudT3vSk1B1WI",
-        "text": "[이벤트] 💙 가정의 달 기념 투표 이벤트 💙"
-      },
-      {
-        "score": 18,
-        "url": "https://www.koda1458.kr/communication/participation/events/BvFN1m1jdE3Eyc6prh5oGctemb_zw5RA_Iu-aU5fE7g",
-        "text": "[이벤트] ♻♻ ‘생명나눔 사례집 공유하기 이벤트’ SNS EVENT ♻♻"
-      }
-    ],
-    "institution": "재단법인 한국장기조직기증원"
-  },
-  {
-    "home": "https://www.kida.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 7,
-    "candidates": 2,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 8,
-        "url": "https://www.kida.re.kr/frt/board/frtNormalBoard.do?sidx=243&depth=2",
-        "text": "소식마당"
-      },
-      {
-        "score": 8,
-        "url": "https://www.kida.re.kr/frt/board/frtNormalBoard.do?sidx=2884&depth=2",
-        "text": "KIDA 소식"
-      }
-    ],
-    "institution": "한국국방연구원"
-  },
-  {
-    "home": "https://www.stop.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국여성인권진흥원"
-  },
-  {
-    "home": "https://www.fipa.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국어촌어항공단"
-  },
-  {
-    "home": "https://www.kospole.co.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 2,
-    "candidates": 3,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.kospole.co.kr/toto/board/pr",
-        "text": "공지사항"
-      },
-      {
-        "score": 4,
-        "url": "https://www.kospole.co.kr/toto/board/detail/4279",
-        "text": "한국스포츠레저(주) 임원(사외이사) 모집 공고"
-      },
-      {
-        "score": 4,
-        "url": "https://www.kospole.co.kr/toto/board/detail/4282",
-        "text": "2026년 추석 명절 청탁금지법 선물 카드뉴스 안내"
-      }
-    ],
-    "institution": "한국스포츠레저(주)"
-  },
-  {
     "home": "https://www.korad.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -3437,6 +3347,17 @@
     "institution": "한국도로공사"
   },
   {
+    "home": "https://www.fipa.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국어촌어항공단"
+  },
+  {
     "home": "https://www.kinac.re.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -3448,15 +3369,15 @@
     "institution": "한국원자력통제기술원"
   },
   {
-    "home": "https://www.koroad.or.kr/",
-    "result": "HOME_ERROR",
+    "home": "https://www.kofpi.or.kr/",
+    "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국도로교통공단"
+    "institution": "한국임업진흥원"
   },
   {
     "home": "https://home.koelsa.or.kr/",
@@ -3511,6 +3432,39 @@
     "institution": "한국승강기안전공단"
   },
   {
+    "home": "https://www.kisa.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국인터넷진흥원"
+  },
+  {
+    "home": "http://www.nids.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 7,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국의료기기안전정보원"
+  },
+  {
+    "home": "https://www.kosaf.go.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국장학재단"
+  },
+  {
     "home": "https://www.kins.re.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 8,
@@ -3548,92 +3502,7 @@
     "institution": "한국원자력안전기술원"
   },
   {
-    "home": "https://www.kofpi.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국임업진흥원"
-  },
-  {
-    "home": "http://www.nids.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 7,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국의료기기안전정보원"
-  },
-  {
-    "home": "https://www.kosaf.go.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국장학재단"
-  },
-  {
-    "home": "http://www.energy.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 21,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 22,
-        "url": "https://www.energy.or.kr/front/board/List2.do",
-        "text": "국민소통"
-      },
-      {
-        "score": 22,
-        "url": "https://www.energy.or.kr/front/board/List5.do",
-        "text": "국민소통함"
-      },
-      {
-        "score": 10,
-        "url": "https://www.energy.or.kr/front/board/List3.do",
-        "text": "보도자료"
-      },
-      {
-        "score": 10,
-        "url": "https://www.energy.or.kr/front/board/List33.do",
-        "text": "공시송달공고"
-      },
-      {
-        "score": 4,
-        "url": "https://www.energy.or.kr/front/board/List12.do",
-        "text": "규정"
-      },
-      {
-        "score": 4,
-        "url": "https://www.energy.or.kr/front/board/List14.do",
-        "text": "정보목록"
-      },
-      {
-        "score": 4,
-        "url": "https://www.energy.or.kr/front/board/List15.do",
-        "text": "바로가기"
-      },
-      {
-        "score": 4,
-        "url": "https://www.energy.or.kr/front/board/List21.do",
-        "text": "미디어 자료"
-      }
-    ],
-    "institution": "한국에너지공단"
-  },
-  {
-    "home": "https://www.kisa.or.kr/",
+    "home": "https://www.koroad.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -3641,7 +3510,7 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국인터넷진흥원"
+    "institution": "한국도로교통공단"
   },
   {
     "home": "http://www.koreajobworld.or.kr/",
@@ -3655,58 +3524,6 @@
     "institution": "한국잡월드"
   },
   {
-    "home": "http://www.fira.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 92,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp",
-        "text": "공지사항"
-      },
-      {
-        "score": 14,
-        "url": "https://www.fira.or.kr/newfira/web/news/news02.jsp",
-        "text": "뉴스·소식"
-      },
-      {
-        "score": 12,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_02.jsp?mode=view&article_no=35753&board_wrapper=%2Fnewfira%2Fweb%2Fnews%2Fnews01_02.jsp&pager.offset=0&board_no=3",
-        "text": "한국수산자원공단 비상임감사 서류심사 합격자 공고"
-      },
-      {
-        "score": 12,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_02.jsp?mode=view&article_no=35804&board_wrapper=%2Fnewfira%2Fweb%2Fnews%2Fnews01_02.jsp&pager.offset=0&board_no=3",
-        "text": "한국수산자원공단 상임이사 모집 공고"
-      },
-      {
-        "score": 12,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_02.jsp?mode=view&article_no=35828&board_wrapper=%2Fnewfira%2Fweb%2Fnews%2Fnews01_02.jsp&pager.offset=0&board_no=3",
-        "text": "한국수산자원공단 상임이사 면접심사 합격자 공고"
-      },
-      {
-        "score": 10,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp?mode=view&article_no=35744",
-        "text": "개인정보 제3자 제공사항 알림(2026년 반부패·청렴 교육) 개인정보 제3자 제공사항(2026년 반부패·청렴 교육)을 붙임과 같이 알려드립니다."
-      },
-      {
-        "score": 10,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp?mode=view&article_no=35762",
-        "text": "민간어업협력사업 서해 수산자원조사 근해어선 추가모집 공고 한국수산자원공단에서는 2026년 민간어업협력사업의 일환으로 서해(한중잠정조치수역) 수산"
-      },
-      {
-        "score": 10,
-        "url": "https://www.fira.or.kr/newfira/web/news/news01_01.jsp?mode=view&article_no=35851",
-        "text": "새글 2026년 연어 부산물 새활용 민간협력사업 참여희망 기업 모집 □ 참여방법 : 동반성장 플랫폼 '상생누리 동반성장프로그램' 및 소통24 협"
-      }
-    ],
-    "institution": "한국수산자원공단"
-  },
-  {
     "home": "http://www.kesco.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -3716,106 +3533,6 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "한국전기안전공사"
-  },
-  {
-    "home": "http://www.kawf.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 3,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국예술인복지재단"
-  },
-  {
-    "home": "https://www.kihs.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 7,
-    "candidates": 37,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 44,
-        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_list.do",
-        "text": "알림마당"
-      },
-      {
-        "score": 42,
-        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=1674",
-        "text": "2025년도 탄소중립 사업화 지원사업 알림 공지"
-      },
-      {
-        "score": 24,
-        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=2151",
-        "text": "한국수자원조사기술원 대회의실 시설 무료개방(무료대여) 안내 공지"
-      },
-      {
-        "score": 18,
-        "url": "https://www.kihs.re.kr/kor_sub/comm/comm_sns.do",
-        "text": "SNS 소통"
-      },
-      {
-        "score": 18,
-        "url": "https://www.kihs.re.kr/kor_sub/oper/comm_center_apply.do",
-        "text": "소통센터"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=2326",
-        "text": "2026년 한국수자원조사기술원 청렴시민감사관 모집 공고"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=2352",
-        "text": "2026년 하반기 국가 K-테스트베드 통합공고 2026-09-16"
-      },
-      {
-        "score": 8,
-        "url": "https://www.kihs.re.kr/kor_sub/bbs/bid_view.do?bbs_detail_idx=1489",
-        "text": "전자계약서 작성 시 인지세 공동부담 안내 공지"
-      }
-    ],
-    "institution": "한국수자원조사기술원"
-  },
-  {
-    "home": "https://www.kips.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 3,
-    "candidates": 5,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 36,
-        "url": "https://www.kips.kr/cntns/cntns.do?menuSn=5010",
-        "text": "공지사항"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kips.kr/cntns/cntns.do?menuSn=5058",
-        "text": "홍보게시판"
-      },
-      {
-        "score": 4,
-        "url": "https://kips.kr/cntns/boardView.do?srchPstgSntnSn=3198&menuSn=5058&bbsSn=5006&srchBgngDt=&srchEndDt=&srchCnd=&srchCndKeyword=&item1Srch=&item2Srch=&item3Srch=&item4Srch=&item5Srch=¤tPageNo=1&recordCountPerPage=10",
-        "text": ""
-      },
-      {
-        "score": 4,
-        "url": "https://kips.kr/cntns/boardView.do?srchPstgSntnSn=3204&menuSn=5058&bbsSn=5006",
-        "text": ""
-      },
-      {
-        "score": 4,
-        "url": "https://kips.kr/cntns/boardView.do?srchPstgSntnSn=3205&menuSn=5058&bbsSn=5006",
-        "text": ""
-      }
-    ],
-    "institution": "한국제품안전관리원"
   },
   {
     "home": "https://kings.ac.kr/",
@@ -3870,6 +3587,54 @@
     "institution": "한국전력국제원자력대학원대학교"
   },
   {
+    "home": "https://www.kips.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 3,
+    "candidates": 5,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 36,
+        "url": "https://www.kips.kr/cntns/cntns.do?menuSn=5010",
+        "text": "공지사항"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kips.kr/cntns/cntns.do?menuSn=5058",
+        "text": "홍보게시판"
+      },
+      {
+        "score": 4,
+        "url": "https://kips.kr/cntns/boardView.do?srchPstgSntnSn=3198&menuSn=5058&bbsSn=5006&srchBgngDt=&srchEndDt=&srchCnd=&srchCndKeyword=&item1Srch=&item2Srch=&item3Srch=&item4Srch=&item5Srch=¤tPageNo=1&recordCountPerPage=10",
+        "text": ""
+      },
+      {
+        "score": 4,
+        "url": "https://kips.kr/cntns/boardView.do?srchPstgSntnSn=3204&menuSn=5058&bbsSn=5006",
+        "text": ""
+      },
+      {
+        "score": 4,
+        "url": "https://kips.kr/cntns/boardView.do?srchPstgSntnSn=3205&menuSn=5058&bbsSn=5006",
+        "text": ""
+      }
+    ],
+    "institution": "한국제품안전관리원"
+  },
+  {
+    "home": "https://www.komsco.com/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국조폐공사"
+  },
+  {
     "home": "https://www.kodma.or.kr/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
@@ -3879,6 +3644,58 @@
     "best_url": null,
     "candidate_samples": [],
     "institution": "한국중소벤처기업유통원"
+  },
+  {
+    "home": "https://www.kihs.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 7,
+    "candidates": 37,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 44,
+        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_list.do",
+        "text": "알림마당"
+      },
+      {
+        "score": 42,
+        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=1674",
+        "text": "2025년도 탄소중립 사업화 지원사업 알림 공지"
+      },
+      {
+        "score": 24,
+        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=2151",
+        "text": "한국수자원조사기술원 대회의실 시설 무료개방(무료대여) 안내 공지"
+      },
+      {
+        "score": 18,
+        "url": "https://www.kihs.re.kr/kor_sub/comm/comm_sns.do",
+        "text": "SNS 소통"
+      },
+      {
+        "score": 18,
+        "url": "https://www.kihs.re.kr/kor_sub/oper/comm_center_apply.do",
+        "text": "소통센터"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=2326",
+        "text": "2026년 한국수자원조사기술원 청렴시민감사관 모집 공고"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kihs.re.kr/kor_sub/bbs/notice_view.do?bbs_detail_idx=2352",
+        "text": "2026년 하반기 국가 K-테스트베드 통합공고 2026-09-16"
+      },
+      {
+        "score": 8,
+        "url": "https://www.kihs.re.kr/kor_sub/bbs/bid_view.do?bbs_detail_idx=1489",
+        "text": "전자계약서 작성 시 인지세 공동부담 안내 공지"
+      }
+    ],
+    "institution": "한국수자원조사기술원"
   },
   {
     "home": "https://www.nia.or.kr/",
@@ -3892,6 +3709,17 @@
     "institution": "한국지능정보사회진흥원"
   },
   {
+    "home": "https://www.kiip.re.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국지식재산연구원"
+  },
+  {
     "home": "https://www.komipo.co.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
@@ -3903,7 +3731,7 @@
     "institution": "한국중부발전(주)"
   },
   {
-    "home": "https://www.kiip.re.kr/",
+    "home": "https://info.korail.com/",
     "result": "NO_CANDIDATE",
     "nav_pages": 0,
     "candidates": 0,
@@ -3911,7 +3739,18 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국지식재산연구원"
+    "institution": "한국철도공사"
+  },
+  {
+    "home": "https://www.bokji.net/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국사회복지협의회"
   },
   {
     "home": "https://www.hf.go.kr/",
@@ -3925,15 +3764,56 @@
     "institution": "한국주택금융공사"
   },
   {
-    "home": "https://info.korail.com/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
+    "home": "http://www.energy.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 21,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국철도공사"
+    "candidate_samples": [
+      {
+        "score": 22,
+        "url": "https://www.energy.or.kr/front/board/List2.do",
+        "text": "국민소통"
+      },
+      {
+        "score": 22,
+        "url": "https://www.energy.or.kr/front/board/List5.do",
+        "text": "국민소통함"
+      },
+      {
+        "score": 10,
+        "url": "https://www.energy.or.kr/front/board/List3.do",
+        "text": "보도자료"
+      },
+      {
+        "score": 10,
+        "url": "https://www.energy.or.kr/front/board/List33.do",
+        "text": "공시송달공고"
+      },
+      {
+        "score": 4,
+        "url": "https://www.energy.or.kr/front/board/List12.do",
+        "text": "규정"
+      },
+      {
+        "score": 4,
+        "url": "https://www.energy.or.kr/front/board/List14.do",
+        "text": "정보목록"
+      },
+      {
+        "score": 4,
+        "url": "https://www.energy.or.kr/front/board/List15.do",
+        "text": "바로가기"
+      },
+      {
+        "score": 4,
+        "url": "https://www.energy.or.kr/front/board/List21.do",
+        "text": "미디어 자료"
+      }
+    ],
+    "institution": "한국에너지공단"
   },
   {
     "home": "https://www.kepco-enc.com/",
@@ -3988,69 +3868,6 @@
     "institution": "한국전력기술주식회사"
   },
   {
-    "home": "https://www.bokji.net/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국사회복지협의회"
-  },
-  {
-    "home": "https://www.kpx.or.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 26,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 46,
-        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78107&act=view",
-        "text": "공지사항 2026년 제4회 전력거래사 자격시험 시행계획 공고 2026년 제4회 전력거래사 자격시험 시행계획을 공고하오니 세부내용은 첨부파일 참고"
-      },
-      {
-        "score": 46,
-        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78136&act=view",
-        "text": "공지사항 2026년 한국전력거래소 혁신파트너십 지원사업 참여기업 모집 공.. 한국전력거래소 공고 제2026-03호 2026년 한국전력거래소 혁신"
-      },
-      {
-        "score": 40,
-        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78119&act=view",
-        "text": "공지사항 2026년 가을철 태양광 연계 ESS 운영방안 시행 안내 2026년 가을철 태양광 ESS 운영방안을 아래와 같이 안내드리오니, 적극적인"
-      },
-      {
-        "score": 40,
-        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78124&act=view",
-        "text": "공지사항 2026년 가을철 전력계통 안정화 대책기간 운영 안내 26.09.15"
-      },
-      {
-        "score": 38,
-        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042",
-        "text": "공지사항 더보기"
-      },
-      {
-        "score": 24,
-        "url": "https://www.kpx.or.kr/menu.es?mid=a10212060000",
-        "text": "적극행정 소통 게시판"
-      },
-      {
-        "score": 24,
-        "url": "https://www.kpx.or.kr/menu.es?mid=a10212070000",
-        "text": "소극행정 혁파 소통 게시판"
-      },
-      {
-        "score": 24,
-        "url": "https://www.kpx.or.kr/menu.es?mid=a11201000000",
-        "text": "소식알림"
-      }
-    ],
-    "institution": "한국전력거래소"
-  },
-  {
     "home": "https://www.krivet.re.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
     "nav_pages": 4,
@@ -4071,28 +3888,6 @@
       }
     ],
     "institution": "한국직업능력연구원"
-  },
-  {
-    "home": "http://www.kdb.co.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국산업은행"
-  },
-  {
-    "home": "https://www.kicet.re.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국세라믹기술원"
   },
   {
     "home": "https://www.kywa.or.kr/",
@@ -4158,6 +3953,58 @@
     "institution": "한국지식재산보호원"
   },
   {
+    "home": "https://www.kpx.or.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 26,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 46,
+        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78107&act=view",
+        "text": "공지사항 2026년 제4회 전력거래사 자격시험 시행계획 공고 2026년 제4회 전력거래사 자격시험 시행계획을 공고하오니 세부내용은 첨부파일 참고"
+      },
+      {
+        "score": 46,
+        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78136&act=view",
+        "text": "공지사항 2026년 한국전력거래소 혁신파트너십 지원사업 참여기업 모집 공.. 한국전력거래소 공고 제2026-03호 2026년 한국전력거래소 혁신"
+      },
+      {
+        "score": 40,
+        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78119&act=view",
+        "text": "공지사항 2026년 가을철 태양광 연계 ESS 운영방안 시행 안내 2026년 가을철 태양광 ESS 운영방안을 아래와 같이 안내드리오니, 적극적인"
+      },
+      {
+        "score": 40,
+        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042&list_no=78124&act=view",
+        "text": "공지사항 2026년 가을철 전력계통 안정화 대책기간 운영 안내 26.09.15"
+      },
+      {
+        "score": 38,
+        "url": "https://www.kpx.or.kr/board.es?mid=a11201000000&bid=0042",
+        "text": "공지사항 더보기"
+      },
+      {
+        "score": 24,
+        "url": "https://www.kpx.or.kr/menu.es?mid=a10212060000",
+        "text": "적극행정 소통 게시판"
+      },
+      {
+        "score": 24,
+        "url": "https://www.kpx.or.kr/menu.es?mid=a10212070000",
+        "text": "소극행정 혁파 소통 게시판"
+      },
+      {
+        "score": 24,
+        "url": "https://www.kpx.or.kr/menu.es?mid=a11201000000",
+        "text": "소식알림"
+      }
+    ],
+    "institution": "한국전력거래소"
+  },
+  {
     "home": "https://www.kafet.or.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
@@ -4191,15 +4038,15 @@
     "institution": "한국특허정보원"
   },
   {
-    "home": "https://www.nikom.or.kr/",
-    "result": "NO_CANDIDATE",
+    "home": "http://www.fira.or.kr/",
+    "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국한의약진흥원"
+    "institution": "한국수산자원공단"
   },
   {
     "home": "http://www.kicece.or.kr/",
@@ -4237,6 +4084,17 @@
       }
     ],
     "institution": "한국영유아보육·교육진흥원"
+  },
+  {
+    "home": "https://www.nikom.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국한의약진흥원"
   },
   {
     "home": "https://www.kead.or.kr/",
@@ -4302,15 +4160,15 @@
     "institution": "한국해양수산개발원"
   },
   {
-    "home": "https://www.khra.kr/",
-    "result": "NO_CANDIDATE",
+    "home": "https://www.seaman.or.kr/",
+    "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국해양조사협회"
+    "institution": "한국해양수산연수원"
   },
   {
     "home": "https://www.kobc.or.kr/",
@@ -4324,67 +4182,31 @@
     "institution": "한국해양진흥공사"
   },
   {
-    "home": "https://www.ekape.or.kr/",
+    "home": "https://www.kic.kr/",
     "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 42,
+    "nav_pages": 3,
+    "candidates": 3,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [
       {
-        "score": 40,
-        "url": "https://www.ekape.or.kr/board/list.do?menuId=menu149208&boardInfoNo=0024",
-        "text": "공지사항"
-      },
-      {
         "score": 28,
-        "url": "https://www.ekape.or.kr/board/list.do?menuId=menu149208",
-        "text": "알림소식"
+        "url": "https://www.kic.kr/ko/news/announcements/bidding",
+        "text": "공고·공지"
       },
       {
-        "score": 20,
-        "url": "https://www.ekape.or.kr/contents/list.do?menuId=menu194570",
-        "text": "국민소통"
+        "score": 8,
+        "url": "https://kic.kr/ko/news/announcements/notice/svrvip",
+        "text": ""
       },
       {
-        "score": 18,
-        "url": "https://www.ekape.or.kr/communication/authentication.do?menuId=menu123539",
-        "text": "안전소통창구"
-      },
-      {
-        "score": 18,
-        "url": "https://www.ekape.or.kr/sms/subscribe/authentication.do?menuId=menu131176",
-        "text": "가격정보 알림톡"
-      },
-      {
-        "score": 16,
-        "url": "https://www.ekape.or.kr/board/view.do?boardInfoNo=0025&boardNo=1412&menuId=menu160301",
-        "text": "2026-09-17 투명하고 신뢰할 수 있는 공공 인공지능(AI) 서비스 제공 다짐"
-      },
-      {
-        "score": 10,
-        "url": "https://www.ekape.or.kr/board/ebook/list.do",
-        "text": "소식지"
-      },
-      {
-        "score": 10,
-        "url": "https://www.ekape.or.kr/board/ebook/list.do?menuId=menu140656&boardInfoNo=0027",
-        "text": "소식지"
+        "score": 8,
+        "url": "https://www.kic.kr/ko/news/press-release",
+        "text": "뉴스"
       }
     ],
-    "institution": "축산물품질평가원"
-  },
-  {
-    "home": "https://www.seaman.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국해양수산연수원"
+    "institution": "한국투자공사"
   },
   {
     "home": "https://www.ksponco.or.kr/",
@@ -4439,333 +4261,15 @@
     "institution": "한국체육산업개발(주)"
   },
   {
-    "home": "https://www.keci.or.kr/",
+    "home": "http://www.kawf.kr/",
     "result": "NO_CANDIDATE",
-    "nav_pages": 0,
+    "nav_pages": 3,
     "candidates": 0,
     "verified": 0,
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국환경보전원"
-  },
-  {
-    "home": "https://www.kipa.re.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국행정연구원"
-  },
-  {
-    "home": "https://www.koem.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "해양환경공단"
-  },
-  {
-    "home": "https://www.fis.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국재정정보원"
-  },
-  {
-    "home": "https://www.nypi.re.kr/",
-    "result": "VERIFIED",
-    "nav_pages": 2,
-    "candidates": 23,
-    "verified": 4,
-    "best_score": 18,
-    "best_url": "https://www.nypi.re.kr/board?menuKey=uCjzEQTnJu&siteId=SITE00002&bbsId=BOARD00019",
-    "candidate_samples": [
-      {
-        "score": 36,
-        "url": "https://www.nypi.re.kr/menu?menuKey=D7eWzSzI7U",
-        "text": "공지사항"
-      },
-      {
-        "score": 24,
-        "url": "https://www.nypi.re.kr/menu?menuKey=OtrsvZStu2",
-        "text": "알림 및 소식"
-      },
-      {
-        "score": 18,
-        "url": "https://www.nypi.re.kr/menu?menuKey=vF0jvMuX7N",
-        "text": "정책소통"
-      },
-      {
-        "score": 16,
-        "url": "https://www.nypi.re.kr/board?menuKey=D7eWzSzI7U&siteId=SITE00002&bbsId=BOARD00015",
-        "text": "기관소식"
-      },
-      {
-        "score": 10,
-        "url": "https://www.nypi.re.kr/board?menuKey=O8K6K818RI&siteId=SITE00002&bbsId=BOARD00021",
-        "text": "뉴스레터"
-      },
-      {
-        "score": 6,
-        "url": "https://www.nypi.re.kr/board/view?&menuKey=D7eWzSzI7U&bbsId=BOARD00015&schType=0&schText=&boardStyle=&ctgryNo=&cntntNm=&pstOtptCnt=0&ntnNm=&pageNum=1&rowCnt=10&no1=5®No=7x7PEAOadr",
-        "text": "한국청소년상담복지개발원 비상임감사 초빙공고"
-      },
-      {
-        "score": 6,
-        "url": "https://www.nypi.re.kr/board/view?&menuKey=D7eWzSzI7U&bbsId=BOARD00015&schType=0&schText=&boardStyle=&ctgryNo=&cntntNm=&pstOtptCnt=0&ntnNm=&pageNum=1&rowCnt=10&no1=8®No=HF5i4i6rNs",
-        "text": "2026년도 성남시청소년청년재단 직원 공개모집 공고"
-      },
-      {
-        "score": 6,
-        "url": "https://www.nypi.re.kr/menu?menuKey=9gsNLZYtSj",
-        "text": "소식"
-      }
-    ],
-    "institution": "한국청소년정책연구원"
-  },
-  {
-    "home": "https://www.kepcomcs.co.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 16,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 26,
-        "url": "https://www.kepcomcs.co.kr/mber/opinion/notice/bbs/29/list",
-        "text": "일반공지"
-      },
-      {
-        "score": 20,
-        "url": "https://www.kepcomcs.co.kr/mber/customer/press-list",
-        "text": "고객소통"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kepcomcs.co.kr/mber/esg/hmintro/hmboard/bbs/1334/list",
-        "text": "인권경영 게시판"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kepcomcs.co.kr/mber/esg/hmintro/hmnews/bbs/1333/list",
-        "text": "인권경영 소식지"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kepcomcs.co.kr/mber/esgsafety/safety/safetynews/bbs/6/list",
-        "text": "안전경영소식"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kepcomcs.co.kr/mber/opinion/news/bbs/1/list",
-        "text": "전력 에너지 뉴스"
-      },
-      {
-        "score": 12,
-        "url": "https://www.kepcomcs.co.kr/mber/opinion/press/pressnews/bbs/27/list",
-        "text": "뉴스레터"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kepcomcs.co.kr/mber/esg/ethic/ethintegrity/bbs/39/list",
-        "text": "청렴·윤리 소식지"
-      }
-    ],
-    "institution": "한전MCS(주)"
-  },
-  {
-    "home": "https://www.kimst.re.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "해양수산과학기술진흥원"
-  },
-  {
-    "home": "https://www.knfc.co.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한전원자력연료주식회사"
-  },
-  {
-    "home": "https://kepco.co.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국전력공사"
-  },
-  {
-    "home": "https://www.kei.re.kr/",
-    "result": "VERIFIED",
-    "nav_pages": 8,
-    "candidates": 46,
-    "verified": 2,
-    "best_score": 4,
-    "best_url": "https://www.kei.re.kr/board.es?mid=a10301000000&bid=0001&act=view&list_no=60514&tag=&nPage=1",
-    "candidate_samples": [
-      {
-        "score": 18,
-        "url": "https://www.kei.re.kr/menu.es?mid=a10301000000",
-        "text": "알림·참여"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kei.re.kr/board.es?mid=a10308040000&bid=0086&act=view&list_no=59199&nPage=1",
-        "text": "KEI 소식지 Vol.1 (2024) 조회수 670 More"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kei.re.kr/board.es?mid=a10308040000&bid=0086&act=view&list_no=59630&nPage=1",
-        "text": "KEI 소식지 Vol.2 (2024) 조회수 577 More"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kei.re.kr/board.es?mid=a10308040000&bid=0086&act=view&list_no=59924&nPage=1",
-        "text": "KEI 소식지 Vol.3 (2025) 조회수 355 More"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kei.re.kr/board.es?mid=a10308040000&bid=0086&act=view&list_no=60125&nPage=1",
-        "text": "KEI 소식지 Vol.4 (2025) 조회수 178 More"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kei.re.kr/board.es?mid=a10308040000&bid=0086&act=view&list_no=60389&nPage=1",
-        "text": "KEI 소식지 Vol.5 (2026) 조회수 63 More"
-      },
-      {
-        "score": 8,
-        "url": "https://www.kei.re.kr/elibList.es?mid=a10103010000&elibName=environmentalpolicy&class_id=&act=view&c_id=769634&rn=10&nPage=1",
-        "text": "학술지 뉴스 미디어를 통한 환경담론의 의제화 과정 : 토픽 간 관계와 담.. 한국환경연구원 2026.03 31"
-      },
-      {
-        "score": 6,
-        "url": "https://www.kei.re.kr/menu.es?mid=a10307020000",
-        "text": "보도자료"
-      }
-    ],
-    "institution": "한국환경연구원"
-  },
-  {
-    "home": "https://www.komsco.com/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국조폐공사"
-  },
-  {
-    "home": "http://www.kigepe.or.kr/",
-    "result": "NO_CANDIDATE",
-    "nav_pages": 8,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국양성평등교육진흥원"
-  },
-  {
-    "home": "http://www.kicj.re.kr/",
-    "result": "CANDIDATE_NOT_VERIFIED",
-    "nav_pages": 8,
-    "candidates": 98,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [
-      {
-        "score": 38,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009",
-        "text": "공지사항 바로가기"
-      },
-      {
-        "score": 26,
-        "url": "https://www.kicj.re.kr/gallery.es?mid=a10303000000&bid=0001&tag=&b_list=10&act=view&list_no=3325&nPage=1&keyField=&keyWord=&orderby=",
-        "text": "한국형사·법무정책연구원 일본 검사 대상 연수 개최(7.6~7.7) 한국형사‧법무정책연구원(원장 정웅석, 이하 ‘연구원’)은 2026년 7월 6일"
-      },
-      {
-        "score": 22,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18447&nPage=1",
-        "text": "도서 정리 2026 자원봉사자 모집 안내 (변경공지)"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=14223&act=view",
-        "text": "형사법무정책연구소식 168호.pdf"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=16636&act=view",
-        "text": "형사·법무정책연구소식 형사법무정책연구소식(2025년 여름호 통권 172호)"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=17565&act=view",
-        "text": "형사·법무정책연구소식 형사법무정책연구소식(2025년 가을호 통권 173호)"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=17819&act=view",
-        "text": "형사·법무정책연구소식 형사법무정책연구소식(2025년 겨울호 통권 174호)"
-      },
-      {
-        "score": 10,
-        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=18064&act=view",
-        "text": "형사·법무정책연구소식 형사법무정책연구소식(2026년 봄호 통권 175호)"
-      }
-    ],
-    "institution": "한국형사·법무정책연구원"
-  },
-  {
-    "home": "https://www.kdhc.co.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국지역난방공사"
-  },
-  {
-    "home": "http://www.kyci.or.kr/",
-    "result": "HOME_ERROR",
-    "nav_pages": 0,
-    "candidates": 0,
-    "verified": 0,
-    "best_score": 0,
-    "best_url": null,
-    "candidate_samples": [],
-    "institution": "한국청소년상담복지개발원"
+    "institution": "한국예술인복지재단"
   },
   {
     "home": "https://www.kmedihub.re.kr/",
@@ -4820,7 +4324,59 @@
     "institution": "대구경북첨단의료산업진흥재단"
   },
   {
-    "home": "https://www.kps.co.kr/",
+    "home": "https://www.nypi.re.kr/",
+    "result": "VERIFIED",
+    "nav_pages": 2,
+    "candidates": 23,
+    "verified": 4,
+    "best_score": 18,
+    "best_url": "https://www.nypi.re.kr/board?menuKey=uCjzEQTnJu&siteId=SITE00002&bbsId=BOARD00019",
+    "candidate_samples": [
+      {
+        "score": 36,
+        "url": "https://www.nypi.re.kr/menu?menuKey=D7eWzSzI7U",
+        "text": "공지사항"
+      },
+      {
+        "score": 24,
+        "url": "https://www.nypi.re.kr/menu?menuKey=OtrsvZStu2",
+        "text": "알림 및 소식"
+      },
+      {
+        "score": 18,
+        "url": "https://www.nypi.re.kr/menu?menuKey=vF0jvMuX7N",
+        "text": "정책소통"
+      },
+      {
+        "score": 16,
+        "url": "https://www.nypi.re.kr/board?menuKey=D7eWzSzI7U&siteId=SITE00002&bbsId=BOARD00015",
+        "text": "기관소식"
+      },
+      {
+        "score": 10,
+        "url": "https://www.nypi.re.kr/board?menuKey=O8K6K818RI&siteId=SITE00002&bbsId=BOARD00021",
+        "text": "뉴스레터"
+      },
+      {
+        "score": 6,
+        "url": "https://www.nypi.re.kr/board/view?&menuKey=D7eWzSzI7U&bbsId=BOARD00015&schType=0&schText=&boardStyle=&ctgryNo=&cntntNm=&pstOtptCnt=0&ntnNm=&pageNum=1&rowCnt=10&no1=5®No=7x7PEAOadr",
+        "text": "한국청소년상담복지개발원 비상임감사 초빙공고"
+      },
+      {
+        "score": 6,
+        "url": "https://www.nypi.re.kr/board/view?&menuKey=D7eWzSzI7U&bbsId=BOARD00015&schType=0&schText=&boardStyle=&ctgryNo=&cntntNm=&pstOtptCnt=0&ntnNm=&pageNum=1&rowCnt=10&no1=8®No=HF5i4i6rNs",
+        "text": "2026년도 성남시청소년청년재단 직원 공개모집 공고"
+      },
+      {
+        "score": 6,
+        "url": "https://www.nypi.re.kr/menu?menuKey=9gsNLZYtSj",
+        "text": "소식"
+      }
+    ],
+    "institution": "한국청소년정책연구원"
+  },
+  {
+    "home": "https://www.fis.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -4828,7 +4384,251 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
+    "institution": "한국재정정보원"
+  },
+  {
+    "home": "https://www.koem.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "해양환경공단"
+  },
+  {
+    "home": "https://www.keci.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국환경보전원"
+  },
+  {
+    "home": "https://kepco.co.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국전력공사"
+  },
+  {
+    "home": "https://www.knfc.co.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한전원자력연료주식회사"
+  },
+  {
+    "home": "https://www.kipa.re.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국행정연구원"
+  },
+  {
+    "home": "https://www.kepcomcs.co.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 16,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 26,
+        "url": "https://www.kepcomcs.co.kr/mber/opinion/notice/bbs/29/list",
+        "text": "일반공지"
+      },
+      {
+        "score": 20,
+        "url": "https://www.kepcomcs.co.kr/mber/customer/press-list",
+        "text": "고객소통"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kepcomcs.co.kr/mber/esg/hmintro/hmboard/bbs/1334/list",
+        "text": "인권경영 게시판"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kepcomcs.co.kr/mber/esg/hmintro/hmnews/bbs/1333/list",
+        "text": "인권경영 소식지"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kepcomcs.co.kr/mber/esgsafety/safety/safetynews/bbs/6/list",
+        "text": "안전경영소식"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kepcomcs.co.kr/mber/opinion/news/bbs/1/list",
+        "text": "전력 에너지 뉴스"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kepcomcs.co.kr/mber/opinion/press/pressnews/bbs/27/list",
+        "text": "뉴스레터"
+      },
+      {
+        "score": 10,
+        "url": "https://www.kepcomcs.co.kr/mber/esg/ethic/ethintegrity/bbs/39/list",
+        "text": "청렴·윤리 소식지"
+      }
+    ],
+    "institution": "한전MCS(주)"
+  },
+  {
+    "home": "https://www.kdhc.co.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국지역난방공사"
+  },
+  {
+    "home": "http://www.kyci.or.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국청소년상담복지개발원"
+  },
+  {
+    "home": "https://www.kps.co.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 32,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 52,
+        "url": "https://www.kps.co.kr/web/Board/47573/detailView.do?pageIndex=1&menu=2467",
+        "text": "공지사항 한전KPS 개인정보 처리방침 변경 알림 한전KPS 개인정보 처리방침이 다음과 같이 변경됨을 알려드립니다. ○ 개인정보 처리방침 변경 가"
+      },
+      {
+        "score": 34,
+        "url": "https://www.kps.co.kr/web/Board/47561/detailView.do?pageIndex=1&menu=2467",
+        "text": "공지사항 공공기관 시니어 인력활용 중소벤처기업 지원사업 「셰르파 프로그램」 2026-08-31"
+      },
+      {
+        "score": 34,
+        "url": "https://www.kps.co.kr/web/Board/47611/detailView.do?pageIndex=1&menu=2467",
+        "text": "공지사항 에너지 창업 경연대회 「스파크업 Spark-Up - 모두의 에너지」 2026-09-11"
+      },
+      {
+        "score": 18,
+        "url": "https://www.kps.co.kr/web/communication/openkps.do",
+        "text": "국민소통"
+      },
+      {
+        "score": 12,
+        "url": "https://www.kps.co.kr/web/communication/kpsnews/notice.do",
+        "text": "KPS뉴스"
+      },
+      {
+        "score": 8,
+        "url": "https://www.kps.co.kr/web/communication/kpsnews/press.do",
+        "text": "보도자료"
+      },
+      {
+        "score": 8,
+        "url": "https://www.kps.co.kr/web/integrity/ethics/newsletter.do",
+        "text": "뉴스레터"
+      },
+      {
+        "score": 6,
+        "url": "https://www.kps.co.kr/web/esg/growth/support.do",
+        "text": "지원사업 공고현황"
+      }
+    ],
     "institution": "한전KPS(주)"
+  },
+  {
+    "home": "http://www.kicj.re.kr/",
+    "result": "CANDIDATE_NOT_VERIFIED",
+    "nav_pages": 8,
+    "candidates": 98,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [
+      {
+        "score": 38,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009",
+        "text": "공지사항 바로가기"
+      },
+      {
+        "score": 26,
+        "url": "https://www.kicj.re.kr/gallery.es?mid=a10303000000&bid=0001&tag=&b_list=10&act=view&list_no=3325&nPage=1&keyField=&keyWord=&orderby=",
+        "text": "한국형사·법무정책연구원 일본 검사 대상 연수 개최(7.6~7.7) 한국형사‧법무정책연구원(원장 정웅석, 이하 ‘연구원’)은 2026년 7월 6일"
+      },
+      {
+        "score": 22,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10301000000&bid=0009&act=view&list_no=18447&nPage=1",
+        "text": "도서 정리 2026 자원봉사자 모집 안내 (변경공지)"
+      },
+      {
+        "score": 10,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=14223&act=view",
+        "text": "형사법무정책연구소식 168호.pdf"
+      },
+      {
+        "score": 10,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=16636&act=view",
+        "text": "형사·법무정책연구소식 형사법무정책연구소식(2025년 여름호 통권 172호)"
+      },
+      {
+        "score": 10,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=17565&act=view",
+        "text": "형사·법무정책연구소식 형사법무정책연구소식(2025년 가을호 통권 173호)"
+      },
+      {
+        "score": 10,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=17819&act=view",
+        "text": "형사·법무정책연구소식 형사법무정책연구소식(2025년 겨울호 통권 174호)"
+      },
+      {
+        "score": 10,
+        "url": "https://www.kicj.re.kr/board.es?mid=a10104010000&bid=0005&list_no=18064&act=view",
+        "text": "형사·법무정책연구소식 형사법무정책연구소식(2026년 봄호 통권 175호)"
+      }
+    ],
+    "institution": "한국형사·법무정책연구원"
+  },
+  {
+    "home": "http://www.kigepe.or.kr/",
+    "result": "NO_CANDIDATE",
+    "nav_pages": 8,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국양성평등교육진흥원"
   },
   {
     "home": "https://www.komsa.or.kr/",
@@ -4842,7 +4642,7 @@
     "institution": "한국해양교통안전공단"
   },
   {
-    "home": "https://www.kic.kr/",
+    "home": "https://www.khra.kr/",
     "result": "HOME_ERROR",
     "nav_pages": 0,
     "candidates": 0,
@@ -4850,6 +4650,28 @@
     "best_score": 0,
     "best_url": null,
     "candidate_samples": [],
-    "institution": "한국투자공사"
+    "institution": "한국해양조사협회"
+  },
+  {
+    "home": "https://www.kimst.re.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "해양수산과학기술진흥원"
+  },
+  {
+    "home": "https://www.kiost.ac.kr/",
+    "result": "HOME_ERROR",
+    "nav_pages": 0,
+    "candidates": 0,
+    "verified": 0,
+    "best_score": 0,
+    "best_url": null,
+    "candidate_samples": [],
+    "institution": "한국해양과학기술원"
   }
 ]
