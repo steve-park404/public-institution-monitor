@@ -1,18 +1,23 @@
 {
   "seen": [
-    "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14946&cpage=1&rows=10&condition=&keyword=",
-    "https://www.kspo.or.kr/kspo/bbs/B0000027/view.do?nttId=64281&menuNo=200149&searchWrd=&pageIndex=1",
-    "https://www.kiet.re.kr/communicate/ntcView?ntc_no=10735&skey=&sval=&pg=1&pp=10",
-    "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14953&cpage=1&rows=10&condition=&keyword=",
-    "https://www.kibo.or.kr/main/center/20260813.do",
-    "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&nPage=1&v_type=&b_list_cnt=10&ord=&tag=&list_no=8025&act=view&keyField=&keyWord=",
-    "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
+    "https://www.geps.or.kr/openInfo_preOpenInfo01",
     "https://home.koelsa.or.kr/portal/bbs/view.do?mId=0401000000&ptIdx=112&bIdx=15225",
     "https://www.sdco.or.kr/kor/",
-    "https://www.ksponco.or.kr/programProposal?mid=a10201060000",
-    "https://home.koelsa.or.kr/portal/contents.do?mId=0801140000",
     "https://www.kps.co.kr/web/Board/47497/detailView.do?pageIndex=1&menu=2467",
-    "https://www.kdissw.or.kr:443/board.es?mid=a10501010000&bid=0002"
+    "https://www.kdissw.or.kr:443/board.es?mid=a10501010000&bid=0002",
+    "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
+    "https://www.koda1458.kr/communication/participation/events/BajwFTqb5t1jANBcemD8gX5HoCwy_T83LJbgFR4mHy4",
+    "https://www.ksponco.or.kr/programProposal?mid=a10201060000",
+    "https://www.koda1458.kr/communication/participation/events/LjlZnB2zNk7e71eF5tDGKbrKYtdG-NTH1ge1K5MRrWQ",
+    "https://www.kibo.or.kr/main/center/20260813.do",
+    "https://home.koelsa.or.kr/portal/contents.do?mId=0801140000",
+    "https://www.koda1458.kr/communication/participation/events",
+    "https://www.kspo.or.kr/kspo/bbs/B0000027/view.do?nttId=64281&menuNo=200149&searchWrd=&pageIndex=1",
+    "https://www.koda1458.kr/communication/participation/events/XGQDIL3m6uXlzvFF3tqw9c6EHRW-c-nB5EqyT42FMWw",
+    "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14946&cpage=1&rows=10&condition=&keyword=",
+    "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&nPage=1&v_type=&b_list_cnt=10&ord=&tag=&list_no=8025&act=view&keyField=&keyWord=",
+    "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14953&cpage=1&rows=10&condition=&keyword=",
+    "https://www.kiet.re.kr/communicate/ntcView?ntc_no=10735&skey=&sval=&pg=1&pp=10"
   ],
   "boards": {
     "(사)남북교류협력지원협회": "https://sonosa.or.kr/?menuno=12",
@@ -257,9 +262,20 @@
     "https://www.kida.re.kr/": "https://www.kida.re.kr/frt/board/frtNormalBoard.do?sidx=243&depth=2",
     "https://www.kwdi.re.kr/": "https://www.kwdi.re.kr/plaza/notice.do",
     "https://www.kmedihub.re.kr/": "https://www.kmedihub.re.kr/index.do?menu_id=00000063",
-    "http://www.kpipa.or.kr/": "https://www.kpipa.or.kr/p/g1_1"
+    "http://www.kpipa.or.kr/": "https://www.kpipa.or.kr/p/g1_1",
+    "https://www.knudh.kr/": "https://www.knudh.kr/index.php",
+    "http://hnibr.re.kr/": "https://www.hnibr.re.kr/ko/M000000478/bbs/list",
+    "http://www.snudh.org/": "https://www.snudh.org/portal/index.do",
+    "https://www.nnibr.re.kr/": "https://www.nnibr.re.kr/index.do?menu_id=00000342&servletPath=%2Findex.do",
+    "http://www.kotra.or.kr/": "https://www.kotra.or.kr/module/stplatLog/selectPolicyLogList.do?stplatSeq=2000002299",
+    "https://www.kotsa.or.kr/": "https://main.kotsa.or.kr/main.do",
+    "https://www.i815.or.kr/": "https://i815.or.kr/2018/eventApply/eventList.do;jsessionid=79A3830143781825F33647CD35560C2E",
+    "https://www.koda1458.kr/": "https://www.koda1458.kr/communication/participation/events",
+    "https://www.kicet.re.kr/": "https://www.kicet.re.kr/main.web",
+    "https://www.geps.or.kr/": "https://www.geps.or.kr/main",
+    "http://www.kigepe.or.kr/": "https://www.epeople.go.kr/index.jsp?menuNo=15200"
   },
   "stats": {},
-  "updated_at": "2026-09-18T20:32:11.610435+09:00",
-  "version": "V8.12.2"
+  "updated_at": "2026-09-18T21:33:25.193298+09:00",
+  "version": "V8.12.3"
 }
