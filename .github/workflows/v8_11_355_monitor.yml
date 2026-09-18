@@ -1,9 +1,13 @@
-name: V8.11 355기관 게시판 고정형 모니터링 + Telegram 대기열
+name: V8.12.1 355기관 최근30일 공지게시판 + Telegram 대기열
+
+concurrency:
+  group: public-institution-monitor
+  cancel-in-progress: false
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: "10 0 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -11,38 +15,43 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Python 설정
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-          cache: "pip"
+          python-version: "3.11"
 
       - name: 패키지 설치
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml openpyxl
 
       - name: 355기관 모니터링
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          MAX_CONCURRENCY: "20"
-          TIMEOUT_SECONDS: "15"
-          RECENT_POSTS: "15"
-          MAX_TOTAL_SECONDS: "1200"
-          HTTP_RETRIES: "2"
-          TELEGRAM_MAX_SEND: "20"
-          MAX_PENDING: "10000"
-        run: python monitor.py
+        run: |
+          python monitor.py
 
       - name: 상태 저장
-        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state.json pending.json monitor_log.json monitor_targets.xlsx
-          git diff --cached --quiet || git commit -m "chore: V8.11 355 institution state and telegram queue update"
-          git push
+
+          git add state.json pending.json
+
+          git commit -m "chore: V8.12.1 355 institution state and telegram queue update" || true
+
+          # 다른 실행이나 수동 변경으로 원격 main이 앞서 있는 경우 반영
+          git pull --rebase origin main
+
+          # 최신 원격 상태 위에 이번 실행 결과를 다시 push
+          git push origin main
