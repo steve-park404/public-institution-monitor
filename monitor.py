@@ -1,842 +1,1206 @@
-VERSION = "V8.12.1"
-import os, re, json, time, html, warnings
+# -*- coding: utf-8 -*-
+"""
+Public Institution Monitor V8.12.2
+
+Architecture:
+355기관 → 공식 홈페이지 → 공지/새소식/알림/참여 관련 게시판 탐색
+→ 최근 30일 게시물 → 상세페이지 → 제목/본문 키워드 매칭 → Telegram
+
+Operational keywords:
+- 설문조사
+- 시민참여
+- 국민참여
+
+Title exclusion:
+- 공모전
+
+V8.12.2 changes:
+1. 최근 30일 날짜 게이트를 최종 상세페이지에서 강제
+2. 1순위 게시판 키워드 12개를 우선 탐색
+3. 참여 게시판을 무조건 배제하지 않고 점수로 처리
+4. 채용/입찰/계약/자료실/교육/공모전/동반성장/사회공헌/구매 등은 강제 배제
+5. 게시판 검증을 "최근 게시물 2개 이상"에서 "최근 게시물 1개 이상"으로 완화
+6. 게시물 제목도 게시판 점수에 반영
+7. V8.11.1의 누락된 fallback 함수/상수 의존성 제거
+8. 진단 로그 강화
+9. pending queue 유지 및 하루 Telegram 최대 20건
+"""
+
+VERSION = "V8.12.2"
+
+import os
+import re
+import json
+import time
+import html
+import warnings
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin, urlparse, parse_qs
+
 import requests
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import openpyxl
 
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
-# 운영 키워드는 정확히 3개만 사용
+# -----------------------------
+# Config
+# -----------------------------
 KEYWORDS = ["설문조사", "시민참여", "국민참여"]
 EXCLUDE_TITLE = ["공모전"]
 
-MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "20"))
-TIMEOUT_SECONDS = int(os.getenv("TIMEOUT_SECONDS", "15"))
-RECENT_POSTS = int(os.getenv("RECENT_POSTS", "15"))
-RECENT_DAYS = int(os.getenv("RECENT_DAYS", "30"))
-MAX_TOTAL_SECONDS = int(os.getenv("MAX_TOTAL_SECONDS", "1200"))
-HTTP_RETRIES = int(os.getenv("HTTP_RETRIES", "2"))
+MAX_CONCURRENCY = 20
+TIMEOUT_SECONDS = 15
+HTTP_RETRIES = 2
 
-# 하루 최대 Telegram 발송량. 초과분은 pending.json에 보관하여 다음 실행으로 이월.
-TELEGRAM_MAX_SEND = int(os.getenv("TELEGRAM_MAX_SEND", "20"))
-MAX_PENDING = int(os.getenv("MAX_PENDING", "10000"))
+RECENT_POSTS = 15
+RECENT_DAYS = 30
 
-UA = "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.12.1)"
+MAX_TOTAL_SECONDS = 1200
+TELEGRAM_MAX_SEND = 20
+MAX_PENDING = 10000
 
-NOISE = ["script","style","noscript","svg","header","footer","nav","aside","form","iframe","canvas","template"]
-FIRST_PRIORITY_BOARD_WORDS = [
-    "공지사항","공지","새소식","알림마당","알림","이벤트",
-    "설문","설문조사","국민참여","시민참여","참여마당","소통"
+BOARD_DISCOVERY_MAX_LINKS = 60
+BOARD_DISCOVERY_MAX_FETCH = 25
+BOARD_DISCOVERY_DEPTH = 1
+
+UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
+
+NOISE = [
+    "script", "style", "noscript", "svg", "header", "footer", "nav",
+    "aside", "form", "iframe", "canvas", "template"
 ]
-BOARD_WORDS = FIRST_PRIORITY_BOARD_WORDS + ["소식","기관소식","게시판","뉴스","보도자료","공고"]
-URL_HINTS = ["notice","noti","board","bbs","news","announcement","plaza","inform"]
-HARD_EXCLUDE_BOARD_WORDS = ["채용","입찰","계약","자료실","교육","공모전","동반성장","사회공헌","구매","구매계약"]
-BAD = HARD_EXCLUDE_BOARD_WORDS + ["로그인","회원","사이트맵","개인정보","이용약관"]
-PARTICIPATION_BOARD_WORDS = ["국민참여","시민참여","참여마당","고객참여","소통","설문","이벤트"]
+
+FIRST_PRIORITY_BOARD_WORDS = [
+    "공지사항", "공지", "새소식", "알림마당", "알림", "이벤트",
+    "설문", "설문조사", "국민참여", "시민참여", "참여마당", "소통"
+]
+
+BOARD_WORDS = FIRST_PRIORITY_BOARD_WORDS + [
+    "소식", "기관소식", "게시판", "뉴스", "보도자료", "공고"
+]
+
+URL_HINTS = [
+    "notice", "noti", "board", "bbs", "news", "announcement",
+    "plaza", "inform", "ntt", "article", "list"
+]
+
+HARD_EXCLUDE_BOARD_WORDS = [
+    "채용", "입찰", "계약", "자료실", "교육", "공모전",
+    "동반성장", "사회공헌", "구매", "구매계약"
+]
+
+BAD = HARD_EXCLUDE_BOARD_WORDS + [
+    "로그인", "회원", "사이트맵", "개인정보", "이용약관"
+]
+
+PARTICIPATION_BOARD_WORDS = [
+    "국민참여", "시민참여", "참여마당", "고객참여", "소통",
+    "설문", "이벤트"
+]
+
 NOTICE_STRONG_WORDS = FIRST_PRIORITY_BOARD_WORDS
-PARTICIPATION_CONTEXT = ["설문","의견수렴","의견조사","만족도","조사","응답","설문지","참여단","시민의견","국민의견"]
+
+PARTICIPATION_CONTEXT = [
+    "설문", "의견수렴", "의견조사", "만족도", "조사", "응답",
+    "설문지", "참여단", "시민의견", "국민의견", "의견"
+]
+
+DATE_SELECTORS = [
+    ".date", ".regdate", ".reg-date", ".write-date", ".wdate",
+    ".board-date", ".bbs-date", ".ntt-date", ".article-date",
+    "[class*='date']", "[class*='Date']",
+    "[class*='regist']", "[class*='Regist']",
+    "[class*='write']", "[class*='Write']",
+    "time", "td"
+]
+
 KST = ZoneInfo("Asia/Seoul")
 
-session = requests.Session()
-session.headers.update({
+STATE_FILE = "state.json"
+PENDING_FILE = "pending.json"
+TARGET_FILE_CANDIDATES = [
+    "monitor_targets.xlsx",
+    "url.xlsx",
+    "targets.xlsx",
+]
+
+# -----------------------------
+# HTTP
+# -----------------------------
+SESSION = requests.Session()
+SESSION.headers.update({
     "User-Agent": UA,
-    "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.5"
+    "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.7",
 })
 
+def get(url):
+    if not url:
+        return None
 
+    for attempt in range(HTTP_RETRIES + 1):
+        try:
+            r = SESSION.get(
+                url,
+                timeout=TIMEOUT_SECONDS,
+                allow_redirects=True,
+                verify=True,
+            )
+            if r.status_code >= 200 and r.status_code < 400:
+                if not r.encoding or r.encoding.lower() == "iso-8859-1":
+                    r.encoding = r.apparent_encoding or "utf-8"
+                return r
+        except Exception:
+            pass
+
+        if attempt < HTTP_RETRIES:
+            time.sleep(0.35 * (attempt + 1))
+
+    return None
+
+# -----------------------------
+# General helpers
+# -----------------------------
 def norm(s):
     return re.sub(r"\s+", " ", html.unescape(str(s or ""))).strip()
 
-def get(url):
-    for i in range(HTTP_RETRIES + 1):
-        try:
-            r = session.get(url, timeout=TIMEOUT_SECONDS, allow_redirects=True)
-            r.raise_for_status()
-            if not r.encoding or r.encoding.lower() == "iso-8859-1":
-                r.encoding = r.apparent_encoding
-            return r
-        except Exception:
-            if i < HTTP_RETRIES:
-                time.sleep(.4 * (i + 1))
-    return None
+def lower_url(u):
+    return (u or "").lower()
 
 def same_domain(a, b):
     try:
-        return urlparse(a).netloc.lower().replace("www.", "") == urlparse(b).netloc.lower().replace("www.", "")
+        da = urlparse(a).netloc.lower().split(":")[0]
+        db = urlparse(b).netloc.lower().split(":")[0]
+        if da.startswith("www."):
+            da = da[4:]
+        if db.startswith("www."):
+            db = db[4:]
+        return da == db
     except Exception:
         return False
 
-def title_of(soup):
-    return norm(soup.title.get_text(" ", strip=True) if soup.title else "")
+def absolute(base, href):
+    try:
+        return urljoin(base, href)
+    except Exception:
+        return ""
 
-def clean(soup):
-    for tag in NOISE:
-        for x in soup.find_all(tag):
-            x.decompose()
-    return soup
+def clean_url(u):
+    try:
+        p = urlparse(u)
+        return p._replace(fragment="").geturl()
+    except Exception:
+        return u
 
-def extract_links(page_url, soup):
-    out, seen = [], set()
-    for a in soup.find_all("a", href=True):
-        href = a.get("href", "").strip()
-        if not href or href.startswith(("javascript:", "mailto:", "tel:", "#")):
-            continue
-        u = urljoin(page_url, href)
-        if not u.startswith(("http://", "https://")) or not same_domain(page_url, u):
-            continue
-        if u in seen:
-            continue
-        seen.add(u)
-        out.append((u, norm(a.get_text(" ", strip=True))))
-    return out
+def text_of(tag):
+    if not tag:
+        return ""
+    return norm(tag.get_text(" ", strip=True))
 
-def detail_signal(u):
-    x = u.lower()
-    q = parse_qs(urlparse(x).query)
-    if any(k.lower() in {"seq","no","idx","nttno","articleid","article_id","id","view"} for k in q):
-        return True
-    return any(v in x for v in ["/view", "/detail", "/read", "/article", "/contents/view", "/board/view"])
+def looks_like_wrong_board(url, soup):
+    text = ""
+    title = ""
 
-def detail_url(u):
-    x = u.lower()
-    if any(v in x for v in ["login", "member", "delete", "write", "modify"]):
-        return False
-    return detail_signal(u)
+    if soup:
+        title = text_of(soup.title)
+        text = norm(soup.get_text(" ", strip=True))[:12000]
 
-def board_score(u, t):
-    s = 0
-    x, tt = u.lower(), t.lower()
+    sample = f"{url} {title} {text[:2500]}".lower()
 
-    # 1순위: 사용자가 지정한 12개 게시판 키워드
-    for w in FIRST_PRIORITY_BOARD_WORDS:
-        if w.lower() in tt:
-            s += 18
+    for bad in HARD_EXCLUDE_BOARD_WORDS:
+        if bad.lower() in sample:
+            # If the page is clearly a generic notice page but merely
+            # mentions "교육" or "구매" in body text, don't reject solely
+            # from body text. Reject when it appears in URL/title or
+            # several times near navigation/list labels.
+            u = lower_url(url)
+            if bad.lower() in u or bad.lower() in title.lower():
+                return True
 
-    # 2순위: 일반 공지/소식 게시판
-    for w in ["소식","기관소식","게시판","뉴스","보도자료","공고"]:
-        if w.lower() in tt:
-            s += 7
+    return False
 
-    s += sum(3 for h in URL_HINTS if h in x)
-    s -= sum(10 for b in HARD_EXCLUDE_BOARD_WORDS if b.lower() in tt)
-
-    if detail_signal(u):
-        s -= 4
-    return s
-
-
+# -----------------------------
+# Date parsing
+# -----------------------------
 DATE_PATTERNS = [
-    re.compile(r"(?P<y>20\d{2})[-./년]\s*(?P<m>\d{1,2})[-./월]\s*(?P<d>\d{1,2})일?"),
-    re.compile(r"(?P<y>\d{2})[-./]\s*(?P<m>\d{1,2})[-./]\s*(?P<d>\d{1,2})"),
+    r"(20\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})",
+    r"(20\d{2})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일",
+    r"(20\d{2})(\d{2})(\d{2})",
 ]
 
-def parse_date_text(text):
-    text = norm(text)
+def parse_date_text(s):
+    s = norm(s)
+    if not s:
+        return None
+
+    # Avoid interpreting ordinary numeric IDs as dates.
     for pat in DATE_PATTERNS:
-        m = pat.search(text)
+        m = re.search(pat, s)
         if not m:
             continue
-        y, mo, d = int(m.group("y")), int(m.group("m")), int(m.group("d"))
-        if y < 100:
-            y += 2000
         try:
-            return datetime(y, mo, d, tzinfo=KST)
-        except ValueError:
+            y, mo, d = map(int, m.groups())
+            if 2000 <= y <= 2099 and 1 <= mo <= 12 and 1 <= d <= 31:
+                return datetime(y, mo, d, tzinfo=KST)
+        except Exception:
             pass
+
     return None
 
 def recent_cutoff():
-    return datetime.now(KST) - timedelta(days=RECENT_DAYS)
+    now = datetime.now(KST)
+    return now - timedelta(days=RECENT_DAYS)
 
 def is_recent_date(dt):
-    return bool(dt and dt >= recent_cutoff())
+    if not dt:
+        return False
+    now = datetime.now(KST)
+    return recent_cutoff() <= dt <= now + timedelta(days=1)
 
-def row_context(a):
-    # Prefer the nearest table/list row; fall back to a small parent container.
-    for tag_name in ("tr", "li"):
-        x = a.find_parent(tag_name)
-        if x:
-            return norm(x.get_text(" ", strip=True))
-    x = a.parent
-    for _ in range(3):
-        if x is None:
-            break
-        txt = norm(x.get_text(" ", strip=True))
-        if len(txt) >= 20:
-            return txt
-        x = x.parent
-    return norm(a.get_text(" ", strip=True))
+# -----------------------------
+# Text extraction
+# -----------------------------
+def visible_main_text(soup):
+    if not soup:
+        return ""
 
-def extract_post_candidates(list_url, soup):
-    """Return detail candidates with best-effort list-row date/title evidence."""
-    out, seen = [], set()
+    for tag in soup.find_all(NOISE):
+        tag.decompose()
+
+    candidates = []
+
+    for selector in ["main", "article"]:
+        for tag in soup.select(selector):
+            t = text_of(tag)
+            if len(t) >= 100:
+                candidates.append(t)
+
+    for tag in soup.find_all(["div", "section"]):
+        ident = f"{tag.get('id','')} {' '.join(tag.get('class',[]) or [])}".lower()
+        if re.search(r"(content|contents|sub|body|article|board|bbs|view|detail)", ident):
+            t = text_of(tag)
+            if len(t) >= 120:
+                candidates.append(t)
+
+    if candidates:
+        candidates.sort(key=len, reverse=True)
+        return candidates[0]
+
+    body = soup.body or soup
+    return text_of(body)
+
+def meaningful_body_match(body, keyword):
+    body = norm(body)
+    if len(body) < 120:
+        return False
+
+    idxs = [m.start() for m in re.finditer(re.escape(keyword), body, re.I)]
+    if not idxs:
+        return False
+
+    for idx in idxs:
+        left = max(0, idx - 250)
+        right = min(len(body), idx + 350)
+        ctx = body[left:right]
+
+        # 국민참여/시민참여는 단어 자체가 기관의 일반 참여 메뉴를
+        # 가리킬 수 있으므로 조사/의견/응답 등 맥락을 요구.
+        if keyword in ("국민참여", "시민참여"):
+            if not any(x in ctx for x in PARTICIPATION_CONTEXT):
+                continue
+
+        # 문장/안내 문맥이 있는 경우만 본문 매치로 인정
+        sentence_markers = [
+            "안내", "참여", "신청", "설문", "의견", "조사",
+            "응답", "만족도", "기간", "대상", "방법", "모집"
+        ]
+        if sum(1 for x in sentence_markers if x in ctx) >= 1:
+            return True
+
+    return False
+
+# -----------------------------
+# Detail date/title
+# -----------------------------
+def extract_title(soup):
+    if not soup:
+        return ""
+
+    selectors = [
+        "h1", "h2", "h3",
+        ".subject", ".title", ".tit", ".board-title",
+        ".bbs-title", ".view-title", ".article-title",
+        "[class*='subject']", "[class*='title']"
+    ]
+
+    vals = []
+    for sel in selectors:
+        for tag in soup.select(sel)[:5]:
+            t = text_of(tag)
+            if 2 <= len(t) <= 300:
+                vals.append(t)
+
+    if vals:
+        # 가장 짧은 제목 후보를 우선하되 너무 짧은 것은 피함.
+        vals.sort(key=lambda x: (len(x) > 150, len(x)))
+        return vals[0]
+
+    if soup.title:
+        return text_of(soup.title)[:300]
+
+    return ""
+
+def extract_detail_date(soup):
+    if not soup:
+        return None
+
+    # meta/time 우선
+    for tag in soup.find_all(["meta", "time"])[:100]:
+        attrs = " ".join(str(v) for v in tag.attrs.values())
+        content = tag.get("content") or tag.get("datetime") or tag.get_text(" ", strip=True)
+        dt = parse_date_text(f"{attrs} {content}")
+        if dt:
+            return dt
+
+    for sel in DATE_SELECTORS:
+        try:
+            tags = soup.select(sel)
+        except Exception:
+            tags = []
+
+        for tag in tags[:30]:
+            dt = parse_date_text(text_of(tag))
+            if dt:
+                return dt
+
+    # 상세 본문 상단에서 날짜 탐색
+    txt = visible_main_text(soup)
+    return parse_date_text(txt[:5000])
+
+# -----------------------------
+# Link extraction / board discovery
+# -----------------------------
+def link_label(a):
+    parts = [
+        text_of(a),
+        a.get("title", ""),
+        a.get("aria-label", ""),
+    ]
+    return norm(" ".join(parts))
+
+def extract_links(base_url, soup):
+    out = []
+    seen = set()
+
+    if not soup:
+        return out
+
     for a in soup.find_all("a", href=True):
         href = a.get("href", "").strip()
-        if not href:
+        if not href or href.lower().startswith(("javascript:", "#", "mailto:", "tel:")):
             continue
-        u = urljoin(list_url, href)
-        if not u.startswith(("http://", "https://")) or not same_domain(list_url, u):
+
+        u = clean_url(absolute(base_url, href))
+        if not u or not same_domain(base_url, u):
             continue
-        if not detail_url(u) or u in seen:
+
+        label = link_label(a)
+        key = (u, label)
+        if key in seen:
             continue
-        text = norm(a.get_text(" ", strip=True)) or norm(a.get("aria-label") or a.get("title"))
-        if not text or text.lower() in {"prev","next","이전","다음","목록","검색","확인","닫기"}:
-            continue
-        ctx = row_context(a)
-        dt = parse_date_text(ctx)
-        seen.add(u)
-        out.append({"url": u, "anchor_title": text, "date": dt.isoformat() if dt else None, "row_text": ctx[:500]})
+        seen.add(key)
+        out.append((u, label))
+
+        if len(out) >= BOARD_DISCOVERY_MAX_LINKS:
+            break
+
     return out
 
-def notice_board_score(url, page_text="", page_title=""):
-    u = url.lower()
-    txt = norm(f"{page_title} {page_text}").lower()
+def hard_exclude_score(u, title):
+    s = f"{u} {title}".lower()
+    score = 0
+    for x in HARD_EXCLUDE_BOARD_WORDS:
+        if x.lower() in s:
+            score -= 14
+    return score
+
+def board_score(u, title, recent_titles=""):
+    s = f"{u} {title}".lower()
     score = 0
 
     for w in FIRST_PRIORITY_BOARD_WORDS:
-        if w.lower() in txt:
+        if w.lower() in s:
+            score += 18
+
+    for w in BOARD_WORDS:
+        if w.lower() in s:
+            score += 7
+
+    for h in URL_HINTS:
+        if h in lower_url(u):
+            score += 3
+
+    score += hard_exclude_score(u, title)
+
+    # 참여 게시판은 허용하되 공지형 게시판보다 우선순위를 낮추는 효과
+    # 를 주기 위해 별도 가산은 하지 않는다.
+    if recent_titles:
+        rt = recent_titles.lower()
+        for kw in KEYWORDS:
+            if kw.lower() in rt:
+                score += 3
+
+    return score
+
+def notice_board_score(u, title):
+    s = f"{u} {title}".lower()
+    score = 0
+
+    for w in FIRST_PRIORITY_BOARD_WORDS:
+        if w.lower() in s:
             score += 12
 
-    for w in ["소식","기관소식","게시판","뉴스","보도자료","공고"]:
-        if w.lower() in txt:
+    for w in ["소식", "기관소식", "게시판", "뉴스", "보도자료", "공고"]:
+        if w.lower() in s:
             score += 5
 
     for h in URL_HINTS:
-        if h in u:
+        if h in lower_url(u):
             score += 2
 
-    for b in HARD_EXCLUDE_BOARD_WORDS:
-        if b.lower() in txt:
+    for x in HARD_EXCLUDE_BOARD_WORDS:
+        if x.lower() in s:
             score -= 12
 
     return score
 
-def board_identity_text(soup):
+# -----------------------------
+# List-page post candidate extraction
+# -----------------------------
+def looks_like_detail_link(u, title):
+    s = f"{u} {title}".lower()
+
+    if any(x.lower() in s for x in [
+        "login", "logout", "sitemap", "privacy", "terms"
+    ]):
+        return False
+
+    if any(x.lower() in s for x in HARD_EXCLUDE_BOARD_WORDS):
+        return False
+
+    # list/view/read/detail/article 계열이면 우선 허용
+    if any(x in lower_url(u) for x in [
+        "view", "read", "detail", "article", "ntt", "bbs",
+        "board", "idx=", "seq=", "no=", "mode=view"
+    ]):
+        return True
+
+    # 링크 텍스트가 긴 경우 일반 게시물 제목일 가능성
+    return 5 <= len(norm(title)) <= 300
+
+def extract_post_candidates(base_url, soup):
+    """
+    반환:
+      [{"url": ..., "title": ..., "date": ...}, ...]
+    """
+    out = []
+    seen = set()
+
     if not soup:
-        return ""
-    parts = []
-    if soup.title:
-        parts.append(soup.title.get_text(" ", strip=True))
-    for tag in soup.find_all(["h1", "h2", "h3"], limit=12):
-        parts.append(tag.get_text(" ", strip=True))
-    main = soup.find("main") or soup.find("article")
-    if main:
-        parts.append(main.get_text(" ", strip=True)[:1800])
-    return norm(" ".join(parts))
+        return out
 
-def looks_like_wrong_board(url, soup):
-    identity = board_identity_text(soup)
-    low = identity.lower()
+    # 표 형식 게시판
+    for row in soup.find_all("tr"):
+        links = row.find_all("a", href=True)
+        if not links:
+            continue
 
-    # 이벤트/설문/국민참여/시민참여/참여마당/소통은 1순위 후보이므로 허용.
-    # 명확히 무관한 게시판만 차단.
-    return any(w.lower() in low for w in HARD_EXCLUDE_BOARD_WORDS)
+        row_text = text_of(row)
+        row_date = parse_date_text(row_text)
 
-def recent_detail_urls(list_url, soup):
-    items = extract_post_candidates(list_url, soup)
-    dated = [x for x in items if x.get("date") and is_recent_date(datetime.fromisoformat(x["date"]))]
-    # If dates are present, strictly enforce the 30-day window.
+        for a in links:
+            title = link_label(a)
+            u = clean_url(absolute(base_url, a.get("href", "")))
+
+            if not u or not same_domain(base_url, u):
+                continue
+            if not looks_like_detail_link(u, title):
+                continue
+
+            key = u
+            if key in seen:
+                continue
+
+            seen.add(key)
+            out.append({
+                "url": u,
+                "title": title,
+                "date": row_date,
+            })
+
+    # 일반 div/ul/li 게시판
+    for a in soup.find_all("a", href=True):
+        title = link_label(a)
+        u = clean_url(absolute(base_url, a.get("href", "")))
+
+        if not u or not same_domain(base_url, u):
+            continue
+        if not looks_like_detail_link(u, title):
+            continue
+        if len(title) < 2:
+            continue
+
+        parent = a.parent
+        parent_text = text_of(parent)
+        dt = parse_date_text(parent_text)
+
+        key = u
+        if key in seen:
+            continue
+
+        seen.add(key)
+        out.append({
+            "url": u,
+            "title": title,
+            "date": dt,
+        })
+
+        if len(out) >= 80:
+            break
+
+    return out
+
+def recent_detail_urls(base_url, soup):
+    candidates = extract_post_candidates(base_url, soup)
+    if not candidates:
+        return []
+
+    dated = [x for x in candidates if x.get("date")]
+    undated = [x for x in candidates if not x.get("date")]
+
+    # 날짜가 하나라도 있으면 최근 날짜 기준으로 정렬.
+    # 목록 페이지가 오래된 글을 섞어도 최근 30일 밖의 글은 여기서 제거.
     if dated:
         dated.sort(key=lambda x: x["date"], reverse=True)
-        return dated[:RECENT_POSTS]
-    # No extractable dates: keep a very small bounded set. Detail-page date
-    # validation in match_post remains mandatory, preventing old alerts.
-    return items[:RECENT_POSTS]
+        recent = [x for x in dated if is_recent_date(x["date"])]
+        return recent[:RECENT_POSTS]
 
-def discover_board_v811(home_url, fetch_html_func):
-    """
-    V8.11: layered board discovery.
-    Returns the highest-scoring verified board URL, or None.
-    fetch_html_func(url) must return HTML text or None.
-    """
-    from bs4 import BeautifulSoup
+    # 목록 페이지에서 날짜를 못 찾으면 상세페이지에서 최종 검증.
+    # 너무 많은 링크를 가져가지 않도록 제한.
+    return candidates[:RECENT_POSTS]
 
-    visited = set()
-    queue = [(home_url, 0)]
-    candidates = []
-
-    while queue and len(visited) < BOARD_DISCOVERY_MAX_LINKS:
-        url, depth = queue.pop(0)
-        if not url or url in visited or depth > BOARD_DISCOVERY_DEPTH:
-            continue
-        visited.add(url)
-        try:
-            html = fetch_html_func(url)
-        except Exception:
-            html = None
-        if not html:
-            continue
-
-        soup = BeautifulSoup(html, "html.parser")
-        for a in soup.find_all("a", href=True):
-            href = a.get("href", "").strip()
-            text = a.get_text(" ", strip=True)
-            try:
-                abs_url = urljoin(url, href)
-            except Exception:
-                continue
-            if not abs_url.startswith(("http://", "https://")):
-                continue
-            if urlparse(abs_url).netloc != urlparse(home_url).netloc:
-                continue
-
-            if _v811_is_candidate_link(text, abs_url):
-                score = _v811_score_link(text, abs_url)
-                candidates.append((score, abs_url, text))
-            elif depth < BOARD_DISCOVERY_DEPTH:
-                # Follow useful-looking internal navigation pages.
-                nt = _v811_norm(text)
-                if nt and any(k.lower() in nt for k in ("알림", "소식", "참여", "게시", "고객", "정보")):
-                    queue.append((abs_url, depth + 1))
-
-    # De-duplicate and verify candidates by looking for list-like content.
-    seen_urls = set()
-    verified = []
-    for score, url, text in sorted(candidates, key=lambda x: (-x[0], x[1])):
-        if url in seen_urls or score < BOARD_DISCOVERY_MIN_SCORE:
-            continue
-        seen_urls.add(url)
-        try:
-            html = fetch_html_func(url)
-        except Exception:
-            html = None
-        if not html:
-            continue
-        soup = BeautifulSoup(html, "html.parser")
-        body_text = soup.get_text(" ", strip=True)
-        # A board/list page normally has repeated links, pagination, or notice/list terms.
-        link_count = len(soup.find_all("a", href=True))
-        list_terms = sum(body_text.count(x) for x in ("공지", "번호", "제목", "등록일", "조회", "목록", "페이지"))
-        if link_count >= 5 or list_terms >= 2:
-            verified.append((score, url, text, link_count, list_terms))
-            if len(verified) >= 5:
-                break
-
-    if not verified:
-        return None
-
-    verified.sort(key=lambda x: (-x[0], -x[4], -x[3], x[1]))
-    return verified[0][1]
-
-
-# =========================
-# V8.11.1: targeted board-discovery diagnostics
-# =========================
-V8111_MAX_NAV_PAGES = int(os.getenv("V8111_MAX_NAV_PAGES", "8"))
-V8111_MAX_CANDIDATES = int(os.getenv("V8111_MAX_CANDIDATES", "25"))
-V8111_MIN_SCORE = int(os.getenv("V8111_MIN_SCORE", "4"))
-V8111_DIAG_FILE = "board_discovery_log.json"
-
-V8111_BOARD_TEXT = FIRST_PRIORITY_BOARD_WORDS + [
-    "소식","기관소식","게시판","뉴스","보도자료","자료실","고시","공고"
-]
-V8111_BOARD_URL = [
-    "notice","noti","board","bbs","news","announcement",
-    "plaza","article","list"
-]
-V8111_BAD_TEXT = HARD_EXCLUDE_BOARD_WORDS + [
-    "로그인","회원","사이트맵","개인정보","이용약관"
-]
-
-
-def v8111_score(url, text):
-    u, t = url.lower(), norm(text).lower()
-    score = 0
-
-    for w in FIRST_PRIORITY_BOARD_WORDS:
-        if w.lower() in t:
-            score += 18
-
-    for w in ["소식","기관소식","게시판","뉴스","보도자료","공고"]:
-        if w.lower() in t:
-            score += 6
-
-    for h in V8111_BOARD_URL:
-        if h in u:
-            score += 2
-
-    # 참여형 게시판은 감점하지 않는다.
-    for b in HARD_EXCLUDE_BOARD_WORDS:
-        if b.lower() in t:
-            score -= 12
-
-    if detail_signal(url):
-        score -= 4
-    return score
-
-
-def discover_board_v8111(home):
-    """Targeted fallback for institutions still marked NO_BOARD.
-    Returns (board_url, recent_detail_urls, diagnostic_record).
-    It is deliberately bounded so the daily 355-site run does not balloon.
-    """
-    diag = {
-        "home": home, "result": "HOME_ERROR", "nav_pages": 0,
-        "candidates": 0, "verified": 0, "best_score": 0,
-        "best_url": None, "candidate_samples": []
-    }
-    r = get(home)
+def inspect_board(board_url):
+    r = get(board_url)
     if not r:
-        return None, [], diag
+        return None, [], {
+            "status": "BOARD_FETCH_ERROR",
+            "url": board_url,
+            "candidate_posts": 0,
+            "recent_posts": 0,
+        }
 
-    visited_pages = {r.url}
-    queue = []
-    candidates = []
-    first_links = extract_links(r.url, BeautifulSoup(r.text, "html.parser"))
+    soup = BeautifulSoup(r.text, "html.parser")
+    if looks_like_wrong_board(r.url, soup):
+        return r.url, [], {
+            "status": "HARD_EXCLUDED",
+            "url": r.url,
+            "candidate_posts": 0,
+            "recent_posts": 0,
+        }
 
-    def add_candidate(u, tx):
-        if not u.startswith(("http://", "https://")) or not same_domain(home, u):
-            return
-        sc = v8111_score(u, tx)
-        if sc >= V8111_MIN_SCORE:
-            candidates.append((sc, u, tx))
+    candidates = recent_detail_urls(r.url, soup)
+    recent = []
 
-    # Home page: collect board candidates and a small number of navigation pages.
-    for u, tx in first_links:
-        add_candidate(u, tx)
-        nt = norm(tx).lower()
-        if any(k in nt for k in ("알림", "소식", "참여", "소통", "게시", "정보", "고객")):
-            queue.append(u)
+    for x in candidates:
+        if x.get("date") and is_recent_date(x["date"]):
+            recent.append(x)
+        elif not x.get("date"):
+            recent.append(x)
 
-    # One bounded navigation hop. This catches sites where the board is behind a top menu.
-    for nav in list(dict.fromkeys(queue))[:V8111_MAX_NAV_PAGES]:
-        if nav in visited_pages:
-            continue
-        rr = get(nav)
-        visited_pages.add(nav)
-        diag["nav_pages"] += 1
-        if not rr:
-            continue
-        for u, tx in extract_links(rr.url, BeautifulSoup(rr.text, "html.parser")):
-            add_candidate(u, tx)
+    # 최종 상세페이지 날짜는 match_post에서 다시 검증.
+    recent_titles = " ".join(x.get("title", "") for x in recent[:10])
 
-    # Deduplicate and verify candidate pages as actual list boards.
-    unique = {}
-    for sc, u, tx in candidates:
-        if u not in unique or sc > unique[u][0]:
-            unique[u] = (sc, u, tx)
-    ranked = sorted(unique.values(), key=lambda x: (-x[0], x[1]))[:V8111_MAX_CANDIDATES]
-    diag["candidates"] = len(unique)
-    diag["candidate_samples"] = [
-        {"score": sc, "url": u, "text": norm(tx)[:80]} for sc, u, tx in ranked[:8]
-    ]
-
-    verified = []
-    for sc, u, tx in ranked:
-        rr = get(u)
-        if not rr:
-            continue
-        ss = BeautifulSoup(rr.text, "html.parser")
-        details = recent_detail_urls(rr.url, ss)
-        if looks_like_wrong_board(rr.url, ss):
-            continue
-        if len(details) >= 2:
-            verified.append((sc, rr.url, [x["url"] for x in details], tx))
-
-    diag["verified"] = len(verified)
-    if verified:
-        verified.sort(key=lambda x: (-x[0], -len(x[2]), x[1]))
-        sc, board, details, tx = verified[0]
-        diag["result"] = "VERIFIED"
-        diag["best_score"] = sc
-        diag["best_url"] = board
-        return board, details, diag
-
-    diag["result"] = "CANDIDATE_NOT_VERIFIED" if unique else "NO_CANDIDATE"
-    return None, [], diag
-
-
-def write_v8111_diag(records):
-    try:
-        with open(V8111_DIAG_FILE, "w", encoding="utf-8") as f:
-            json.dump(records, f, ensure_ascii=False, indent=2)
-    except Exception:
-        pass
-
+    return r.url, recent, {
+        "status": "VERIFIED" if recent else "NO_RECENT_CANDIDATE",
+        "url": r.url,
+        "candidate_posts": len(candidates),
+        "recent_posts": len(recent),
+        "recent_titles": recent_titles[:1000],
+        "score_hint": notice_board_score(r.url, text_of(soup.title)),
+    }
 
 def discover_board(home):
+    """
+    1차 + 2차 게시판 탐색.
+    참여 게시판을 완전히 배제하지 않고 점수로 판단한다.
+    """
+    diag = {
+        "home": home,
+        "status": "START",
+        "candidate_count": 0,
+        "fetched_count": 0,
+        "verified_count": 0,
+        "selected": "",
+        "selected_score": None,
+        "selected_status": "",
+        "candidates": [],
+    }
+
     r = get(home)
     if not r:
-        return None, [], "HOME_ERROR"
+        diag["status"] = "HOME_ERROR"
+        return None, [], "HOME_ERROR", diag
+
     soup = BeautifulSoup(r.text, "html.parser")
     links = extract_links(r.url, soup)
-    scored = sorted([(board_score(u, t), u, t) for u, t in links], reverse=True)
-    for score, u, t in scored[:35]:
-        if score < 4:
-            break
-        rr = get(u)
-        if not rr:
-            continue
-        ss = BeautifulSoup(rr.text, "html.parser")
-        details = recent_detail_urls(rr.url, ss)
-        if looks_like_wrong_board(rr.url, ss):
-            continue
-        if len(details) >= 2:
-            return rr.url, [x["url"] for x in details], "DISCOVERED"
-    return None, [], "NO_BOARD"
 
-def visible_main_text(soup):
-    soup = clean(soup)
-    main = soup.find("main") or soup.find("article")
-    if not main:
-        candidates = soup.find_all(
-            ["div", "section"],
-            id=re.compile(r"(content|contents|sub|body|article)", re.I)
+    scored = []
+    for u, t in links:
+        sc = board_score(u, t)
+        scored.append((sc, u, t))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    diag["candidate_count"] = len(scored)
+
+    if not scored:
+        diag["status"] = "NO_CANDIDATE"
+        return None, [], "NO_CANDIDATE", diag
+
+    best = None
+
+    for score, u, t in scored[:BOARD_DISCOVERY_MAX_FETCH]:
+        if score < -5:
+            continue
+
+        if looks_like_wrong_board(u, None):
+            continue
+
+        diag["fetched_count"] += 1
+
+        bu, details, info = inspect_board(u)
+        diag["candidates"].append({
+            "score": score,
+            "url": u,
+            "title": t[:120],
+            "status": info.get("status"),
+            "recent_posts": info.get("recent_posts", 0),
+            "candidate_posts": info.get("candidate_posts", 0),
+        })
+
+        if info.get("status") != "VERIFIED":
+            continue
+
+        diag["verified_count"] += 1
+
+        combined = score + info.get("score_hint", 0)
+
+        # 최근 게시물 제목까지 보고 보정
+        rt = info.get("recent_titles", "")
+        for kw in KEYWORDS:
+            if kw in rt:
+                combined += 2
+
+        if best is None or combined > best["score"]:
+            best = {
+                "score": combined,
+                "url": bu,
+                "details": details,
+                "title": t,
+            }
+
+    if best:
+        diag["status"] = "VERIFIED"
+        diag["selected"] = best["url"]
+        diag["selected_score"] = best["score"]
+        diag["selected_status"] = "VERIFIED"
+        return (
+            best["url"],
+            [x["url"] for x in best["details"][:RECENT_POSTS]],
+            "DISCOVERED",
+            diag,
         )
-        main = max(candidates, key=lambda x: len(x.get_text(" ", strip=True))) if candidates else soup.body
-    if not main:
-        return ""
-    for x in main.find_all(["ul", "ol"]):
-        txt = norm(x.get_text(" ", strip=True))
-        if len(txt) < 400 and sum(1 for k in BOARD_WORDS if k in txt) >= 1:
-            x.decompose()
-    return norm(main.get_text(" ", strip=True))
 
-def meaningful_body_match(body, kw):
-    for m in re.finditer(re.escape(kw), body):
-        a = max(0, m.start() - 160)
-        b = min(len(body), m.end() + 220)
-        ctx = body[a:b]
-        if len(ctx) < 80:
-            continue
-        if kw in ("국민참여", "시민참여"):
-            if not any(x in ctx for x in PARTICIPATION_CONTEXT):
-                continue
-        if any(p in ctx for p in [".", "다.", "요.", "습니다", "한다", "안내", "실시", "모집", "참여", "응답", "기간"]):
-            return True
-    return False
+    diag["status"] = "CANDIDATE_NOT_VERIFIED"
+    return None, [], "CANDIDATE_NOT_VERIFIED", diag
 
-def extract_detail_date(soup):
-    # Look at common metadata/date containers first, then visible text.
-    selectors = [
-        "time", ".date", ".regdate", ".reg_date", ".view_date", ".board-date",
-        ".bbs-date", ".article-date", ".date-info", ".info", ".view_info"
-    ]
-    for sel in selectors:
-        for x in soup.select(sel):
-            dt = parse_date_text(x.get_text(" ", strip=True))
-            if dt:
-                return dt
-    # Search only a bounded head/body prefix to avoid dates in attachments/history.
-    txt = norm(soup.get_text(" ", strip=True))
-    return parse_date_text(txt[:5000])
-
+# -----------------------------
+# Detail matching
+# -----------------------------
 def match_post(u):
     r = get(u)
     if not r:
         return None
+
     soup = BeautifulSoup(r.text, "html.parser")
-    title = title_of(soup)
-    if not title:
+
+    dt = extract_detail_date(soup)
+
+    # 최근 30일 날짜를 확인할 수 없으면 안전하게 알림 제외.
+    if not dt or not is_recent_date(dt):
         return None
 
-    # Hard date gate: old posts can never alert.
-    post_date = extract_detail_date(soup)
-    if not is_recent_date(post_date):
-        return None
+    title = extract_title(soup)
 
     if any(x in title for x in EXCLUDE_TITLE):
         return None
 
+    # 제목은 키워드가 직접 들어가면 즉시 매치.
     for kw in KEYWORDS:
         if kw in title:
             return {
-                "url": r.url, "title": title, "keyword": kw,
-                "where": "title", "date": post_date.strftime("%Y-%m-%d")
+                "url": r.url,
+                "title": title[:300],
+                "date": dt.strftime("%Y-%m-%d"),
+                "keyword": kw,
+                "match_type": "TITLE",
             }
 
     body = visible_main_text(soup)
-    if len(body) < 120:
+    if not body:
         return None
+
     for kw in KEYWORDS:
         if meaningful_body_match(body, kw):
             return {
-                "url": r.url, "title": title, "keyword": kw,
-                "where": "body", "date": post_date.strftime("%Y-%m-%d")
+                "url": r.url,
+                "title": title[:300],
+                "date": dt.strftime("%Y-%m-%d"),
+                "keyword": kw,
+                "match_type": "BODY",
             }
+
+    return None
+
+# -----------------------------
+# State / pending
+# -----------------------------
+def load_json(path, default):
+    try:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return default
+
+def save_json(path, data):
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
+def normalize_pending_item(x):
+    if not isinstance(x, dict):
+        return None
+    if not x.get("url"):
+        return None
+
+    return {
+        "url": x.get("url", ""),
+        "title": x.get("title", "")[:300],
+        "date": x.get("date", ""),
+        "keyword": x.get("keyword", ""),
+        "match_type": x.get("match_type", ""),
+        "institution": x.get("institution", ""),
+        "added_at": x.get("added_at", datetime.now(KST).isoformat()),
+    }
+
+def pending_key(x):
+    return x.get("url", "") if isinstance(x, dict) else ""
+
+def revalidate_pending(pending):
+    """
+    오래된 pending은 제거.
+    상세페이지를 다시 확인할 수 있으면 날짜/제목/키워드를 갱신.
+    """
+    valid = []
+    removed = 0
+
+    for item in pending[:MAX_PENDING]:
+        item = normalize_pending_item(item)
+        if not item:
+            removed += 1
+            continue
+
+        u = item["url"]
+        r = get(u)
+        if not r:
+            # 일시적 장애는 pending 유지
+            valid.append(item)
+            continue
+
+        soup = BeautifulSoup(r.text, "html.parser")
+        dt = extract_detail_date(soup)
+
+        if not dt or not is_recent_date(dt):
+            removed += 1
+            continue
+
+        title = extract_title(soup)
+        if any(x in title for x in EXCLUDE_TITLE):
+            removed += 1
+            continue
+
+        new_match = match_post(u)
+        if new_match:
+            new_match["institution"] = item.get("institution", "")
+            new_match["added_at"] = item.get("added_at", datetime.now(KST).isoformat())
+            valid.append(new_match)
+        else:
+            removed += 1
+
+    return valid, removed
+
+# -----------------------------
+# Targets
+# -----------------------------
+def find_target_file():
+    for f in TARGET_FILE_CANDIDATES:
+        if os.path.exists(f):
+            return f
     return None
 
 def load_targets():
-    wb = openpyxl.load_workbook("monitor_targets.xlsx", read_only=True, data_only=True)
-    ws = wb["355기관"]
-    hs = [c.value for c in next(ws.iter_rows())]
-    ix = {str(v): i for i, v in enumerate(hs)}
-    out = []
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[ix["기관명"]]:
-            continue
-        out.append({
-            "name": str(row[ix["기관명"]]).strip(),
-            "home": str(row[ix["홈페이지URL"]] or "").strip(),
-            "board": str(row[ix["공지게시판URL"]] or "").strip()
-        })
-    return out[:355]
+    path = find_target_file()
+    if not path:
+        raise FileNotFoundError(
+            f"기관 목록 파일을 찾을 수 없습니다. "
+            f"다음 중 하나가 필요합니다: {TARGET_FILE_CANDIDATES}"
+        )
 
-def load_state():
-    try:
-        with open("state.json", "r", encoding="utf-8") as f:
-            s = json.load(f)
-    except Exception:
-        s = {}
-    if not isinstance(s, dict):
-        s = {}
-    if not isinstance(s.get("seen"), dict):
-        s["seen"] = {str(x): 1 for x in s.get("seen", [])[-10000:]}
-    if not isinstance(s.get("boards"), dict):
-        s["boards"] = {}
-    if not isinstance(s.get("stats"), dict):
-        s["stats"] = {}
-    return s
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
 
-def save_state(s):
-    s["seen"] = dict(list(s.get("seen", {}).items())[-10000:])
-    with open("state.json", "w", encoding="utf-8") as f:
-        json.dump(s, f, ensure_ascii=False, indent=2)
+    ws = wb["355기관"] if "355기관" in wb.sheetnames else wb[wb.sheetnames[0]]
 
-def load_pending():
-    try:
-        with open("pending.json", "r", encoding="utf-8") as f:
-            p = json.load(f)
-    except Exception:
-        p = []
-    if not isinstance(p, list):
+    rows = list(ws.iter_rows(values_only=True))
+    if not rows:
         return []
-    # 구버전/중복 데이터 방어
-    out, seen = [], set()
-    for m in p:
-        if not isinstance(m, dict):
+
+    headers = [norm(x) for x in rows[0]]
+
+    def col(*names):
+        for name in names:
+            if name in headers:
+                return headers.index(name)
+        return None
+
+    idx_name = col("기관명", "기관")
+    idx_home = col("홈페이지URL", "URL", "홈페이지")
+    idx_board = col("공지게시판URL", "공지사항URL", "게시판URL")
+
+    if idx_name is None or idx_home is None:
+        raise ValueError(
+            f"기관명/홈페이지URL 열을 찾지 못했습니다. 현재 열: {headers}"
+        )
+
+    out = []
+    for row in rows[1:]:
+        if not row:
             continue
-        key = match_key(m)
-        if not key or key in seen:
+
+        name = norm(row[idx_name]) if idx_name < len(row) else ""
+        home = norm(row[idx_home]) if idx_home < len(row) else ""
+        board = norm(row[idx_board]) if idx_board is not None and idx_board < len(row) else ""
+
+        if not name or not home:
             continue
-        seen.add(key)
-        out.append(m)
-    return out[-MAX_PENDING:]
 
-def save_pending(pending):
-    with open("pending.json", "w", encoding="utf-8") as f:
-        json.dump(pending[-MAX_PENDING:], f, ensure_ascii=False, indent=2)
+        out.append({
+            "기관명": name,
+            "홈페이지URL": home,
+            "공지게시판URL": board,
+        })
 
-def match_key(m):
-    return f"{m.get('url','')}|{m.get('keyword','')}"
+    return out
 
-def priority(m):
-    # 제목 매칭을 먼저, 키워드는 설문조사 → 시민참여 → 국민참여 순
-    where_rank = 0 if m.get("where") == "title" else 1
-    kw_rank = {k: i for i, k in enumerate(KEYWORDS)}.get(m.get("keyword"), 99)
-    return (where_rank, kw_rank, m.get("기관명", ""), m.get("title", ""), m.get("url", ""))
+# -----------------------------
+# Institution process
+# -----------------------------
+def process(target, state):
+    name = target["기관명"]
+    home = target["홈페이지URL"]
+    seed = target.get("공지게시판URL", "")
 
-def process(t, state, deadline):
-    name, home, seed = t["name"], t["home"], t["board"]
-    if time.time() >= deadline:
-        return {"name": name, "status": "DEADLINE", "posts": 0, "matches": [], "diag": None}
+    result = {
+        "기관명": name,
+        "home": home,
+        "board": "",
+        "status": "",
+        "posts_checked": 0,
+        "matches": [],
+        "error": "",
+        "diag": {},
+    }
 
-    board = seed or state["boards"].get(name, "")
+    cached = state.get("boards", {}).get(home, "")
+
+    board = cached or seed
     details = []
-    diag = None
 
+    # 1. 캐시/엑셀 seed
     if board:
-        rr = get(board)
-        if rr:
-            ss = BeautifulSoup(rr.text, "html.parser")
-            if looks_like_wrong_board(rr.url, ss):
-                board = ""
-            else:
-                details = [x["url"] for x in recent_detail_urls(rr.url, ss)]
+        bu, details, info = inspect_board(board)
+        if info.get("status") == "VERIFIED":
+            result["board"] = bu
+            result["status"] = "CACHED_OR_SEED"
         else:
             board = ""
+            details = []
 
-    # Proven discovery first. V8.11.1 fallback is called ONLY when the proven
-    # one fails, so normal sites keep the previous runtime characteristics.
-    if not board and home:
-        board, details, status = discover_board(home)
-
-    if not board and home and time.time() < deadline:
-        board, details, diag = discover_board_v8111(home)
-
+    # 2. 홈페이지 탐색
     if not board:
-        return {"name": name, "status": "NO_BOARD", "posts": 0, "matches": [], "diag": diag}
+        try:
+            bu, details, status, diag = discover_board(home)
+            result["diag"] = diag
 
+            if bu and details:
+                board = bu
+                result["board"] = bu
+                result["status"] = status
+            else:
+                result["status"] = status
+                return result
+        except Exception as e:
+            result["status"] = "DISCOVERY_ERROR"
+            result["error"] = str(e)[:500]
+            return result
+
+    # 3. 상세페이지 매칭
     matches = []
+
+    # URL 중복 제거
+    unique_details = []
+    seen = set()
     for u in details:
-        if time.time() >= deadline:
-            break
-        m = match_post(u)
-        if m:
-            m["기관명"] = name
-            matches.append(m)
+        if u and u not in seen:
+            seen.add(u)
+            unique_details.append(u)
 
-    return {
-        "name": name,
-        "status": "OK",
-        "posts": len(details),
-        "matches": matches,
-        "board": board,
-        "diag": diag
-    }
+    result["posts_checked"] = len(unique_details)
 
-def telegram_send(m):
-    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-    chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-    if not token or not chat:
-        return False, "CONFIG_MISSING"
+    for u in unique_details:
+        try:
+            m = match_post(u)
+            if m:
+                m["institution"] = name
+                matches.append(m)
+        except Exception:
+            continue
+
+    result["matches"] = matches
+    return result
+
+# -----------------------------
+# Telegram
+# -----------------------------
+def telegram_send(item):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+
+    if not token or not chat_id:
+        return False
+
+    title = item.get("title", "")
+    institution = item.get("institution", "")
+    keyword = item.get("keyword", "")
+    date = item.get("date", "")
+    url = item.get("url", "")
 
     text = (
-        f"📢 공공기관 참여정보 알림\n"
-        f"기관: {m['기관명']}\n"
-        f"키워드: {m['keyword']}\n"
-        f"제목: {m['title']}\n"
-        f"검색위치: {m['where']}\n"
-        f"{m['url']}"
+        f"📢 [{institution}] 공공기관 참여/설문 게시물\n\n"
+        f"제목: {title}\n"
+        f"일자: {date}\n"
+        f"키워드: {keyword}\n"
+        f"매칭: {item.get('match_type','')}\n"
+        f"링크: {url}"
     )
-    try:
-        r = requests.post(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            json={"chat_id": chat, "text": text},
-            timeout=20
-        )
-        if r.ok and r.json().get("ok"):
-            return True, "SENT"
-        print("TELEGRAM_ERROR", r.status_code, r.text[:300])
-        return False, f"HTTP_{r.status_code}"
-    except Exception as e:
-        print("TELEGRAM_EXCEPTION", repr(e))
-        return False, "EXCEPTION"
 
+    api = f"https://api.telegram.org/bot{token}/sendMessage"
+
+    try:
+        r = SESSION.post(
+            api,
+            data={
+                "chat_id": chat_id,
+                "text": text[:4000],
+                "disable_web_page_preview": False,
+            },
+            timeout=20,
+        )
+        return r.ok
+    except Exception:
+        return False
+
+# -----------------------------
+# Main
+# -----------------------------
 def main():
-    start = time.time()
-    deadline = start + MAX_TOTAL_SECONDS
+    started = time.time()
 
     targets = load_targets()
-    state = load_state()
-    pending = load_pending()
+    state = load_json(STATE_FILE, {
+        "seen": [],
+        "boards": {},
+        "updated_at": "",
+        "version": VERSION,
+    })
 
-    pending_before = len(pending)
+    pending = load_json(PENDING_FILE, [])
+    if not isinstance(pending, list):
+        pending = []
+
+    # 기존 pending 재검증
+    pending, pending_removed_invalid = revalidate_pending(pending)
+
+    seen = set(state.get("seen", []))
     results = []
-    discovered = []
 
-    # 병렬 수집 단계에서는 seen/pending을 변경하지 않음.
+    completed = 0
+    no_board = 0
+    errors = 0
+    posts_checked = 0
+    new_matches = 0
+
+    deadline = started + MAX_TOTAL_SECONDS
+
     with ThreadPoolExecutor(max_workers=MAX_CONCURRENCY) as ex:
-        fs = [ex.submit(process, t, state, deadline) for t in targets]
-        for f in as_completed(fs):
+        future_map = {
+            ex.submit(process, target, state): target
+            for target in targets
+        }
+
+        for fut in as_completed(future_map):
+            if time.time() >= deadline:
+                break
+
+            target = future_map[fut]
+
             try:
-                r = f.result()
-            except Exception as e:
-                r = {
-                    "name": "?",
-                    "status": "ERROR",
-                    "posts": 0,
-                    "matches": [],
-                    "error": repr(e)
-                }
-            results.append(r)
-            discovered.extend(r.get("matches", []))
+                result = fut.result()
+                results.append(result)
 
-    # Persist newly discovered boards for future runs.
-    for r in results:
-        if r.get("status") == "OK" and r.get("board"):
-            state["boards"][r["name"]] = r["board"]
+                status = result.get("status", "")
+                if result.get("board"):
+                    completed += 1
+                    state.setdefault("boards", {})[
+                        result["home"]
+                    ] = result["board"]
+                else:
+                    no_board += 1
 
-    # V8.11.1 diagnostics: only fallback attempts are recorded.
-    diag_records = []
-    for r in results:
-        d = r.get("diag")
-        if d:
-            d = dict(d)
-            d["institution"] = r.get("name")
-            diag_records.append(d)
-    write_v8111_diag(diag_records)
-    diag_counts = {}
-    for d in diag_records:
-        k = d.get("result", "UNKNOWN")
-        diag_counts[k] = diag_counts.get(k, 0) + 1
-    print("BOARD_DISCOVERY_DIAG", json.dumps(diag_counts, ensure_ascii=False))
+                posts_checked += result.get("posts_checked", 0)
+                errors += 1 if result.get("error") else 0
 
-    # V8.12: revalidate legacy pending items so old/false alerts are purged.
-    cleaned_pending = []
-    pending_removed_invalid = 0
-    for old in pending:
-        try:
-            refreshed = match_post(old.get("url", ""))
-        except Exception:
-            refreshed = None
-        if refreshed:
-            refreshed["기관명"] = old.get("기관명", refreshed.get("기관명", ""))
-            cleaned_pending.append(refreshed)
-        else:
-            pending_removed_invalid += 1
-    pending = cleaned_pending
+                for m in result.get("matches", []):
+                    u = m.get("url", "")
+                    if not u:
+                        continue
 
-    # 신규 매칭을 queue에 넣는다. 이미 seen 또는 pending이면 중복 삽입하지 않는다.
-    seen_keys = set(state.get("seen", {}).keys())
-    pending_keys = {match_key(m) for m in pending}
+                    # 이미 seen 또는 pending이면 중복 방지
+                    if u in seen:
+                        continue
+                    if any(pending_key(x) == u for x in pending):
+                        continue
 
-    new_matches = []
-    for m in discovered:
-        k = match_key(m)
-        if not k or k in seen_keys or k in pending_keys:
+                    m["added_at"] = datetime.now(KST).isoformat()
+                    pending.append(m)
+                    new_matches += 1
+
+            except Exception:
+                errors += 1
+
+    # pending 중복 제거
+    dedup = {}
+    for item in pending:
+        k = pending_key(item)
+        if k:
+            dedup[k] = item
+    pending = list(dedup.values())
+
+    # FIFO
+    pending.sort(key=lambda x: x.get("added_at", ""))
+
+    # 최대 보관
+    if len(pending) > MAX_PENDING:
+        pending = pending[-MAX_PENDING:]
+
+    pending_before_send = len(pending)
+
+    # Telegram 하루 최대 20건
+    sent = 0
+    remaining = []
+
+    for item in pending:
+        if sent >= TELEGRAM_MAX_SEND:
+            remaining.append(item)
             continue
-        pending.append(m)
-        pending_keys.add(k)
-        new_matches.append(m)
 
-    # 발송 우선순위: 제목 매칭 → 키워드 순 → 기관명/제목/URL
-    pending.sort(key=priority)
-    pending = pending[-MAX_PENDING:]
-
-    sent_items = []
-    send_attempts = min(TELEGRAM_MAX_SEND, len(pending))
-
-    for m in pending[:send_attempts]:
-        ok, status = telegram_send(m)
-        if ok:
-            sent_items.append(m)
-            state["seen"][match_key(m)] = int(time.time())
+        if telegram_send(item):
+            sent += 1
+            seen.add(item.get("url", ""))
         else:
-            # 실패/미설정이면 queue에서 제거하지 않는다.
-            if status == "CONFIG_MISSING":
-                print("TELEGRAM_CONFIG_MISSING")
-            break
+            remaining.append(item)
 
-    sent_keys = {match_key(m) for m in sent_items}
-    if sent_keys:
-        pending = [m for m in pending if match_key(m) not in sent_keys]
+    pending = remaining
 
-    save_pending(pending)
-    save_state(state)
+    state["seen"] = list(seen)[-50000:]
+    state["updated_at"] = datetime.now(KST).isoformat()
+    state["version"] = VERSION
 
-    summary = {
+    save_json(STATE_FILE, state)
+    save_json(PENDING_FILE, pending)
+
+    elapsed = time.time() - started
+    timed_out = elapsed >= MAX_TOTAL_SECONDS
+
+    # 진단 파일
+    diag_counts = {}
+    for r in results:
+        d = r.get("diag") or {}
+        st = d.get("status")
+        if st:
+            diag_counts[st] = diag_counts.get(st, 0) + 1
+
+    diagnostics = {
+        "version": VERSION,
+        "updated_at": datetime.now(KST).isoformat(),
         "targets": len(targets),
-        "completed": sum(r["status"] == "OK" for r in results),
-        "no_board": sum(r["status"] == "NO_BOARD" for r in results),
-        "posts_checked": sum(r.get("posts", 0) for r in results),
-        "new_matches": len(new_matches),
-        "pending_before": pending_before,
+        "completed": completed,
+        "no_board": no_board,
+        "posts_checked": posts_checked,
+        "new_matches": new_matches,
+        "pending_before": pending_before_send,
         "pending_removed_invalid": pending_removed_invalid,
-        "recent_days": RECENT_DAYS,
-        "telegram_sent": len(sent_items),
+        "telegram_sent": sent,
         "pending_after": len(pending),
-        "errors": sum(r["status"] == "ERROR" for r in results),
-        "elapsed_seconds": round(time.time() - start, 1),
-        "timed_out": time.time() >= deadline,
-        "board_discovery_diag": diag_counts
+        "errors": errors,
+        "elapsed_seconds": round(elapsed, 1),
+        "timed_out": timed_out,
+        "recent_days": RECENT_DAYS,
+        "telegram_max_send": TELEGRAM_MAX_SEND,
+        "board_discovery_status": diag_counts,
+        "board_details": [
+            {
+                "기관명": r.get("기관명"),
+                "status": r.get("status"),
+                "board": r.get("board"),
+                "posts_checked": r.get("posts_checked"),
+                "diag_status": (r.get("diag") or {}).get("status"),
+                "candidate_count": (r.get("diag") or {}).get("candidate_count"),
+                "fetched_count": (r.get("diag") or {}).get("fetched_count"),
+                "verified_count": (r.get("diag") or {}).get("verified_count"),
+                "selected_score": (r.get("diag") or {}).get("selected_score"),
+            }
+            for r in results
+        ],
     }
 
-    with open("monitor_log.json", "w", encoding="utf-8") as f:
-        json.dump({
-            "summary": summary,
-            "sent": sent_items[-TELEGRAM_MAX_SEND:],
-            "new_matches": new_matches[-500:],
-            "pending_after": pending[-500:],
-            "results": results
-        }, f, ensure_ascii=False, indent=2)
+    save_json("diagnostics.json", diagnostics)
 
-    print("TELEGRAM_SENT", len(sent_items))
-    print("SUMMARY", json.dumps(summary, ensure_ascii=False))
+    print(json.dumps(diagnostics, ensure_ascii=False, indent=2))
+
 
 if __name__ == "__main__":
     main()
