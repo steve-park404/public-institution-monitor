@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Public Institution Monitor V8.12.2
+Public Institution Monitor V8.12.6
 
 Architecture:
 355기관 → 공식 홈페이지 → 공지/새소식/알림/참여 관련 게시판 탐색
@@ -14,7 +14,7 @@ Operational keywords:
 Title exclusion:
 - 공모전
 
-V8.12.2 changes:
+V8.12.6 changes:
 1. 최근 30일 날짜 게이트를 최종 상세페이지에서 강제
 2. 1순위 게시판 키워드 12개를 우선 탐색
 3. 참여 게시판을 무조건 배제하지 않고 점수로 처리
@@ -24,9 +24,13 @@ V8.12.2 changes:
 7. V8.11.1의 누락된 fallback 함수/상수 의존성 제거
 8. 진단 로그 강화
 9. pending queue 유지 및 하루 Telegram 최대 20건
+10. 실제 목록 URL 보수적 차단
+11. 기관별 상세 URL 패턴 학습
+12. 기관별 상태/오류 유형 집계 및 미처리 기관 수 진단
+13. 일반 메뉴명이 제목으로 추출되어도 게시물 구조가 명확하면 본문 검사를 계속
 """
 
-VERSION = "V8.12.3"
+VERSION = "V8.12.6"
 
 import os
 import re
@@ -805,6 +809,51 @@ def discover_board(home):
     return None, [], "CANDIDATE_NOT_VERIFIED", diag
 
 # -----------------------------
+# V8.12.6 detail/list diagnostics
+# -----------------------------
+LIST_ONLY_PATHS = {
+    "/list", "/lists", "/index", "/events", "/event",
+    "/notice", "/notices", "/news", "/board", "/bbs"
+}
+
+def is_list_only_url(url):
+    try:
+        p = urlparse(url)
+        path = (p.path or "").rstrip("/").lower()
+        q = (p.query or "").lower()
+        if path in LIST_ONLY_PATHS and not q:
+            return True
+        if re.search(r"(^|&)(page|pageindex|pageno|page_no|mode=list|act=list)=", q):
+            return True
+    except Exception:
+        pass
+    return False
+
+def infer_detail_pattern(board_url, detail_urls):
+    if not board_url or not detail_urls:
+        return ""
+    try:
+        bp=urlparse(board_url); b=(bp.path or "").rstrip("/")
+        for u in detail_urls:
+            dp=urlparse(u); d=(dp.path or "").rstrip("/")
+            if b and d.startswith(b+"/"):
+                return b+"/"
+    except Exception:
+        pass
+    return ""
+
+def classify_exception(exc):
+    if isinstance(exc, requests.exceptions.Timeout):
+        return "TIMEOUT"
+    if isinstance(exc, requests.exceptions.ConnectionError):
+        return "CONNECTION_ERROR"
+    if isinstance(exc, (KeyError, IndexError, TypeError, AttributeError)):
+        return "CODE_ERROR"
+    if isinstance(exc, ValueError):
+        return "VALUE_ERROR"
+    return "PROCESS_ERROR"
+
+# -----------------------------
 # Detail matching
 # -----------------------------
 def match_post(u):
@@ -820,13 +869,29 @@ def match_post(u):
     if not dt or not is_recent_date(dt):
         return None
 
+    if is_list_only_url(r.url):
+        return None
+
     title = extract_title(soup)
 
-    if not title or is_probable_content_page(r.url, soup, title):
+    generic_title = title in GENERIC_PAGE_TITLES
+    content_page = is_probable_content_page(r.url, soup, title)
+
+    # 메뉴명이 제목으로 추출된 경우에도 상세 URL + 게시물 구조가 명확하면
+    # 제목 추출 실패로만 처리하고 즉시 폐기하지 않는다.
+    if not title:
+        return None
+
+    if content_page and not generic_title:
         return None
 
     if not has_post_structure(soup, title):
         return None
+
+    if generic_title:
+        # 일반 메뉴명이 제목으로 남은 경우에는 제목 매칭은 금지하고
+        # 본문 매칭만 허용한다.
+        title = ""
 
     if any(x in title for x in EXCLUDE_TITLE):
         return None
@@ -1009,73 +1074,75 @@ def process(target, state):
     seed = target.get("공지게시판URL", "")
 
     result = {
-        "기관명": name,
-        "home": home,
-        "board": "",
-        "status": "",
-        "posts_checked": 0,
-        "matches": [],
-        "error": "",
-        "diag": {},
+        "기관명": name, "home": home, "board": "", "status": "",
+        "posts_checked": 0, "matches": [], "error": "",
+        "error_type": "", "diag": {}
     }
 
-    cached = state.get("boards", {}).get(home, "")
+    try:
+        cached = state.get("boards", {}).get(home, "")
+        board = cached or seed
+        details = []
 
-    board = cached or seed
-    details = []
-
-    # 1. 캐시/엑셀 seed
-    if board:
-        bu, details, info = inspect_board(board)
-        if info.get("status") == "VERIFIED":
-            result["board"] = bu
-            result["status"] = "CACHED_OR_SEED"
-        else:
-            board = ""
-            details = []
-
-    # 2. 홈페이지 탐색
-    if not board:
-        try:
-            bu, details, status, diag = discover_board(home)
-            result["diag"] = diag
-
-            if bu and details:
+        if board:
+            try:
+                bu, details, info = inspect_board(board)
+            except Exception as e:
+                bu, details, info = None, [], {"status":"BOARD_FETCH_ERROR", "error":str(e)[:500]}
+                result["error_type"] = classify_exception(e)
+                result["error"] = str(e)[:500]
+            if info.get("status") == "VERIFIED":
                 board = bu
                 result["board"] = bu
-                result["status"] = status
+                result["status"] = "CACHED_OR_SEED"
             else:
+                board = ""; details=[]
+
+        if not board:
+            try:
+                bu, details, status, diag = discover_board(home)
+                result["diag"] = diag or {}
                 result["status"] = status
+                if bu and details:
+                    board = bu
+                    result["board"] = bu
+                else:
+                    return result
+            except Exception as e:
+                et=classify_exception(e)
+                result.update({"status":"DISCOVERY_ERROR","error_type":et,"error":str(e)[:500]})
+                result["diag"]={"status":"DISCOVERY_ERROR","error_type":et,"error":str(e)[:500]}
                 return result
-        except Exception as e:
-            result["status"] = "DISCOVERY_ERROR"
-            result["error"] = str(e)[:500]
-            return result
 
-    # 3. 상세페이지 매칭
-    matches = []
+        unique=[]; seen=set()
+        for u in details:
+            if u and u not in seen:
+                seen.add(u); unique.append(u)
+        result["posts_checked"] = len(unique)
 
-    # URL 중복 제거
-    unique_details = []
-    seen = set()
-    for u in details:
-        if u and u not in seen:
-            seen.add(u)
-            unique_details.append(u)
+        pattern = infer_detail_pattern(board, unique)
+        result.setdefault("diag", {})
+        if pattern:
+            result["diag"]["detail_pattern"] = pattern
 
-    result["posts_checked"] = len(unique_details)
+        matches=[]
+        for u in unique:
+            try:
+                m=match_post(u)
+                if m:
+                    m["institution"]=name
+                    matches.append(m)
+            except Exception:
+                # 개별 상세페이지 오류는 기관 전체 오류로 승격하지 않는다.
+                continue
+        result["matches"]=matches
+        return result
 
-    for u in unique_details:
-        try:
-            m = match_post(u)
-            if m:
-                m["institution"] = name
-                matches.append(m)
-        except Exception:
-            continue
-
-    result["matches"] = matches
-    return result
+    except Exception as e:
+        et=classify_exception(e)
+        result.update({"status":"PROCESS_ERROR","error_type":et,"error":str(e)[:500]})
+        result["diag"]={**(result.get("diag") or {}),"status":"PROCESS_ERROR","error_type":et,"error":str(e)[:500]}
+        return result
 
 # -----------------------------
 # Telegram
@@ -1147,6 +1214,8 @@ def main():
     errors = 0
     posts_checked = 0
     new_matches = 0
+    status_counts = {}
+    error_type_counts = {}
 
     deadline = started + MAX_TOTAL_SECONDS
 
@@ -1166,17 +1235,22 @@ def main():
                 result = fut.result()
                 results.append(result)
 
-                status = result.get("status", "")
+                status = result.get("status", "") or "UNKNOWN"
+                status_counts[status] = status_counts.get(status, 0) + 1
                 if result.get("board"):
                     completed += 1
-                    state.setdefault("boards", {})[
-                        result["home"]
-                    ] = result["board"]
+                    state.setdefault("boards", {})[result["home"]] = result["board"]
+                    dp=(result.get("diag") or {}).get("detail_pattern", "")
+                    if dp:
+                        state.setdefault("detail_patterns", {})[result["home"]] = dp
                 else:
                     no_board += 1
 
                 posts_checked += result.get("posts_checked", 0)
-                errors += 1 if result.get("error") else 0
+                et=result.get("error_type", "")
+                if et:
+                    error_type_counts[et]=error_type_counts.get(et,0)+1
+                    errors += 1
 
                 for m in result.get("matches", []):
                     u = m.get("url", "")
@@ -1193,8 +1267,11 @@ def main():
                     pending.append(m)
                     new_matches += 1
 
-            except Exception:
+            except Exception as e:
                 errors += 1
+                et=classify_exception(e)
+                error_type_counts[et]=error_type_counts.get(et,0)+1
+                status_counts["FUTURE_EXCEPTION"]=status_counts.get("FUTURE_EXCEPTION",0)+1
 
     # pending 중복 제거
     dedup = {}
@@ -1266,6 +1343,10 @@ def main():
         "recent_days": RECENT_DAYS,
         "telegram_max_send": TELEGRAM_MAX_SEND,
         "board_discovery_status": diag_counts,
+        "status_counts": status_counts,
+        "error_type_counts": error_type_counts,
+        "processed_total": len(results),
+        "unprocessed_total": max(0, len(targets) - len(results)),
         "board_details": [
             {
                 "기관명": r.get("기관명"),
@@ -1277,6 +1358,9 @@ def main():
                 "fetched_count": (r.get("diag") or {}).get("fetched_count"),
                 "verified_count": (r.get("diag") or {}).get("verified_count"),
                 "selected_score": (r.get("diag") or {}).get("selected_score"),
+                "detail_pattern": (r.get("diag") or {}).get("detail_pattern", ""),
+                "error_type": r.get("error_type", ""),
+                "error": r.get("error", "")[:500],
             }
             for r in results
         ],
