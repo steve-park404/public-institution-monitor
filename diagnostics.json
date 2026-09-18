@@ -1,26 +1,27 @@
 {
-  "version": "V8.12.3",
-  "updated_at": "2026-09-18T21:33:25.194267+09:00",
+  "version": "V8.12.4",
+  "updated_at": "2026-09-18T21:47:32.956504+09:00",
   "targets": 355,
-  "completed": 13,
-  "no_board": 139,
-  "posts_checked": 146,
-  "new_matches": 5,
-  "pending_before": 5,
+  "completed": 2,
+  "no_board": 149,
+  "posts_checked": 6,
+  "new_matches": 0,
+  "pending_before": 0,
   "pending_removed_invalid": 0,
-  "telegram_sent": 5,
+  "telegram_sent": 0,
   "pending_after": 0,
-  "errors": 203,
-  "elapsed_seconds": 180.6,
+  "errors": 204,
+  "elapsed_seconds": 251.3,
   "timed_out": false,
   "recent_days": 30,
   "telegram_max_send": 20,
   "board_discovery_status": {
-    "NO_CANDIDATE": 92,
-    "HOME_ERROR": 46,
-    "VERIFIED": 13,
-    "CANDIDATE_NOT_VERIFIED": 1
+    "NO_CANDIDATE": 87,
+    "HOME_ERROR": 59,
+    "VERIFIED": 2,
+    "CANDIDATE_NOT_VERIFIED": 3
   },
+  "error_type_counts": {},
   "board_details": [
     {
       "기관명": "(재)우체국물류지원단",
@@ -31,7 +32,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "(재)한국통계정보원",
@@ -42,7 +46,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "(주)공영홈쇼핑",
@@ -53,7 +60,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "(재)한국통계진흥원",
@@ -64,7 +74,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "건강보험심사평가원",
@@ -75,18 +88,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "가축위생방역지원본부",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "과학기술사업화진흥원",
@@ -97,73 +102,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국가아동권리보장원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "공간정보산업진흥원",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국립공원공단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국립농업박물관",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국립대구과학관",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국립박물관문화재단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "과학기술정책연구원",
@@ -174,7 +116,108 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국가아동권리보장원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "가축위생방역지원본부",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국립농업박물관",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국립공원공단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "공간정보산업진흥원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국립대구과학관",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국립박물관문화재단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국립울진해양과학관",
@@ -185,29 +228,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "경북대학교치과병원",
-      "status": "DISCOVERED",
-      "board": "https://www.knudh.kr/index.php",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 1,
-      "fetched_count": 1,
-      "verified_count": 1,
-      "selected_score": 0
-    },
-    {
-      "기관명": "국립항공박물관",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "경상국립대학교병원",
@@ -218,7 +242,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국민건강보험공단",
@@ -229,7 +256,24 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국립항공박물관",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국립부산과학관",
@@ -240,18 +284,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국제방송교류재단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국방전직교육원",
@@ -262,18 +298,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국토안전관리원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국토교통과학기술진흥원",
@@ -284,7 +312,24 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국토안전관리원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "그랜드코리아레저(주)",
@@ -295,205 +340,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "농림수산식품교육문화정보원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "근로복지공단",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "국립호남권생물자원관",
-      "status": "DISCOVERED",
-      "board": "https://www.hnibr.re.kr/ko/M000000478/bbs/list",
-      "posts_checked": 6,
-      "diag_status": "VERIFIED",
-      "candidate_count": 13,
-      "fetched_count": 13,
-      "verified_count": 12,
-      "selected_score": 10
-    },
-    {
-      "기관명": "동남권원자력의학원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "북한이탈주민지원재단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "민주화운동기념사업회",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "부산대학교치과병원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "사립학교교직원연금공단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "서민금융진흥원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "서울대학교병원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "(주)한국가스기술공사",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "수도권매립지관리공사",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "소상공인시장진흥공단",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "신용보증재단중앙회",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "신용보증기금",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "식품안전정보원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "여수광양항만공사",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "영상물등급위원회",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국방기술진흥연구소",
@@ -504,10 +354,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "육아정책연구소",
+      "기관명": "국제방송교류재단",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -515,10 +368,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "인천국제공항공사",
+      "기관명": "농림수산식품교육문화정보원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -526,10 +382,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "재외동포협력센터",
+      "기관명": "근로복지공단",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -537,10 +396,97 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "대한장애인체육회",
+      "기관명": "동남권원자력의학원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "민주화운동기념사업회",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "북한이탈주민지원재단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "사립학교교직원연금공단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "서민금융진흥원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "수도권매립지관리공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "(주)한국가스기술공사",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -548,10 +494,27 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "영화진흥위원회",
+      "기관명": "소상공인시장진흥공단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "식품안전정보원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -559,10 +522,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "재단법인 대한건설기계안전관리원",
+      "기관명": "신용보증기금",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -570,18 +536,38 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "서울대학교치과병원",
-      "status": "DISCOVERED",
-      "board": "https://www.snudh.org/portal/index.do",
-      "posts_checked": 9,
-      "diag_status": "VERIFIED",
-      "candidate_count": 9,
-      "fetched_count": 9,
-      "verified_count": 5,
-      "selected_score": 0
+      "기관명": "신용보증재단중앙회",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "여수광양항만공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국립광주과학관",
@@ -592,10 +578,83 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "재단법인 한국에너지재단",
+      "기관명": "영상물등급위원회",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "육아정책연구소",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "영화진흥위원회",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "인천국제공항공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "부산대학교치과병원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "재외동포협력센터",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -603,106 +662,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "정보통신정책연구원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "제주국제자유도시개발센터",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "정부법무공단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "정보통신기획평가원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "중소벤처기업진흥공단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "중앙사회서비스원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "주택도시보증공사",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "코레일테크(주)",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "통일연구원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "재단법인 건설기술교육원",
@@ -713,10 +676,27 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국고용정보원",
+      "기관명": "재단법인 한국에너지재단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "정보통신정책연구원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -724,21 +704,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "국립낙동강생물자원관",
-      "status": "DISCOVERED",
-      "board": "https://www.nnibr.re.kr/index.do?menu_id=00000342&servletPath=%2Findex.do",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 60,
-      "fetched_count": 25,
-      "verified_count": 25,
-      "selected_score": 50
-    },
-    {
-      "기관명": "한국관세정보원",
+      "기관명": "정보통신기획평가원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -746,10 +718,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국교육개발원",
+      "기관명": "정부법무공단",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -757,10 +732,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국교육과정평가원",
+      "기관명": "제주국제자유도시개발센터",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -768,7 +746,66 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "재단법인 대한건설기계안전관리원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "중소벤처기업진흥공단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "중앙사회서비스원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "주택도시보증공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국립생태원",
@@ -779,10 +816,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국교육학술정보원",
+      "기관명": "코레일테크(주)",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -790,84 +830,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "대한무역투자진흥공사",
-      "status": "DISCOVERED",
-      "board": "https://www.kotra.or.kr/module/stplatLog/selectPolicyLogList.do?stplatSeq=2000002299",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 60,
-      "fetched_count": 25,
-      "verified_count": 25,
-      "selected_score": 5
-    },
-    {
-      "기관명": "한국국토정보공사",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국국제협력단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국남동발전(주)",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "전쟁기념사업회",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국나노기술원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국남부발전(주)",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "국방과학연구소",
@@ -878,7 +844,52 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "통일연구원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "전쟁기념사업회",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국고용정보원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "중소기업기술정보진흥원",
@@ -889,7 +900,94 @@
       "candidate_count": 60,
       "fetched_count": 25,
       "verified_count": 24,
-      "selected_score": 74
+      "selected_score": 74,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "서울대학교병원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국관세정보원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국교육개발원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "대한장애인체육회",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국교육과정평가원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국교육학술정보원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국공정거래조정원",
@@ -900,32 +998,69 @@
       "candidate_count": 2,
       "fetched_count": 2,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국교통안전공단",
-      "status": "DISCOVERED",
-      "board": "https://main.kotsa.or.kr/main.do",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 1,
-      "fetched_count": 1,
-      "verified_count": 1,
-      "selected_score": 0
+      "기관명": "한국국토정보공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "독립기념관",
-      "status": "DISCOVERED",
-      "board": "https://i815.or.kr/2018/eventApply/eventList.do;jsessionid=79A3830143781825F33647CD35560C2E",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 60,
-      "fetched_count": 25,
-      "verified_count": 25,
-      "selected_score": 42
+      "기관명": "한국국제협력단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국도로공사서비스(주)",
+      "기관명": "한국남동발전(주)",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국나노기술원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국남부발전(주)",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -933,7 +1068,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국도박문제예방치유원",
@@ -944,76 +1082,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국물기술인증원",
-      "status": "DISCOVERED",
-      "board": "https://www.kwtc.or.kr/kwha/bbs/kwhNoticeNew.do",
-      "posts_checked": 1,
-      "diag_status": "VERIFIED",
-      "candidate_count": 17,
-      "fetched_count": 17,
-      "verified_count": 17,
-      "selected_score": 15
-    },
-    {
-      "기관명": "한국사회보장정보원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국보건의료인국가시험원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국사학진흥재단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국산업기술시험원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국산업안전보건공단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국보건의료연구원",
+      "기관명": "한국도로공사서비스(주)",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1021,73 +1096,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국서부발전(주)",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국산업단지공단",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국상하수도협회",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국수력원자력(주)",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "재단법인 한국장기조직기증원",
-      "status": "DISCOVERED",
-      "board": "https://www.koda1458.kr/communication/participation/events",
-      "posts_checked": 5,
-      "diag_status": "VERIFIED",
-      "candidate_count": 60,
-      "fetched_count": 25,
-      "verified_count": 20,
-      "selected_score": 51
-    },
-    {
-      "기관명": "한국소비자원",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "전국재해구호협회",
@@ -1098,7 +1110,66 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국물기술인증원",
+      "status": "DISCOVERED",
+      "board": "https://www.kwtc.or.kr/kwha/bbs/kwhNoticeNew.do",
+      "posts_checked": 1,
+      "diag_status": "VERIFIED",
+      "candidate_count": 17,
+      "fetched_count": 17,
+      "verified_count": 17,
+      "selected_score": 15,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "(재)일제강제동원피해자지원재단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "공무원연금공단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국립낙동강생물자원관",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국마약퇴치운동본부",
@@ -1109,21 +1180,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국식품안전관리인증원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국석유관리원",
+      "기관명": "국립호남권생물자원관",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1131,21 +1194,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국수출입은행",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국여성인권진흥원",
+      "기관명": "한국보건의료인국가시험원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1153,18 +1208,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국산림복지진흥원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "코레일네트웍스(주)",
@@ -1175,10 +1222,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국산업은행",
+      "기관명": "한국사회보장정보원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1186,10 +1236,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국원자력환경공단",
+      "기관명": "한국사학진흥재단",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1197,65 +1250,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국원자력통제기술원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국임업진흥원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국의약품안전관리원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국장학재단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국재정정보원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국인터넷진흥원",
+      "기관명": "국방기술품질원",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1263,10 +1264,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국제품안전관리원",
+      "기관명": "한국산업기술시험원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1274,10 +1278,27 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국조폐공사",
+      "기관명": "한국보건의료연구원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국산업안전보건공단",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1285,10 +1306,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국중소벤처기업유통원",
+      "기관명": "한국산림복지진흥원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1296,7 +1320,178 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국산업단지공단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국서부발전(주)",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국상하수도협회",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국수력원자력(주)",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "대한무역투자진흥공사",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국소비자원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국식품안전관리인증원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "기술보증기금",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "독립기념관",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국수출입은행",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국여성인권진흥원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국석유관리원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국어촌어항공단",
@@ -1307,10 +1502,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국지능정보사회진흥원",
+      "기관명": "한국원자력통제기술원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1318,10 +1516,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국전기안전공사",
+      "기관명": "한국원자력환경공단",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1329,10 +1530,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국지식재산연구원",
+      "기관명": "한국임업진흥원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1340,10 +1544,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국중부발전(주)",
+      "기관명": "한국산업은행",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1351,10 +1558,27 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국철도공사",
+      "기관명": "한국인터넷진흥원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국장학재단",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1362,54 +1586,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국세라믹기술원",
-      "status": "DISCOVERED",
-      "board": "https://www.kicet.re.kr/main.web",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 60,
-      "fetched_count": 25,
-      "verified_count": 23,
-      "selected_score": 0
-    },
-    {
-      "기관명": "한국청소년활동진흥원",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국도로공사",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국도로교통공단",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국잡월드",
+      "기관명": "한국의약품안전관리원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1417,7 +1600,24 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "국가철도공단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국기술교육대학교",
@@ -1428,10 +1628,69 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국치산기술협회",
+      "기관명": "한국제품안전관리원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국조폐공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국중소벤처기업유통원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국지능정보사회진흥원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국도로공사",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1439,10 +1698,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국특허정보원",
+      "기관명": "한국잡월드",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1450,10 +1712,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국해양교통안전공단",
+      "기관명": "한국지식재산연구원",
       "status": "NO_CANDIDATE",
       "board": "",
       "posts_checked": 0,
@@ -1461,7 +1726,80 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국철도공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국중부발전(주)",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국도로교통공단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국전기안전공사",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국청소년활동진흥원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국한의약진흥원",
@@ -1472,7 +1810,38 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국특허정보원",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국치산기술협회",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국해양진흥공사",
@@ -1483,7 +1852,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국해양조사협회",
@@ -1494,29 +1866,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국해양수산개발원",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "해양환경공단",
-      "status": "NO_CANDIDATE",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "NO_CANDIDATE",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국해양수산연수원",
@@ -1527,7 +1880,38 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "해양환경공단",
+      "status": "NO_CANDIDATE",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "NO_CANDIDATE",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "대한법률구조공단",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "해양수산과학기술진흥원",
@@ -1538,40 +1922,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국사회복지협의회",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "한국행정연구원",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
-    },
-    {
-      "기관명": "(재)한국우편사업진흥원",
-      "status": "HOME_ERROR",
-      "board": "",
-      "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
-      "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한전원자력연료주식회사",
@@ -1582,10 +1936,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국소방산업기술원",
+      "기관명": "한국행정연구원",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1593,7 +1950,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국환경보전원",
@@ -1604,18 +1964,66 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "공무원연금공단",
-      "status": "DISCOVERED",
-      "board": "https://www.geps.or.kr/main",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 12,
-      "fetched_count": 11,
-      "verified_count": 6,
-      "selected_score": 0
+      "기관명": "한국소방산업기술원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국국방연구원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국교통안전공단",
+      "status": "CANDIDATE_NOT_VERIFIED",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "CANDIDATE_NOT_VERIFIED",
+      "candidate_count": 1,
+      "fetched_count": 1,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국재정정보원",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국전력공사",
@@ -1626,7 +2034,24 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국사회복지협의회",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국지역난방공사",
@@ -1637,7 +2062,10 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국청소년상담복지개발원",
@@ -1648,10 +2076,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "한국기상산업기술원",
+      "기관명": "한국해양교통안전공단",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1659,10 +2090,13 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
-      "기관명": "대외경제정책연구원",
+      "기관명": "한국해양수산개발원",
       "status": "HOME_ERROR",
       "board": "",
       "posts_checked": 0,
@@ -1670,29 +2104,38 @@
       "candidate_count": 0,
       "fetched_count": 0,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
+    },
+    {
+      "기관명": "한국문화진흥주식회사",
+      "status": "HOME_ERROR",
+      "board": "",
+      "posts_checked": 0,
+      "diag_status": "HOME_ERROR",
+      "candidate_count": 0,
+      "fetched_count": 0,
+      "verified_count": 0,
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     },
     {
       "기관명": "한국양성평등교육진흥원",
-      "status": "DISCOVERED",
-      "board": "https://www.epeople.go.kr/index.jsp?menuNo=15200",
-      "posts_checked": 15,
-      "diag_status": "VERIFIED",
-      "candidate_count": 60,
-      "fetched_count": 25,
-      "verified_count": 1,
-      "selected_score": 0
-    },
-    {
-      "기관명": "한국원자력안전기술원",
-      "status": "HOME_ERROR",
+      "status": "CANDIDATE_NOT_VERIFIED",
       "board": "",
       "posts_checked": 0,
-      "diag_status": "HOME_ERROR",
-      "candidate_count": 0,
-      "fetched_count": 0,
+      "diag_status": "CANDIDATE_NOT_VERIFIED",
+      "candidate_count": 60,
+      "fetched_count": 25,
       "verified_count": 0,
-      "selected_score": null
+      "selected_score": null,
+      "error_type": "",
+      "error": "",
+      "detail_errors": 0
     }
   ]
 }

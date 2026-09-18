@@ -1,23 +1,23 @@
 {
   "seen": [
-    "https://www.geps.or.kr/openInfo_preOpenInfo01",
-    "https://home.koelsa.or.kr/portal/bbs/view.do?mId=0401000000&ptIdx=112&bIdx=15225",
-    "https://www.sdco.or.kr/kor/",
-    "https://www.kps.co.kr/web/Board/47497/detailView.do?pageIndex=1&menu=2467",
-    "https://www.kdissw.or.kr:443/board.es?mid=a10501010000&bid=0002",
     "https://kcmf.or.kr/KCMF/contents/KCMF020100.do",
-    "https://www.koda1458.kr/communication/participation/events/BajwFTqb5t1jANBcemD8gX5HoCwy_T83LJbgFR4mHy4",
-    "https://www.ksponco.or.kr/programProposal?mid=a10201060000",
-    "https://www.koda1458.kr/communication/participation/events/LjlZnB2zNk7e71eF5tDGKbrKYtdG-NTH1ge1K5MRrWQ",
-    "https://www.kibo.or.kr/main/center/20260813.do",
-    "https://home.koelsa.or.kr/portal/contents.do?mId=0801140000",
-    "https://www.koda1458.kr/communication/participation/events",
-    "https://www.kspo.or.kr/kspo/bbs/B0000027/view.do?nttId=64281&menuNo=200149&searchWrd=&pageIndex=1",
     "https://www.koda1458.kr/communication/participation/events/XGQDIL3m6uXlzvFF3tqw9c6EHRW-c-nB5EqyT42FMWw",
-    "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14946&cpage=1&rows=10&condition=&keyword=",
-    "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&nPage=1&v_type=&b_list_cnt=10&ord=&tag=&list_no=8025&act=view&keyField=&keyWord=",
+    "https://home.koelsa.or.kr/portal/bbs/view.do?mId=0401000000&ptIdx=112&bIdx=15225",
+    "https://www.ksponco.or.kr/programProposal?mid=a10201060000",
     "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14953&cpage=1&rows=10&condition=&keyword=",
-    "https://www.kiet.re.kr/communicate/ntcView?ntc_no=10735&skey=&sval=&pg=1&pp=10"
+    "https://www.koda1458.kr/communication/participation/events/BajwFTqb5t1jANBcemD8gX5HoCwy_T83LJbgFR4mHy4",
+    "https://www.geps.or.kr/openInfo_preOpenInfo01",
+    "https://www.kps.co.kr/web/Board/47497/detailView.do?pageIndex=1&menu=2467",
+    "https://home.koelsa.or.kr/portal/contents.do?mId=0801140000",
+    "https://www.sdco.or.kr/kor/",
+    "https://www.koda1458.kr/communication/participation/events",
+    "https://www.kibo.or.kr/main/center/20260813.do",
+    "https://www.k-medi.or.kr/web/lay1/bbs/S1T13C18/A/1/view.do?article_seq=14946&cpage=1&rows=10&condition=&keyword=",
+    "https://www.kiet.re.kr/communicate/ntcView?ntc_no=10735&skey=&sval=&pg=1&pp=10",
+    "https://www.koda1458.kr/communication/participation/events/LjlZnB2zNk7e71eF5tDGKbrKYtdG-NTH1ge1K5MRrWQ",
+    "https://www.ksponco.or.kr/gallery.es?mid=a10201020000&bid=0028&nPage=1&v_type=&b_list_cnt=10&ord=&tag=&list_no=8025&act=view&keyField=&keyWord=",
+    "https://www.kdissw.or.kr:443/board.es?mid=a10501010000&bid=0002",
+    "https://www.kspo.or.kr/kspo/bbs/B0000027/view.do?nttId=64281&menuNo=200149&searchWrd=&pageIndex=1"
   ],
   "boards": {
     "(사)남북교류협력지원협회": "https://sonosa.or.kr/?menuno=12",
@@ -276,6 +276,6 @@
     "http://www.kigepe.or.kr/": "https://www.epeople.go.kr/index.jsp?menuNo=15200"
   },
   "stats": {},
-  "updated_at": "2026-09-18T21:33:25.193298+09:00",
-  "version": "V8.12.3"
+  "updated_at": "2026-09-18T21:47:32.955369+09:00",
+  "version": "V8.12.4"
 }
