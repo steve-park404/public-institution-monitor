@@ -1,4 +1,4 @@
-VERSION = "V8.12"
+VERSION = "V8.12.1"
 import os, re, json, time, html, warnings
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -25,14 +25,19 @@ HTTP_RETRIES = int(os.getenv("HTTP_RETRIES", "2"))
 TELEGRAM_MAX_SEND = int(os.getenv("TELEGRAM_MAX_SEND", "20"))
 MAX_PENDING = int(os.getenv("MAX_PENDING", "10000"))
 
-UA = "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.11.1)"
+UA = "Mozilla/5.0 (compatible; PublicInstitutionMonitor/8.12.1)"
 
 NOISE = ["script","style","noscript","svg","header","footer","nav","aside","form","iframe","canvas","template"]
-BOARD_WORDS = ["공지사항","공지","알림마당","알림","소식","새소식","기관소식","게시판","뉴스","보도자료","공고"]
+FIRST_PRIORITY_BOARD_WORDS = [
+    "공지사항","공지","새소식","알림마당","알림","이벤트",
+    "설문","설문조사","국민참여","시민참여","참여마당","소통"
+]
+BOARD_WORDS = FIRST_PRIORITY_BOARD_WORDS + ["소식","기관소식","게시판","뉴스","보도자료","공고"]
 URL_HINTS = ["notice","noti","board","bbs","news","announcement","plaza","inform"]
-BAD = ["채용","입찰","계약","로그인","회원","사이트맵","개인정보","이용약관"]
-PARTICIPATION_BOARD_WORDS = ["국민참여","시민참여","참여마당","고객참여","소통","설문","이벤트","공모전","동반성장","사회공헌"]
-NOTICE_STRONG_WORDS = ["공지사항","새소식","알림마당","기관소식","보도자료","공고"]
+HARD_EXCLUDE_BOARD_WORDS = ["채용","입찰","계약","자료실","교육","공모전","동반성장","사회공헌","구매","구매계약"]
+BAD = HARD_EXCLUDE_BOARD_WORDS + ["로그인","회원","사이트맵","개인정보","이용약관"]
+PARTICIPATION_BOARD_WORDS = ["국민참여","시민참여","참여마당","고객참여","소통","설문","이벤트"]
+NOTICE_STRONG_WORDS = FIRST_PRIORITY_BOARD_WORDS
 PARTICIPATION_CONTEXT = ["설문","의견수렴","의견조사","만족도","조사","응답","설문지","참여단","시민의견","국민의견"]
 KST = ZoneInfo("Asia/Seoul")
 
@@ -105,13 +110,23 @@ def detail_url(u):
 def board_score(u, t):
     s = 0
     x, tt = u.lower(), t.lower()
-    s += sum(7 for w in BOARD_WORDS if w.lower() in tt)
+
+    # 1순위: 사용자가 지정한 12개 게시판 키워드
+    for w in FIRST_PRIORITY_BOARD_WORDS:
+        if w.lower() in tt:
+            s += 18
+
+    # 2순위: 일반 공지/소식 게시판
+    for w in ["소식","기관소식","게시판","뉴스","보도자료","공고"]:
+        if w.lower() in tt:
+            s += 7
+
     s += sum(3 for h in URL_HINTS if h in x)
-    s -= sum(5 for b in BAD if b.lower() in tt)
+    s -= sum(10 for b in HARD_EXCLUDE_BOARD_WORDS if b.lower() in tt)
+
     if detail_signal(u):
         s -= 4
     return s
-
 
 
 DATE_PATTERNS = [
@@ -181,18 +196,23 @@ def notice_board_score(url, page_text="", page_title=""):
     u = url.lower()
     txt = norm(f"{page_title} {page_text}").lower()
     score = 0
-    for w in NOTICE_STRONG_WORDS:
+
+    for w in FIRST_PRIORITY_BOARD_WORDS:
         if w.lower() in txt:
-            score += 8
+            score += 12
+
+    for w in ["소식","기관소식","게시판","뉴스","보도자료","공고"]:
+        if w.lower() in txt:
+            score += 5
+
     for h in URL_HINTS:
         if h in u:
             score += 2
-    for w in PARTICIPATION_BOARD_WORDS:
-        if w.lower() in txt:
-            score -= 8
-    for b in BAD:
+
+    for b in HARD_EXCLUDE_BOARD_WORDS:
         if b.lower() in txt:
-            score -= 5
+            score -= 12
+
     return score
 
 def board_identity_text(soup):
@@ -210,11 +230,11 @@ def board_identity_text(soup):
 
 def looks_like_wrong_board(url, soup):
     identity = board_identity_text(soup)
-    score = notice_board_score(url, identity, title_of(soup) if soup else "")
     low = identity.lower()
-    explicit_bad = any(w.lower() in low for w in PARTICIPATION_BOARD_WORDS)
-    strong_notice = any(w.lower() in low for w in NOTICE_STRONG_WORDS)
-    return explicit_bad and not strong_notice and score < 5
+
+    # 이벤트/설문/국민참여/시민참여/참여마당/소통은 1순위 후보이므로 허용.
+    # 명확히 무관한 게시판만 차단.
+    return any(w.lower() in low for w in HARD_EXCLUDE_BOARD_WORDS)
 
 def recent_detail_urls(list_url, soup):
     items = extract_post_candidates(list_url, soup)
@@ -311,33 +331,39 @@ V8111_MAX_CANDIDATES = int(os.getenv("V8111_MAX_CANDIDATES", "25"))
 V8111_MIN_SCORE = int(os.getenv("V8111_MIN_SCORE", "4"))
 V8111_DIAG_FILE = "board_discovery_log.json"
 
-V8111_BOARD_TEXT = [
-    "공지사항", "공지", "알림마당", "알림", "소식", "새소식", "기관소식",
-    "게시판", "뉴스", "보도자료", "자료실", "고시", "공고", "참여", "소통",
-    "국민참여", "시민참여", "고객참여"
+V8111_BOARD_TEXT = FIRST_PRIORITY_BOARD_WORDS + [
+    "소식","기관소식","게시판","뉴스","보도자료","자료실","고시","공고"
 ]
 V8111_BOARD_URL = [
-    "notice", "noti", "board", "bbs", "news", "announcement",
-    "plaza", "article", "list"
+    "notice","noti","board","bbs","news","announcement",
+    "plaza","article","list"
 ]
-V8111_BAD_TEXT = ["채용", "입찰", "계약", "로그인", "회원", "사이트맵", "개인정보", "이용약관"]
+V8111_BAD_TEXT = HARD_EXCLUDE_BOARD_WORDS + [
+    "로그인","회원","사이트맵","개인정보","이용약관"
+]
 
 
 def v8111_score(url, text):
     u, t = url.lower(), norm(text).lower()
     score = 0
-    for w in V8111_BOARD_TEXT:
+
+    for w in FIRST_PRIORITY_BOARD_WORDS:
         if w.lower() in t:
-            score += 7 if w in ("공지사항", "새소식", "알림마당", "게시판") else 3
+            score += 18
+
+    for w in ["소식","기관소식","게시판","뉴스","보도자료","공고"]:
+        if w.lower() in t:
+            score += 6
+
     for h in V8111_BOARD_URL:
         if h in u:
             score += 2
-    for w in PARTICIPATION_BOARD_WORDS:
-        if w.lower() in t:
-            score -= 7
-    for b in V8111_BAD_TEXT:
+
+    # 참여형 게시판은 감점하지 않는다.
+    for b in HARD_EXCLUDE_BOARD_WORDS:
         if b.lower() in t:
-            score -= 5
+            score -= 12
+
     if detail_signal(url):
         score -= 4
     return score
