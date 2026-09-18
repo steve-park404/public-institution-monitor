@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Public Institution Monitor V8.12.4
+Public Institution Monitor V8.12.2
 
 Architecture:
 355기관 → 공식 홈페이지 → 공지/새소식/알림/참여 관련 게시판 탐색
@@ -15,11 +15,7 @@ Title exclusion:
 - 공모전
 
 V8.12.2 changes:
-1. 실제 게시물 상세 URL 검증 강화
-2. 게시물 제목 추출 우선순위 강화 및 메뉴 제목 오인 방지
-3. 목록 URL(/events 등) 및 정보공개/콘텐츠 페이지 오탐 차단
-4. 오류 유형 세분화 및 진단 로그 강화
-5. 최근 30일 날짜 게이트를 최종 상세페이지에서 강제
+1. 최근 30일 날짜 게이트를 최종 상세페이지에서 강제
 2. 1순위 게시판 키워드 12개를 우선 탐색
 3. 참여 게시판을 무조건 배제하지 않고 점수로 처리
 4. 채용/입찰/계약/자료실/교육/공모전/동반성장/사회공헌/구매 등은 강제 배제
@@ -30,7 +26,7 @@ V8.12.2 changes:
 9. pending queue 유지 및 하루 Telegram 최대 20건
 """
 
-VERSION = "V8.12.4"
+VERSION = "V8.12.3"
 
 import os
 import re
@@ -130,8 +126,7 @@ GENERIC_PAGE_TITLES = {
 }
 
 GENERIC_URL_HINTS = [
-    "sitemap", "privacy", "terms", "login", "contents.do", "programproposal",
-    "openinfo_pre", "preopeninfo", "openinfo", "policy", "introduction"
+    "sitemap", "privacy", "terms", "login", "contents.do", "programproposal"
 ]
 
 DATE_SELECTORS = [
@@ -360,115 +355,61 @@ def extract_title(soup):
     if not soup:
         return ""
 
-    # 실제 게시물 제목은 게시물 영역을 가장 우선한다.
-    # 상단 메뉴(h1), breadcrumb, 페이지 공통 제목은 후보에서 제외한다.
+    # 실제 게시물 제목 영역을 우선한다. 메뉴/브레드크럼의 h1을 잘못
+    # 가져오는 것을 막기 위해 일반적인 UI 영역은 제외한다.
     selectors = [
         ".view-title", ".board-title", ".article-title", ".bbs-title",
         ".board_view .subject", ".boardView .subject", ".view .subject",
         ".view_subject", ".viewSubject", ".subject",
-        "article h1", "article h2", "article h3",
-        "main h1", "main h2",
+        "article h1", "article h2", "main h1", "main h2",
         "[class*='view'][class*='title']",
         "[class*='board'][class*='title']",
-        "[class*='article'][class*='title']",
-        "[class*='subject']",
+        "[class*='article'][class*='title']"
     ]
 
-    candidates = []
-    generic = {norm(x) for x in GENERIC_PAGE_TITLES}
-
-    def add(tag, priority):
-        if not tag:
-            return
-        t = text_of(tag)
-        if not (2 <= len(t) <= 300):
-            return
-        if t in generic:
-            return
-        low = t.lower()
-        if any(x in low for x in ["skip navigation", "바로가기", "breadcrumb"]):
-            return
-        # 메뉴/네비게이션 영역은 제목 후보에서 제외
-        parent = tag.parent
-        for _ in range(4):
-            if not parent:
-                break
-            role = str(parent.get("role", "")).lower()
-            ident = (str(parent.get("id", "")) + " " + " ".join(parent.get("class", []) or [])).lower()
-            if role in ("navigation", "banner") or re.search(r"(gnb|lnb|nav|breadcrumb|menu|snb)", ident):
-                return
-            parent = parent.parent
-        candidates.append((priority, t))
-
+    vals = []
     for sel in selectors:
         try:
-            tags = soup.select(sel)[:20]
+            tags = soup.select(sel)[:10]
         except Exception:
             tags = []
         for tag in tags:
-            add(tag, 100 if any(x in sel for x in ["view-title", "board-title", "article-title", "bbs-title", "subject"]) else 90)
+            t = text_of(tag)
+            if 2 <= len(t) <= 300 and t not in GENERIC_PAGE_TITLES:
+                vals.append(t)
 
-    # 게시물 영역 내부의 제목 후보를 추가
-    for container in soup.select("article, main, [class*='view'], [class*='board-view'], [class*='bbs-view']")[:20]:
-        for tag in container.find_all(["h1", "h2", "h3"], limit=10):
-            add(tag, 85)
+    if vals:
+        # 게시물 제목은 지나치게 짧은 메뉴명보다 적당한 길이의 후보를 우선.
+        vals.sort(key=lambda x: (len(x) < 4, len(x) > 150, len(x)))
+        return vals[0]
 
-    if candidates:
-        # 우선순위 → 길이(너무 짧은 메뉴명보다 실제 제목을 우선)
-        candidates.sort(key=lambda x: (-x[0], -(len(x[1]) if len(x[1]) <= 150 else 150)))
-        return candidates[0][1]
+    # h1/h2 전체 후보에서 generic 제목을 제외
+    for tag in soup.find_all(["h1", "h2", "h3"])[:30]:
+        t = text_of(tag)
+        if 4 <= len(t) <= 300 and t not in GENERIC_PAGE_TITLES:
+            return t
 
-    # og:title은 보조 수단. 사이트명 접미사가 붙은 경우 앞부분을 우선 사용.
+    # og:title은 보조 수단.
     og = soup.select_one("meta[property='og:title']")
     if og and og.get("content"):
         t = norm(og.get("content"))
-        if t and t not in generic:
-            for sep in [" | ", " - ", " :: ", " > "]:
-                if sep in t:
-                    left = norm(t.split(sep)[0])
-                    if left and left not in generic:
-                        t = left
-                        break
-            return t[:300]
-
-    # title 태그는 마지막 수단
-    if soup.title:
-        t = text_of(soup.title)
-        if t and t not in generic:
+        if t and t not in GENERIC_PAGE_TITLES:
             return t[:300]
 
     return ""
 
 def is_probable_content_page(url, soup, title=""):
-    u = lower_url(url).rstrip("/")
+    u = lower_url(url)
     t = norm(title)
-
+    # 명백한 콘텐츠/정책/사이트맵/개인정보 등은 게시물로 취급하지 않는다.
     if any(h in u for h in GENERIC_URL_HINTS):
         return True
     if t in GENERIC_PAGE_TITLES:
         return True
-
-    # 게시판 목록의 대표 경로는 상세 게시물로 오인하지 않는다.
-    # 단, query에 명확한 view/detail 식별자가 있으면 허용한다.
-    try:
-        p = urlparse(u)
-        last = (p.path.rstrip("/").split("/")[-1] or "").lower()
-        q = p.query.lower()
-        list_segments = {
-            "events", "event", "notice", "notices", "list", "board", "boards",
-            "bbs", "news", "announcement", "announcements", "article", "articles"
-        }
-        detail_query = any(x in q for x in ["idx=", "seq=", "no=", "ntt=", "article_seq=", "list_no=", "mode=view", "view=", "id="])
-        if last in list_segments and not detail_query:
-            return True
-    except Exception:
-        pass
-
     if soup:
         pt = text_of(soup.title)
         if pt in GENERIC_PAGE_TITLES:
             return True
-
     return False
 
 def has_post_structure(soup, title=""):
@@ -1075,9 +1016,6 @@ def process(target, state):
         "posts_checked": 0,
         "matches": [],
         "error": "",
-        "error_type": "",
-        "detail_errors": 0,
-        "detail_error_samples": [],
         "diag": {},
     }
 
@@ -1111,12 +1049,7 @@ def process(target, state):
                 return result
         except Exception as e:
             result["status"] = "DISCOVERY_ERROR"
-            result["error_type"] = f"DISCOVERY_{type(e).__name__}"
             result["error"] = str(e)[:500]
-            result["diag"] = result.get("diag") or {}
-            result["diag"]["status"] = "DISCOVERY_ERROR"
-            result["diag"]["error_type"] = result["error_type"]
-            result["diag"]["error"] = str(e)[:500]
             return result
 
     # 3. 상세페이지 매칭
@@ -1138,19 +1071,8 @@ def process(target, state):
             if m:
                 m["institution"] = name
                 matches.append(m)
-        except Exception as e:
-            result["detail_errors"] += 1
-            if len(result["detail_error_samples"]) < 5:
-                result["detail_error_samples"].append({
-                    "url": u,
-                    "error_type": type(e).__name__,
-                    "error": str(e)[:300],
-                })
+        except Exception:
             continue
-
-    if result["detail_errors"] and not result.get("error"):
-        result["error_type"] = "DETAIL_ERROR"
-        result["error"] = f"상세페이지 처리 오류 {result['detail_errors']}건"
 
     result["matches"] = matches
     return result
@@ -1326,12 +1248,6 @@ def main():
         if st:
             diag_counts[st] = diag_counts.get(st, 0) + 1
 
-    error_type_counts = {}
-    for r in results:
-        et = r.get("error_type") or ""
-        if et:
-            error_type_counts[et] = error_type_counts.get(et, 0) + 1
-
     diagnostics = {
         "version": VERSION,
         "updated_at": datetime.now(KST).isoformat(),
@@ -1350,7 +1266,6 @@ def main():
         "recent_days": RECENT_DAYS,
         "telegram_max_send": TELEGRAM_MAX_SEND,
         "board_discovery_status": diag_counts,
-        "error_type_counts": error_type_counts,
         "board_details": [
             {
                 "기관명": r.get("기관명"),
@@ -1362,9 +1277,6 @@ def main():
                 "fetched_count": (r.get("diag") or {}).get("fetched_count"),
                 "verified_count": (r.get("diag") or {}).get("verified_count"),
                 "selected_score": (r.get("diag") or {}).get("selected_score"),
-                "error_type": r.get("error_type", ""),
-                "error": r.get("error", "")[:300],
-                "detail_errors": r.get("detail_errors", 0),
             }
             for r in results
         ],
