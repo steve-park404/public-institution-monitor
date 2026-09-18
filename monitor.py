@@ -30,7 +30,7 @@ V8.12.6 changes:
 13. 일반 메뉴명이 제목으로 추출되어도 게시물 구조가 명확하면 본문 검사를 계속
 """
 
-VERSION = "V8.12.6"
+VERSION = "V8.12.7"
 
 import os
 import re
@@ -59,15 +59,15 @@ MAX_CONCURRENCY = 20
 TIMEOUT_SECONDS = 15
 HTTP_RETRIES = 2
 
-RECENT_POSTS = 15
+RECENT_POSTS = 20
 RECENT_DAYS = 30
 
 MAX_TOTAL_SECONDS = 1200
 TELEGRAM_MAX_SEND = 20
 MAX_PENDING = 10000
 
-BOARD_DISCOVERY_MAX_LINKS = 60
-BOARD_DISCOVERY_MAX_FETCH = 25
+BOARD_DISCOVERY_MAX_LINKS = 100
+BOARD_DISCOVERY_MAX_FETCH = 35
 BOARD_DISCOVERY_DEPTH = 1
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
@@ -563,25 +563,22 @@ def notice_board_score(u, title):
 # List-page post candidate extraction
 # -----------------------------
 def looks_like_detail_link(u, title):
+    """게시물 후보 링크인지 넓게 잡는다. 최종 진위 판정은 상세페이지에서 한다."""
     s = f"{u} {title}".lower()
 
-    if any(x.lower() in s for x in [
-        "login", "logout", "sitemap", "privacy", "terms"
-    ]):
+    if any(x in s for x in ["login", "logout", "sitemap", "privacy", "terms"]):
         return False
 
-    if any(x.lower() in s for x in HARD_EXCLUDE_BOARD_WORDS):
-        return False
-
-    # list/view/read/detail/article 계열이면 우선 허용
+    # 게시물 링크 자체에 채용/입찰 등이 포함됐다는 이유만으로
+    # 공지게시판의 정상 게시물을 버리지 않는다. 게시판 탐색 단계의
+    # HARD_EXCLUDE와 게시물 후보 단계는 분리한다.
     if any(x in lower_url(u) for x in [
         "view", "read", "detail", "article", "ntt", "bbs",
-        "board", "idx=", "seq=", "no=", "mode=view"
+        "board", "idx=", "seq=", "no=", "mode=view", "view.do", "read.do"
     ]):
         return True
 
-    # 링크 텍스트가 긴 경우 일반 게시물 제목일 가능성
-    return 5 <= len(norm(title)) <= 300
+    return 2 <= len(norm(title)) <= 300
 
 def extract_post_candidates(base_url, soup):
     """
@@ -661,17 +658,15 @@ def recent_detail_urls(base_url, soup):
         return []
 
     dated = [x for x in candidates if x.get("date")]
-    undated = [x for x in candidates if not x.get("date")]
-
-    # 날짜가 하나라도 있으면 최근 날짜 기준으로 정렬.
-    # 목록 페이지가 오래된 글을 섞어도 최근 30일 밖의 글은 여기서 제거.
     if dated:
         dated.sort(key=lambda x: x["date"], reverse=True)
         recent = [x for x in dated if is_recent_date(x["date"])]
-        return recent[:RECENT_POSTS]
+        # 목록 날짜가 비정상적으로 파싱된 경우에도 상세페이지에서 재검증할 수 있도록
+        # 일부 후보를 보존한다. 최근 날짜 후보가 있으면 그것을 우선한다.
+        if recent:
+            return recent[:RECENT_POSTS]
+        return dated[:RECENT_POSTS]
 
-    # 목록 페이지에서 날짜를 못 찾으면 상세페이지에서 최종 검증.
-    # 너무 많은 링크를 가져가지 않도록 제한.
     return candidates[:RECENT_POSTS]
 
 def inspect_board(board_url):
@@ -695,18 +690,18 @@ def inspect_board(board_url):
 
     candidates = recent_detail_urls(r.url, soup)
     recent = []
-
     for x in candidates:
         if x.get("date") and is_recent_date(x["date"]):
             recent.append(x)
         elif not x.get("date"):
             recent.append(x)
 
-    # 최종 상세페이지 날짜는 match_post에서 다시 검증.
-    recent_titles = " ".join(x.get("title", "") for x in recent[:10])
+    # 날짜가 목록에서 오래되게 잡혀도 상세페이지에서 최종 검증한다.
+    # 따라서 후보가 있으면 게시판 확보 단계에서는 VERIFIED로 본다.
+    recent_titles = " ".join(x.get("title", "") for x in candidates[:10])
 
-    return r.url, recent, {
-        "status": "VERIFIED" if recent else "NO_RECENT_CANDIDATE",
+    return r.url, candidates[:RECENT_POSTS], {
+        "status": "VERIFIED" if candidates else "NO_RECENT_CANDIDATE",
         "url": r.url,
         "candidate_posts": len(candidates),
         "recent_posts": len(recent),
@@ -715,20 +710,11 @@ def inspect_board(board_url):
     }
 
 def discover_board(home):
-    """
-    1차 + 2차 게시판 탐색.
-    참여 게시판을 완전히 배제하지 않고 점수로 판단한다.
-    """
     diag = {
-        "home": home,
-        "status": "START",
-        "candidate_count": 0,
-        "fetched_count": 0,
-        "verified_count": 0,
-        "selected": "",
-        "selected_score": None,
-        "selected_status": "",
-        "candidates": [],
+        "home": home, "status": "START", "candidate_count": 0,
+        "fetched_count": 0, "verified_count": 0, "selected": "",
+        "selected_score": None, "selected_status": "", "candidates": [],
+        "candidate_errors": 0,
     }
 
     r = get(home)
@@ -738,13 +724,7 @@ def discover_board(home):
 
     soup = BeautifulSoup(r.text, "html.parser")
     links = extract_links(r.url, soup)
-
-    scored = []
-    for u, t in links:
-        sc = board_score(u, t)
-        scored.append((sc, u, t))
-
-    scored.sort(key=lambda x: x[0], reverse=True)
+    scored = sorted([(board_score(u, t), u, t) for u, t in links], key=lambda x: x[0], reverse=True)
     diag["candidate_count"] = len(scored)
 
     if not scored:
@@ -752,58 +732,46 @@ def discover_board(home):
         return None, [], "NO_CANDIDATE", diag
 
     best = None
-
     for score, u, t in scored[:BOARD_DISCOVERY_MAX_FETCH]:
-        if score < -5:
+        if score < -8:
             continue
-
         if looks_like_wrong_board(u, None):
             continue
-
         diag["fetched_count"] += 1
+        try:
+            bu, details, info = inspect_board(u)
+        except Exception as e:
+            diag["candidate_errors"] += 1
+            diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","error_type":classify_exception(e) if 'classify_exception' in globals() else type(e).__name__})
+            continue
 
-        bu, details, info = inspect_board(u)
         diag["candidates"].append({
-            "score": score,
-            "url": u,
-            "title": t[:120],
+            "score": score, "url": u, "title": t[:120],
             "status": info.get("status"),
             "recent_posts": info.get("recent_posts", 0),
             "candidate_posts": info.get("candidate_posts", 0),
         })
-
         if info.get("status") != "VERIFIED":
             continue
 
         diag["verified_count"] += 1
-
         combined = score + info.get("score_hint", 0)
-
-        # 최근 게시물 제목까지 보고 보정
         rt = info.get("recent_titles", "")
         for kw in KEYWORDS:
             if kw in rt:
                 combined += 2
+        # 실제 후보 수가 있는 게시판을 약간 우선
+        combined += min(info.get("candidate_posts", 0), 10)
 
         if best is None or combined > best["score"]:
-            best = {
-                "score": combined,
-                "url": bu,
-                "details": details,
-                "title": t,
-            }
+            best = {"score":combined,"url":bu,"details":details,"title":t}
 
     if best:
         diag["status"] = "VERIFIED"
         diag["selected"] = best["url"]
         diag["selected_score"] = best["score"]
         diag["selected_status"] = "VERIFIED"
-        return (
-            best["url"],
-            [x["url"] for x in best["details"][:RECENT_POSTS]],
-            "DISCOVERED",
-            diag,
-        )
+        return best["url"], best["details"][:RECENT_POSTS], "DISCOVERED", diag
 
     diag["status"] = "CANDIDATE_NOT_VERIFIED"
     return None, [], "CANDIDATE_NOT_VERIFIED", diag
@@ -856,72 +824,59 @@ def classify_exception(exc):
 # -----------------------------
 # Detail matching
 # -----------------------------
-def match_post(u):
+def match_post_detailed(u):
     r = get(u)
     if not r:
-        return None
+        return None, "DETAIL_FETCH_ERROR", "FETCH_ERROR"
 
     soup = BeautifulSoup(r.text, "html.parser")
+    if is_list_only_url(r.url):
+        return None, "LIST_PAGE", ""
+
+    if is_probable_content_page(r.url, soup, ""):
+        return None, "GENERIC_PAGE", ""
 
     dt = extract_detail_date(soup)
-
-    # 최근 30일 날짜를 확인할 수 없으면 안전하게 알림 제외.
     if not dt or not is_recent_date(dt):
-        return None
-
-    if is_list_only_url(r.url):
-        return None
+        return None, "OLD_OR_NO_DATE", ""
 
     title = extract_title(soup)
-
-    generic_title = title in GENERIC_PAGE_TITLES
-    content_page = is_probable_content_page(r.url, soup, title)
-
-    # 메뉴명이 제목으로 추출된 경우에도 상세 URL + 게시물 구조가 명확하면
-    # 제목 추출 실패로만 처리하고 즉시 폐기하지 않는다.
     if not title:
-        return None
+        return None, "NO_TITLE", ""
 
-    if content_page and not generic_title:
-        return None
-
-    if not has_post_structure(soup, title):
-        return None
-
-    if generic_title:
-        # 일반 메뉴명이 제목으로 남은 경우에는 제목 매칭은 금지하고
-        # 본문 매칭만 허용한다.
-        title = ""
+    # 명백한 사이트 공통 페이지는 게시물로 보지 않는다.
+    if title in GENERIC_PAGE_TITLES:
+        return None, "GENERIC_TITLE", ""
 
     if any(x in title for x in EXCLUDE_TITLE):
-        return None
+        return None, "CONTEST_TITLE", ""
 
-    # 제목은 키워드가 직접 들어가면 즉시 매치.
+    if not has_post_structure(soup, title):
+        return None, "NOT_POST_STRUCTURE", ""
+
     for kw in KEYWORDS:
         if kw in title:
             return {
-                "url": r.url,
-                "title": title[:300],
+                "url": r.url, "title": title[:300],
                 "date": dt.strftime("%Y-%m-%d"),
-                "keyword": kw,
-                "match_type": "TITLE",
-            }
+                "keyword": kw, "match_type": "TITLE",
+            }, "TITLE_MATCH", kw
 
     body = visible_main_text(soup)
-    if not body:
-        return None
+    if body:
+        for kw in KEYWORDS:
+            if meaningful_body_match(body, kw):
+                return {
+                    "url": r.url, "title": title[:300],
+                    "date": dt.strftime("%Y-%m-%d"),
+                    "keyword": kw, "match_type": "BODY",
+                }, "BODY_MATCH", kw
 
-    for kw in KEYWORDS:
-        if meaningful_body_match(body, kw):
-            return {
-                "url": r.url,
-                "title": title[:300],
-                "date": dt.strftime("%Y-%m-%d"),
-                "keyword": kw,
-                "match_type": "BODY",
-            }
+    return None, "NO_KEYWORD", ""
 
-    return None
+def match_post(u):
+    m, _, _ = match_post_detailed(u)
+    return m
 
 # -----------------------------
 # State / pending
@@ -1072,70 +1027,90 @@ def process(target, state):
     name = target["기관명"]
     home = target["홈페이지URL"]
     seed = target.get("공지게시판URL", "")
-
     result = {
         "기관명": name, "home": home, "board": "", "status": "",
         "posts_checked": 0, "matches": [], "error": "",
-        "error_type": "", "diag": {}
+        "error_type": "", "diag": {},
+        "detail_checked": 0, "recent_posts": 0,
+        "title_matches": 0, "body_matches": 0,
+        "excluded_list_pages": 0, "excluded_generic_pages": 0,
+        "excluded_contest_titles": 0, "detail_errors": 0,
     }
 
     try:
         cached = state.get("boards", {}).get(home, "")
         board = cached or seed
         details = []
+        recoverable_warning = ""
 
         if board:
             try:
                 bu, details, info = inspect_board(board)
             except Exception as e:
-                bu, details, info = None, [], {"status":"BOARD_FETCH_ERROR", "error":str(e)[:500]}
-                result["error_type"] = classify_exception(e)
-                result["error"] = str(e)[:500]
+                # 캐시/시드 검증 실패는 복구 가능한 경고다.
+                recoverable_warning = classify_exception(e)
+                bu, details, info = None, [], {"status":"BOARD_FETCH_ERROR"}
             if info.get("status") == "VERIFIED":
                 board = bu
                 result["board"] = bu
                 result["status"] = "CACHED_OR_SEED"
             else:
-                board = ""; details=[]
+                board = ""
+                details = []
 
         if not board:
             try:
                 bu, details, status, diag = discover_board(home)
                 result["diag"] = diag or {}
-                result["status"] = status
                 if bu and details:
                     board = bu
                     result["board"] = bu
+                    result["status"] = "DISCOVERED"
                 else:
+                    result["status"] = status
                     return result
             except Exception as e:
-                et=classify_exception(e)
-                result.update({"status":"DISCOVERY_ERROR","error_type":et,"error":str(e)[:500]})
-                result["diag"]={"status":"DISCOVERY_ERROR","error_type":et,"error":str(e)[:500]}
+                et = classify_exception(e)
+                result.update({"status":"DISCOVERY_ERROR", "error_type":et, "error":str(e)[:500]})
+                result["diag"] = {"status":"DISCOVERY_ERROR","error_type":et,"error":str(e)[:500]}
                 return result
 
-        unique=[]; seen=set()
-        for u in details:
-            if u and u not in seen:
-                seen.add(u); unique.append(u)
+        unique=[]; seen_urls=set()
+        for item in details:
+            u = item.get("url") if isinstance(item, dict) else item
+            if u and u not in seen_urls:
+                seen_urls.add(u); unique.append(item)
         result["posts_checked"] = len(unique)
+        result["detail_checked"] = len(unique)
 
-        pattern = infer_detail_pattern(board, unique)
+        pattern = infer_detail_pattern(board, [x.get("url") if isinstance(x,dict) else x for x in unique])
         result.setdefault("diag", {})
         if pattern:
+            result["detail_pattern"] = pattern
             result["diag"]["detail_pattern"] = pattern
 
         matches=[]
-        for u in unique:
+        for item in unique:
+            u = item.get("url") if isinstance(item,dict) else item
             try:
-                m=match_post(u)
+                m, reason, kw = match_post_detailed(u)
+                if reason == "LIST_PAGE": result["excluded_list_pages"] += 1
+                elif reason in ("GENERIC_PAGE", "GENERIC_TITLE"): result["excluded_generic_pages"] += 1
+                elif reason == "CONTEST_TITLE": result["excluded_contest_titles"] += 1
+                elif reason == "DETAIL_FETCH_ERROR": result["detail_errors"] += 1
+                elif reason == "OLD_OR_NO_DATE": pass
+                elif reason == "TITLE_MATCH": result["title_matches"] += 1
+                elif reason == "BODY_MATCH": result["body_matches"] += 1
                 if m:
-                    m["institution"]=name
+                    m["institution"] = name
                     matches.append(m)
-            except Exception:
-                # 개별 상세페이지 오류는 기관 전체 오류로 승격하지 않는다.
-                continue
-        result["matches"]=matches
+            except Exception as e:
+                result["detail_errors"] += 1
+        result["matches"] = matches
+        result["recent_posts"] = max(0, len(unique) - result["excluded_list_pages"] - result["excluded_generic_pages"] - result["excluded_contest_titles"])
+        # recoverable warning은 fatal error_type으로 올리지 않는다.
+        if recoverable_warning:
+            result.setdefault("diag", {})["recoverable_board_warning"] = recoverable_warning
         return result
 
     except Exception as e:
@@ -1216,6 +1191,12 @@ def main():
     new_matches = 0
     status_counts = {}
     error_type_counts = {}
+    aggregate = {
+        "board_candidates": 0, "post_candidates": 0, "detail_checked": 0,
+        "recent_posts": 0, "title_matches": 0, "body_matches": 0,
+        "excluded_list_pages": 0, "excluded_generic_pages": 0,
+        "excluded_contest_titles": 0, "detail_errors": 0, "fatal_errors": 0,
+    }
 
     deadline = started + MAX_TOTAL_SECONDS
 
@@ -1247,6 +1228,17 @@ def main():
                     no_board += 1
 
                 posts_checked += result.get("posts_checked", 0)
+                aggregate["detail_checked"] += result.get("detail_checked", 0)
+                aggregate["recent_posts"] += result.get("recent_posts", 0)
+                aggregate["title_matches"] += result.get("title_matches", 0)
+                aggregate["body_matches"] += result.get("body_matches", 0)
+                aggregate["excluded_list_pages"] += result.get("excluded_list_pages", 0)
+                aggregate["excluded_generic_pages"] += result.get("excluded_generic_pages", 0)
+                aggregate["excluded_contest_titles"] += result.get("excluded_contest_titles", 0)
+                aggregate["detail_errors"] += result.get("detail_errors", 0)
+                d = result.get("diag") or {}
+                aggregate["board_candidates"] += d.get("candidate_count", 0) or 0
+                aggregate["post_candidates"] += result.get("posts_checked", 0)
                 et=result.get("error_type", "")
                 if et:
                     error_type_counts[et]=error_type_counts.get(et,0)+1
@@ -1345,6 +1337,7 @@ def main():
         "board_discovery_status": diag_counts,
         "status_counts": status_counts,
         "error_type_counts": error_type_counts,
+        "pipeline_counts": aggregate,
         "processed_total": len(results),
         "unprocessed_total": max(0, len(targets) - len(results)),
         "board_details": [
@@ -1353,6 +1346,14 @@ def main():
                 "status": r.get("status"),
                 "board": r.get("board"),
                 "posts_checked": r.get("posts_checked"),
+                "detail_checked": r.get("detail_checked"),
+                "recent_posts": r.get("recent_posts"),
+                "title_matches": r.get("title_matches"),
+                "body_matches": r.get("body_matches"),
+                "excluded_list_pages": r.get("excluded_list_pages"),
+                "excluded_generic_pages": r.get("excluded_generic_pages"),
+                "excluded_contest_titles": r.get("excluded_contest_titles"),
+                "detail_errors": r.get("detail_errors"),
                 "diag_status": (r.get("diag") or {}).get("status"),
                 "candidate_count": (r.get("diag") or {}).get("candidate_count"),
                 "fetched_count": (r.get("diag") or {}).get("fetched_count"),
