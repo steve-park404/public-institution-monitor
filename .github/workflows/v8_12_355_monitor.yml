@@ -1,13 +1,13 @@
 name: V8.12.1 355기관 최근30일 공지게시판 + Telegram 대기열
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 0 * * *"
+
 concurrency:
   group: public-institution-monitor
   cancel-in-progress: false
-
-on:
-  schedule:
-    - cron: "10 0 * * *"
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,8 +15,7 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,34 +23,72 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
+      - name: 최신 main 반영
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+
       - name: Python 설정
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
+          cache: "pip"
 
       - name: 패키지 설치
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 lxml openpyxl
+        run: pip install -r requirements.txt
 
       - name: 355기관 모니터링
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          python monitor.py
+          MAX_CONCURRENCY: "20"
+          TIMEOUT_SECONDS: "15"
+          RECENT_POSTS: "15"
+          RECENT_DAYS: "30"
+          MAX_TOTAL_SECONDS: "1200"
+          HTTP_RETRIES: "2"
+          TELEGRAM_MAX_SEND: "20"
+          MAX_PENDING: "10000"
+        run: python monitor.py
 
-      - name: 상태 저장
+      - name: 상태 저장 및 안전한 Push
+        if: always()
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json pending.json monitor_log.json monitor_targets.xlsx board_discovery_log.json
 
-          git add state.json pending.json
+          if git diff --cached --quiet; then
+            echo "변경사항이 없어 커밋하지 않습니다."
+            exit 0
+          fi
 
-          git commit -m "chore: V8.12.1 355 institution state and telegram queue update" || true
+          git commit -m "chore: V8.12.1 355 institution state and telegram queue update"
 
-          # 다른 실행이나 수동 변경으로 원격 main이 앞서 있는 경우 반영
-          git pull --rebase origin main
+          for i in 1 2 3; do
+            echo "Push 시도 $i/3"
+            git fetch origin main
 
-          # 최신 원격 상태 위에 이번 실행 결과를 다시 push
-          git push origin main
+            if git rebase origin/main; then
+              if git push origin HEAD:main; then
+                echo "Push 성공"
+                exit 0
+              fi
+            else
+              echo "Rebase 충돌 발생"
+              for f in state.json pending.json monitor_log.json monitor_targets.xlsx board_discovery_log.json; do
+                if git status --porcelain | grep -q "$f"; then
+                  git checkout --theirs -- "$f" || true
+                  git add "$f" || true
+                fi
+              done
+              GIT_EDITOR=true git -c core.editor=true rebase --continue
+            fi
+            sleep 5
+          done
+
+          echo "3회 Push 실패"
+          exit 1
