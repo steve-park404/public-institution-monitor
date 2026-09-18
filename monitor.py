@@ -26,7 +26,7 @@ V8.12.2 changes:
 9. pending queue 유지 및 하루 Telegram 최대 20건
 """
 
-VERSION = "V8.12.2"
+VERSION = "V8.12.3"
 
 import os
 import re
@@ -105,7 +105,28 @@ NOTICE_STRONG_WORDS = FIRST_PRIORITY_BOARD_WORDS
 
 PARTICIPATION_CONTEXT = [
     "설문", "의견수렴", "의견조사", "만족도", "조사", "응답",
-    "설문지", "참여단", "시민의견", "국민의견", "의견"
+    "설문지", "참여단", "시민의견", "국민의견", "의견",
+    "참여기간", "응답기간", "조사기간", "참여방법", "응답방법",
+    "참여해 주세요", "응답해 주세요", "설문에 참여", "조사에 참여",
+    "의견을 제출", "의견을 남겨", "설문링크", "조사대상"
+]
+
+SURVEY_ACTION_CONTEXT = [
+    "설문", "조사", "응답", "만족도", "의견수렴", "의견조사",
+    "설문지", "참여기간", "응답기간", "조사기간", "참여방법",
+    "응답방법", "참여해 주세요", "응답해 주세요", "설문에 참여",
+    "조사에 참여", "의견을 제출", "의견을 남겨", "설문링크",
+    "조사대상", "응답자", "참여자"
+]
+
+GENERIC_PAGE_TITLES = {
+    "사이트맵", "사이트 맵", "알림마당", "공지사항", "공지", "새소식",
+    "사업소개", "연구", "국민소통", "시민참여", "국민참여", "참여마당",
+    "개인정보처리방침", "개인정보 처리방침", "이용약관", "로그인", "회원가입"
+}
+
+GENERIC_URL_HINTS = [
+    "sitemap", "privacy", "terms", "login", "contents.do", "programproposal"
 ]
 
 DATE_SELECTORS = [
@@ -301,20 +322,26 @@ def meaningful_body_match(body, keyword):
         return False
 
     for idx in idxs:
-        left = max(0, idx - 250)
-        right = min(len(body), idx + 350)
+        left = max(0, idx - 350)
+        right = min(len(body), idx + 500)
         ctx = body[left:right]
 
-        # 국민참여/시민참여는 단어 자체가 기관의 일반 참여 메뉴를
-        # 가리킬 수 있으므로 조사/의견/응답 등 맥락을 요구.
+        # 국민참여/시민참여는 일반 메뉴명이나 기관의 상시 참여창구가
+        # 본문에 섞이는 경우가 많으므로 실제 조사/응답 행동 문맥을 요구.
         if keyword in ("국민참여", "시민참여"):
             if not any(x in ctx for x in PARTICIPATION_CONTEXT):
                 continue
 
-        # 문장/안내 문맥이 있는 경우만 본문 매치로 인정
+        # 설문조사 역시 단어 하나만 존재하는 정책/개인정보/사이트 안내는 제외.
+        # 주변 문맥에서 실제 조사/응답 행위를 나타내는 표현을 요구한다.
+        if keyword == "설문조사":
+            if not any(x in ctx for x in SURVEY_ACTION_CONTEXT):
+                continue
+
         sentence_markers = [
             "안내", "참여", "신청", "설문", "의견", "조사",
-            "응답", "만족도", "기간", "대상", "방법", "모집"
+            "응답", "만족도", "기간", "대상", "방법", "모집",
+            "제출", "온라인", "링크"
         ]
         if sum(1 for x in sentence_markers if x in ctx) >= 1:
             return True
@@ -328,29 +355,81 @@ def extract_title(soup):
     if not soup:
         return ""
 
+    # 실제 게시물 제목 영역을 우선한다. 메뉴/브레드크럼의 h1을 잘못
+    # 가져오는 것을 막기 위해 일반적인 UI 영역은 제외한다.
     selectors = [
-        "h1", "h2", "h3",
-        ".subject", ".title", ".tit", ".board-title",
-        ".bbs-title", ".view-title", ".article-title",
-        "[class*='subject']", "[class*='title']"
+        ".view-title", ".board-title", ".article-title", ".bbs-title",
+        ".board_view .subject", ".boardView .subject", ".view .subject",
+        ".view_subject", ".viewSubject", ".subject",
+        "article h1", "article h2", "main h1", "main h2",
+        "[class*='view'][class*='title']",
+        "[class*='board'][class*='title']",
+        "[class*='article'][class*='title']"
     ]
 
     vals = []
     for sel in selectors:
-        for tag in soup.select(sel)[:5]:
+        try:
+            tags = soup.select(sel)[:10]
+        except Exception:
+            tags = []
+        for tag in tags:
             t = text_of(tag)
-            if 2 <= len(t) <= 300:
+            if 2 <= len(t) <= 300 and t not in GENERIC_PAGE_TITLES:
                 vals.append(t)
 
     if vals:
-        # 가장 짧은 제목 후보를 우선하되 너무 짧은 것은 피함.
-        vals.sort(key=lambda x: (len(x) > 150, len(x)))
+        # 게시물 제목은 지나치게 짧은 메뉴명보다 적당한 길이의 후보를 우선.
+        vals.sort(key=lambda x: (len(x) < 4, len(x) > 150, len(x)))
         return vals[0]
 
-    if soup.title:
-        return text_of(soup.title)[:300]
+    # h1/h2 전체 후보에서 generic 제목을 제외
+    for tag in soup.find_all(["h1", "h2", "h3"])[:30]:
+        t = text_of(tag)
+        if 4 <= len(t) <= 300 and t not in GENERIC_PAGE_TITLES:
+            return t
+
+    # og:title은 보조 수단.
+    og = soup.select_one("meta[property='og:title']")
+    if og and og.get("content"):
+        t = norm(og.get("content"))
+        if t and t not in GENERIC_PAGE_TITLES:
+            return t[:300]
 
     return ""
+
+def is_probable_content_page(url, soup, title=""):
+    u = lower_url(url)
+    t = norm(title)
+    # 명백한 콘텐츠/정책/사이트맵/개인정보 등은 게시물로 취급하지 않는다.
+    if any(h in u for h in GENERIC_URL_HINTS):
+        return True
+    if t in GENERIC_PAGE_TITLES:
+        return True
+    if soup:
+        pt = text_of(soup.title)
+        if pt in GENERIC_PAGE_TITLES:
+            return True
+    return False
+
+def has_post_structure(soup, title=""):
+    if not soup:
+        return False
+    text = visible_main_text(soup)
+    if len(text) < 120:
+        return False
+
+    signals = 0
+    raw = norm(soup.get_text(" ", strip=True))[:15000]
+    if title and title not in GENERIC_PAGE_TITLES:
+        signals += 1
+    if re.search(r"(등록일|작성일|게시일|작성자|조회수|첨부파일|첨부|이전글|다음글)", raw):
+        signals += 1
+    if soup.select(".file, .attach, [class*='attach'], [class*='file']"):
+        signals += 1
+    if soup.select("article, [class*='view'], [class*='board-view'], [class*='bbs-view'], [class*='contents']"):
+        signals += 1
+    return signals >= 2
 
 def extract_detail_date(soup):
     if not soup:
@@ -742,6 +821,12 @@ def match_post(u):
         return None
 
     title = extract_title(soup)
+
+    if not title or is_probable_content_page(r.url, soup, title):
+        return None
+
+    if not has_post_structure(soup, title):
+        return None
 
     if any(x in title for x in EXCLUDE_TITLE):
         return None
