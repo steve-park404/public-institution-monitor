@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Public Institution Monitor V8.12.6
+Public Institution Monitor V8.12.9
 
 Architecture:
 355기관 → 공식 홈페이지 → 공지/새소식/알림/참여 관련 게시판 탐색
@@ -30,7 +30,7 @@ V8.12.6 changes:
 13. 일반 메뉴명이 제목으로 추출되어도 게시물 구조가 명확하면 본문 검사를 계속
 """
 
-VERSION = "V8.12.8"
+VERSION = "V8.12.9"
 
 import os
 import re
@@ -130,7 +130,8 @@ GENERIC_PAGE_TITLES = {
 }
 
 GENERIC_URL_HINTS = [
-    "sitemap", "privacy", "terms", "login", "contents.do", "programproposal"
+    "sitemap", "privacy", "terms", "login", "contents.do", "programproposal",
+    "consulting", "issueData", "main", "homepage"
 ]
 
 DATE_SELECTORS = [
@@ -291,12 +292,11 @@ def visible_main_text(soup):
     if not soup:
         return ""
 
-    # 페이지 공통 영역 제거. 특히 footer의 다음글/관련링크/개인정보 문구가
-    # 현재 게시물 본문으로 오인되는 것을 방지한다.
     for tag in soup.find_all(NOISE):
         tag.decompose()
 
-    # 게시물 본문에 자주 쓰이는 전용 컨테이너를 최우선으로 사용한다.
+    # 현재 게시물 본문으로 쓰이는 전용 영역을 우선한다. 다만 전용 영역 안에도
+    # 이전글/다음글/목록/관련글이 섞이는 사이트가 있어 해당 블록을 제거한다.
     selectors = [
         ".view-content", ".view_cont", ".view-cont", ".board-content",
         ".board_cont", ".board-view-content", ".bbs-content", ".bbs_cont",
@@ -305,6 +305,19 @@ def visible_main_text(soup):
         "[class*='board'][class*='content']", "[class*='bbs'][class*='content']",
         "[class*='article'][class*='content']"
     ]
+
+    def clean_container(tag):
+        clone = BeautifulSoup(str(tag), "html.parser")
+        for x in clone.find_all(["header", "nav", "footer", "aside", "form", "script", "style"]):
+            x.decompose()
+        for x in clone.find_all(["div", "section", "ul", "ol", "li", "p", "dl"]):
+            tx = norm(x.get_text(" ", strip=True))
+            if tx and len(tx) <= 500 and re.search(
+                r"^(이전글|다음글|목록|공유|인쇄|관련글|관련사이트|첨부파일|만족도)", tx
+            ):
+                x.decompose()
+        return text_of(clone)
+
     candidates = []
     for sel in selectors:
         try:
@@ -312,33 +325,24 @@ def visible_main_text(soup):
         except Exception:
             tags = []
         for tag in tags:
-            t = text_of(tag)
-            if len(t) >= 80:
+            t = clean_container(tag)
+            if 80 <= len(t) <= 30000:
                 candidates.append(t)
 
     if candidates:
-        # 전용 본문은 너무 큰 전체 main보다 우선한다.
-        candidates.sort(key=len, reverse=True)
+        # 지나치게 큰 영역은 페이지 전체가 섞였을 가능성이 있으므로 우선 배제한다.
+        candidates.sort(key=lambda x: (len(x) > 20000, -len(x)))
         return candidates[0]
 
-    # 그 다음 main/article에서 공통 하단 영역을 제거하고 사용한다.
+    candidates = []
     for root_sel in ["article", "main"]:
-        roots = soup.select(root_sel)
-        for root in roots:
-            clone = BeautifulSoup(str(root), "html.parser")
-            for tag in clone.find_all(["header", "nav", "footer", "aside", "form", "script", "style"]):
-                tag.decompose()
-            # 다음글/이전글/목록/공유/인쇄 영역 제거
-            for tag in clone.find_all(["div", "section", "ul", "ol", "p"]):
-                tx = norm(tag.get_text(" ", strip=True))
-                if tx and len(tx) < 300 and re.search(r"^(이전글|다음글|목록|공유|인쇄|관련글|관련사이트)", tx):
-                    tag.decompose()
-            t = text_of(clone)
-            if len(t) >= 100:
+        for root in soup.select(root_sel):
+            t = clean_container(root)
+            if 100 <= len(t) <= 30000:
                 candidates.append(t)
 
     if candidates:
-        candidates.sort(key=len, reverse=True)
+        candidates.sort(key=lambda x: (len(x) > 20000, -len(x)))
         return candidates[0]
 
     body = soup.body or soup
@@ -389,9 +393,14 @@ def extract_title(soup):
 
     def valid(t):
         t = norm(t)
-        return 2 <= len(t) <= 300 and t not in GENERIC_PAGE_TITLES
+        if not (2 <= len(t) <= 300):
+            return False
+        if t in GENERIC_PAGE_TITLES:
+            return False
+        if re.fullmatch(r"(?:KOGAS|KHIS|KLRI|KCA|KODDI|국가생명윤리정책원|한국(?:원자력안전재단|수목원정원관리원|법제연구원))?\s*", t):
+            return False
+        return True
 
-    # 1) 게시물 제목 전용 selector. 넓은 main h1/h2는 사용하지 않는다.
     selectors = [
         ".view-title", ".board-title", ".article-title", ".bbs-title",
         ".board_view .subject", ".boardView .subject", ".view .subject",
@@ -401,90 +410,44 @@ def extract_title(soup):
         "[class*='article'][class*='title']", "[class*='post'][class*='title']",
         "[class*='subject']"
     ]
-    vals = []
+    vals=[]
     for sel in selectors:
-        try:
-            tags = soup.select(sel)[:10]
-        except Exception:
-            tags = []
+        try: tags=soup.select(sel)[:10]
+        except Exception: tags=[]
         for tag in tags:
-            t = text_of(tag)
-            if valid(t):
-                vals.append(t)
+            t=text_of(tag)
+            if valid(t): vals.append(t)
     if vals:
-        # 게시물 제목은 적당한 길이의 구체적 문구를 우선한다.
         vals.sort(key=lambda x: (len(x) < 5, len(x) > 180, -len(x)))
         return vals[0]
 
-    # 2) 날짜/작성자 메타데이터 주변의 heading을 찾는다.
-    meta_tags = []
-    try:
-        meta_tags = soup.select("[class*='date'], [class*='Date'], [class*='regist'], [class*='write'], time")[:80]
-    except Exception:
-        pass
+    # 날짜/작성자 메타데이터 주변 heading. 단, 사이트 공통 heading은 제외.
+    try: meta_tags=soup.select("[class*='date'], [class*='Date'], [class*='regist'], [class*='write'], time")[:80]
+    except Exception: meta_tags=[]
     for meta in meta_tags:
-        parent = meta.parent
+        parent=meta.parent
         for _ in range(3):
-            if not parent:
-                break
-            heads = parent.find_all(["h1", "h2", "h3"], recursive=True)
-            for h in heads:
-                t = text_of(h)
-                if valid(t):
-                    return t
-            parent = parent.parent
+            if not parent: break
+            for h in parent.find_all(["h1","h2","h3"], recursive=True):
+                t=text_of(h)
+                if valid(t): return t
+            parent=parent.parent
 
-    # 3) og:title은 fallback. 기관명/일반 메뉴명은 차단한다.
     for sel in ["meta[property='og:title']", "meta[name='twitter:title']"]:
-        og = soup.select_one(sel)
+        og=soup.select_one(sel)
         if og and og.get("content"):
-            t = norm(og.get("content"))
-            if valid(t):
-                return t[:300]
+            t=norm(og.get("content"))
+            # og:title에 사이트명이 붙은 경우 마지막 구분자 앞부분을 우선 검토
+            parts=[norm(x) for x in re.split(r"\s*[|｜]\s*", t) if norm(x)]
+            for part in parts:
+                if valid(part): return part[:300]
 
-    # 4) title tag는 마지막 fallback. ' | 공지사항' 같은 suffix를 제거하되
-    # 사이트명만 남으면 사용하지 않는다.
     if soup.title:
-        t = norm(soup.title.get_text(" ", strip=True))
-        parts = [norm(x) for x in re.split(r"\s*[|｜]\s*", t) if norm(x)]
+        t=norm(soup.title.get_text(" ", strip=True))
+        parts=[norm(x) for x in re.split(r"\s*[|｜]\s*", t) if norm(x)]
         for part in parts:
-            if valid(part) and not re.search(r"한국보건의료정보원|Korea Health Information Service|국가생명윤리정책원", part, re.I):
-                return part[:300]
-
+            if valid(part): return part[:300]
     return ""
-
-def is_probable_content_page(url, soup, title=""):
-    u = lower_url(url)
-    t = norm(title)
-    # 명백한 콘텐츠/정책/사이트맵/개인정보 등은 게시물로 취급하지 않는다.
-    if any(h in u for h in GENERIC_URL_HINTS):
-        return True
-    if t in GENERIC_PAGE_TITLES:
-        return True
-    if soup:
-        pt = text_of(soup.title)
-        if pt in GENERIC_PAGE_TITLES:
-            return True
-    return False
-
-def has_post_structure(soup, title=""):
-    if not soup:
-        return False
-    text = visible_main_text(soup)
-    if len(text) < 120:
-        return False
-
-    signals = 0
-    raw = norm(soup.get_text(" ", strip=True))[:15000]
-    if title and title not in GENERIC_PAGE_TITLES:
-        signals += 1
-    if re.search(r"(등록일|작성일|게시일|작성자|조회수|첨부파일|첨부|이전글|다음글)", raw):
-        signals += 1
-    if soup.select(".file, .attach, [class*='attach'], [class*='file']"):
-        signals += 1
-    if soup.select("article, [class*='view'], [class*='board-view'], [class*='bbs-view'], [class*='contents']"):
-        signals += 1
-    return signals >= 2
 
 def extract_detail_date(soup):
     if not soup:
@@ -837,17 +800,19 @@ LIST_ONLY_PATHS = {
 
 def is_list_only_url(url):
     try:
-        p = urlparse(url)
-        path = (p.path or "").rstrip("/").lower()
-        q = (p.query or "").lower()
+        p=urlparse(url)
+        path=(p.path or "").rstrip("/").lower()
+        q=(p.query or "").lower()
+        full=(path + "?" + q)
         if path in LIST_ONLY_PATHS and not q:
             return True
-        if re.search(r"(^|&)(page|pageindex|pageno|page_no|mode=list|act=list)=", q):
+        if re.search(r"(^|&)(page|pageindex|pageno|page_no|mode=list|act=list)=[^&]*", q):
             return True
-        # 일반적인 목록 경로는 query가 없어도 목록일 가능성이 높다.
-        if re.search(r"/(notice|notices|news|board|bbs|list|announcement|announcements)$", path):
+        if re.search(r"/(?:notice|notices|news|board|bbs|list|announcement|announcements)(?:/index)?$", path):
             return True
-        if re.search(r"/(notice|notices|news|board|bbs|list)/(list|index)?$", path):
+        if re.search(r"/(?:selectnttlist|selectbbslist|boardlist|selectboardlist|list)\.do$", path):
+            return True
+        if re.search(r"(?:selectnttlist|selectbbslist|boardlist|selectboardlist|mode=list|act=list)", full):
             return True
     except Exception:
         pass
@@ -904,6 +869,13 @@ def match_post_detailed(u):
     if is_probable_content_page(r.url, soup, ""):
         return None, "GENERIC_PAGE", ""
 
+    # 목록/기관 공통 콘텐츠 경로는 URL 자체가 게시물 상세임을 입증하지 못하므로 차단.
+    path = (urlparse(r.url).path or "").lower().rstrip("/")
+    if re.search(r"/(?:issueData|consulting)(?:/|$)", path):
+        return None, "GENERIC_PAGE", ""
+    if path in ("", "/main", "/home", "/homepage"):
+        return None, "GENERIC_PAGE", ""
+
     dt = extract_detail_date(soup)
     if not dt or not is_recent_date(dt):
         return None, "OLD_OR_NO_DATE", ""
@@ -914,6 +886,12 @@ def match_post_detailed(u):
 
     # 명백한 사이트 공통 페이지는 게시물로 보지 않는다.
     if title in GENERIC_PAGE_TITLES:
+        return None, "GENERIC_TITLE", ""
+
+    # 기관명/사이트명만 제목으로 추출된 경우는 실제 게시물 제목으로 인정하지 않는다.
+    title_compact = re.sub(r"[^0-9A-Za-z가-힣]", "", title).lower()
+    site_name = re.sub(r"[^0-9A-Za-z가-힣]", "", (soup.title.get_text(" ", strip=True) if soup.title else "")).lower()
+    if title_compact and site_name and title_compact == site_name:
         return None, "GENERIC_TITLE", ""
 
     if any(x in title for x in EXCLUDE_TITLE):
