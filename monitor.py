@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.2"
+VERSION = "V8.14.3"
 
 import os, re, json, time, html, warnings
 from datetime import datetime, timedelta
@@ -44,6 +44,8 @@ MAX_PENDING = 10000
 
 BOARD_DISCOVERY_MAX_LINKS = 100
 BOARD_DISCOVERY_MAX_FETCH = 35
+BOARD_DISCOVERY_MAX_SECONDARY = 12
+BOARD_CACHE_FILE = "board_cache.json"
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
 KST = ZoneInfo("Asia/Seoul")
@@ -121,10 +123,11 @@ SESSION.headers.update({
 def get(url):
     if not url:
         return None
+    headers_variants=[{}, {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36"}]
     for attempt in range(HTTP_RETRIES + 1):
         try:
-            r = SESSION.get(url, timeout=TIMEOUT_SECONDS,
-                            allow_redirects=True, verify=True)
+            extra=headers_variants[min(attempt, len(headers_variants)-1)]
+            r=SESSION.get(url, timeout=TIMEOUT_SECONDS, allow_redirects=True, verify=True, headers=extra)
             if 200 <= r.status_code < 400:
                 if not r.encoding or r.encoding.lower() == "iso-8859-1":
                     r.encoding = r.apparent_encoding or "utf-8"
@@ -132,7 +135,7 @@ def get(url):
         except Exception:
             pass
         if attempt < HTTP_RETRIES:
-            time.sleep(0.35 * (attempt + 1))
+            time.sleep(0.5 * (attempt + 1))
     return None
 
 def norm(s):
@@ -427,9 +430,40 @@ def inspect_board(board_url):
                    "url":r.url,"candidate_posts":len(c),
                    "recent_titles":" ".join(x.get("title","") for x in c[:10])[:1000]}
 
+def secondary_discovery(home):
+    """1차 링크 탐색 실패 시 sitemap/robots/대표 게시판 경로를 이용한 2차 탐색."""
+    candidates=[]; seen_urls=set()
+    try:
+        base=urlparse(home); root=f"{base.scheme or 'https'}://{base.netloc}"
+    except Exception:
+        return candidates
+    for suffix in ["/sitemap.xml","/robots.txt"]:
+        u=root+suffix; r=get(u)
+        if not r: continue
+        text=r.text or ""
+        for x in re.findall(r'https?://[^\s<>"]+',text)[:200]:
+            x=clean_url(x)
+            if same_domain(root,x) and x not in seen_urls:
+                seen_urls.add(x); candidates.append((board_score(x,""),x,"secondary-sitemap"))
+        if suffix.endswith("robots.txt"):
+            for line in text.splitlines():
+                if line.lower().startswith("sitemap:"):
+                    su=line.split(":",1)[1].strip(); rr=get(su) if su else None
+                    if rr:
+                        for x in re.findall(r'https?://[^\s<>"]+',rr.text or "")[:200]:
+                            x=clean_url(x)
+                            if same_domain(root,x) and x not in seen_urls:
+                                seen_urls.add(x); candidates.append((board_score(x,""),x,"secondary-robots-sitemap"))
+    paths=["/board","/bbs","/notice","/news","/community","/participation","/board/list","/bbs/list","/notice/list","/boardList.do","/bbsList.do","/board/list.do","/bbs/list.do","/contents/board","/site/board"]
+    for path in paths:
+        u=root+path
+        if u not in seen_urls:
+            seen_urls.add(u); candidates.append((board_score(u,path),u,"secondary-common-path"))
+    candidates.sort(reverse=True)
+    return candidates[:BOARD_DISCOVERY_MAX_SECONDARY]
+
 def discover_board(home):
-    diag={"home":home,"status":"START","candidate_count":0,"fetched_count":0,
-          "verified_count":0,"selected":"","selected_score":None,"candidates":[]}
+    diag={"home":home,"status":"START","candidate_count":0,"fetched_count":0,"verified_count":0,"selected":"","selected_score":None,"candidates":[],"secondary_candidate_count":0}
     r=get(home)
     if not r:
         diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
@@ -437,34 +471,39 @@ def discover_board(home):
     links=extract_links(r.url,soup)
     scored=sorted([(board_score(u,t),u,t) for u,t in links],reverse=True)
     diag["candidate_count"]=len(scored)
-    if not scored:
-        diag["status"]="NO_CANDIDATE"; return None,[],"NO_CANDIDATE",diag
-
     best=None
     for score,u,t in scored[:BOARD_DISCOVERY_MAX_FETCH]:
         if score < -8: continue
         diag["fetched_count"]+=1
-        try:
-            bu,details,info=inspect_board(u)
+        try: bu,details,info=inspect_board(u)
         except Exception as e:
-            diag["candidates"].append({"score":score,"url":u,"title":t[:120],
-                                       "status":"INSPECT_ERROR","error_type":type(e).__name__})
-            continue
-        diag["candidates"].append({"score":score,"url":u,"title":t[:120],
-                                   "status":info.get("status"),
-                                   "candidate_posts":info.get("candidate_posts",0)})
+            diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","error_type":type(e).__name__}); continue
+        diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":info.get("status"),"candidate_posts":info.get("candidate_posts",0),"source":"primary"})
         if info.get("status")!="VERIFIED": continue
         diag["verified_count"]+=1
         combined=score+min(info.get("candidate_posts",0),10)
-        rt=info.get("recent_titles","")
-        if any(k in rt for k in KEYWORDS): combined+=2
-        if best is None or combined>best["score"]:
-            best={"score":combined,"url":bu,"details":details}
+        if any(k in info.get("recent_titles","") for k in KEYWORDS): combined+=2
+        if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
+    if best is None:
+        secondary=secondary_discovery(home); diag["secondary_candidate_count"]=len(secondary)
+        for score,u,t in secondary:
+            diag["fetched_count"]+=1
+            try: bu,details,info=inspect_board(u)
+            except Exception as e:
+                diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","source":"secondary","error_type":type(e).__name__}); continue
+            diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":info.get("status"),"candidate_posts":info.get("candidate_posts",0),"source":"secondary"})
+            if info.get("status")!="VERIFIED": continue
+            diag["verified_count"]+=1
+            combined=score+min(info.get("candidate_posts",0),10)
+            if any(k in info.get("recent_titles","") for k in KEYWORDS): combined+=2
+            if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
     if best:
         diag["status"]="VERIFIED"; diag["selected"]=best["url"]; diag["selected_score"]=best["score"]
         return best["url"],best["details"][:RECENT_POSTS],"DISCOVERED",diag
-    diag["status"]="CANDIDATE_NOT_VERIFIED"
-    return None,[],"CANDIDATE_NOT_VERIFIED",diag
+    if not scored and not diag["secondary_candidate_count"]:
+        diag["status"]="NO_CANDIDATE"; return None,[],"NO_CANDIDATE",diag
+    diag["status"]="CANDIDATE_NOT_VERIFIED"; return None,[],"CANDIDATE_NOT_VERIFIED",diag
+
 
 def classify_exception(exc):
     if isinstance(exc,requests.exceptions.Timeout): return "TIMEOUT"
@@ -663,7 +702,19 @@ def load_targets():
             })
     return out
 
-def process(target,state):
+def load_board_cache():
+    data=load_json(BOARD_CACHE_FILE,{})
+    return data if isinstance(data,dict) else {}
+
+def cache_board(board_cache,name,home,board,status="VERIFIED"):
+    if board:
+        board_cache[home]={"기관명":name,"홈페이지URL":home,"게시판URL":board,"status":status,"updated_at":datetime.now(KST).isoformat(),"version":VERSION}
+
+def board_from_cache(board_cache,home):
+    x=board_cache.get(home,{})
+    return x.get("게시판URL","") if isinstance(x,dict) else ""
+
+def process(target,state,board_cache):
     name=target["기관명"]; home=target["홈페이지URL"]; seed=target.get("공지게시판URL","")
     result={"기관명":name,"기관유형":target.get("기관유형",""),"home":home,"board":"","status":"","posts_checked":0,"matches":[],
             "error":"","error_type":"","diag":{},"post_candidates":0,"detail_checked":0,"recent_posts":0,
@@ -671,20 +722,20 @@ def process(target,state):
             "excluded_generic_pages":0,"excluded_contest_titles":0,"detail_errors":0,
             "excluded_not_post_structure":0,"excluded_no_body":0}
     try:
-        board=state.get("boards",{}).get(home,"") or seed
+        board=board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"") or seed
         details=[]
         if board:
             try: bu,details,info=inspect_board(board)
             except Exception: bu,details,info=None,[],{"status":"BOARD_FETCH_ERROR"}
             if info.get("status")=="VERIFIED":
-                board=bu; result["board"]=bu; result["status"]="CACHED_OR_SEED"
+                board=bu; result["board"]=bu; result["status"]="CACHED_OR_SEED"; cache_board(board_cache,name,home,bu,"VERIFIED")
             else: board=""; details=[]
 
         if not board:
             bu,details,status,diag=discover_board(home)
             result["diag"]=diag or {}
             if bu and details:
-                board=bu; result["board"]=bu; result["status"]="DISCOVERED"
+                board=bu; result["board"]=bu; result["status"]="DISCOVERED"; cache_board(board_cache,name,home,bu,"VERIFIED")
             else:
                 result["status"]=status; return result
 
@@ -855,6 +906,7 @@ def main():
 
     # V8.13.1의 seen 기록을 V8.14.1의 영구 발송 이력으로 승계.
     state=migrate_sent_ledger(state)
+    board_cache=load_board_cache()
 
     seen=set(canonical_url(x) for x in state.get("seen",[]) if x)
     sent_urls=state.get("sent_urls",{})
@@ -881,7 +933,7 @@ def main():
 
     deadline=started+MAX_TOTAL_SECONDS
     with ThreadPoolExecutor(max_workers=MAX_CONCURRENCY) as ex:
-        fmap={ex.submit(process,t,state):t for t in targets}
+        fmap={ex.submit(process,t,state,board_cache):t for t in targets}
         for fut in as_completed(fmap):
             if time.time()>=deadline: break
             try:
@@ -895,7 +947,7 @@ def main():
             st=result.get("status") or "UNKNOWN"
             status_counts[st]=status_counts.get(st,0)+1
             if result.get("board"):
-                completed+=1; state.setdefault("boards",{})[result["home"]]=result["board"]
+                completed+=1; state.setdefault("boards",{})[result["home"]]=result["board"]; cache_board(board_cache,result.get("기관명",""),result["home"],result["board"],"VERIFIED")
             else: no_board+=1
 
             posts_checked+=result.get("posts_checked",0)
@@ -990,7 +1042,9 @@ def main():
         "posts_checked":posts_checked,"new_matches":new_matches,
         "pending_before":pending_before_send,"pending_removed_invalid":pending_removed_invalid,
         "telegram_sent":sent,"summary_telegram_sent":summary_sent,
-        "pending_after":len(pending),"sent_url_ledger":len(sent_urls),"migrated_from_previous":migrated_from_previous,"errors":errors,
+        "pending_after":len(pending),"sent_url_ledger":len(sent_urls),
+        "board_cache_total":len(board_cache),
+        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":elapsed>=MAX_TOTAL_SECONDS,
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
