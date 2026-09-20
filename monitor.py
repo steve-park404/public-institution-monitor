@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.13.0"
+VERSION = "V8.14.1"
 
 import os, re, json, time, html, warnings
 from datetime import datetime, timedelta
@@ -518,6 +518,61 @@ def match_post_detailed(u):
                     "keyword":kw,"match_type":"BODY"},"BODY_MATCH",kw
     return None,"NO_KEYWORD",""
 
+def canonical_url(url):
+    """동일 게시물 URL의 표기 차이를 줄여 중복 알림을 방지한다."""
+    try:
+        p = urlparse(clean_url(url))
+        scheme = (p.scheme or "https").lower()
+        host = (p.netloc or "").lower()
+        if host.startswith("www."):
+            host = host[4:]
+        path = (p.path or "/").rstrip("/") or "/"
+        query = p.query or ""
+        return f"{scheme}://{host}{path}" + (f"?{query}" if query else "")
+    except Exception:
+        return clean_url(url)
+
+def alert_key(item):
+    return canonical_url(item.get("url", ""))
+
+def migrate_sent_ledger(state):
+    """
+    V8.13.1 이하에서 이미 Telegram 발송 후 seen에 들어간 URL을
+    V8.14.1의 영구 발송 이력으로 승계한다.
+    """
+    if not isinstance(state, dict):
+        state = {}
+    state.setdefault("seen", [])
+    old = state.get("sent_urls", {})
+    if not isinstance(old, dict):
+        old = {}
+
+    migrated = dict(old)
+    for u in state.get("seen", []):
+        k = canonical_url(u)
+        if k and k not in migrated:
+            migrated[k] = state.get("updated_at", datetime.now(KST).isoformat())
+
+    state["sent_urls"] = migrated
+    return state
+
+def clean_pending_against_ledger(pending):
+    """이미 발송된 URL 및 동일 URL 중복 항목을 pending에서 제거한다."""
+    out = []
+    seen_pending = set()
+    for item in pending if isinstance(pending, list) else []:
+        if not isinstance(item, dict):
+            continue
+        k = alert_key(item)
+        if not k or k in sent_keys or k in seen:
+            continue
+        if k in seen_pending:
+            continue
+        item["url"] = k
+        seen_pending.add(k)
+        out.append(item)
+    return out
+
 def load_json(path,default):
     try:
         if os.path.exists(path):
@@ -540,12 +595,29 @@ def normalize_pending_item(x):
 def pending_key(x): return x.get("url","") if isinstance(x,dict) else ""
 
 def revalidate_pending(pending):
-    valid=[]; removed=0
+    valid=[]
+    removed=0
     for item in pending[:MAX_PENDING]:
         item=normalize_pending_item(item)
-        if not item: removed+=1; continue
+        if not item:
+            removed+=1
+            continue
+
+        key=alert_key(item)
+        if not key:
+            removed+=1
+            continue
+
+        # 이미 Telegram으로 보냈거나 seen에 기록된 URL은 절대 재발송하지 않는다.
+        if key in seen or key in sent_keys:
+            removed+=1
+            continue
+
         r=get(item["url"])
-        if not r: valid.append(item); continue
+        if not r:
+            valid.append(item)
+            continue
+
         m,reason,_=match_post_detailed(item["url"])
         if m:
             m["institution"]=item.get("institution","")
@@ -662,12 +734,31 @@ def telegram_send(item):
 def main():
     started=time.time()
     targets=load_targets()
-    state=load_json(STATE_FILE,{"seen":[],"boards":{},"updated_at":"","version":VERSION})
+    state=load_json(
+        STATE_FILE,
+        {"seen":[],"sent_urls":{},"boards":{},"updated_at":"","version":VERSION}
+    )
+    if not isinstance(state,dict):
+        state={"seen":[],"sent_urls":{},"boards":{},"updated_at":"","version":VERSION}
+
+    # V8.13.1의 seen 기록을 V8.14.1의 영구 발송 이력으로 승계.
+    state=migrate_sent_ledger(state)
+
+    seen=set(canonical_url(x) for x in state.get("seen",[]) if x)
+    sent_urls=state.get("sent_urls",{})
+    sent_keys=set(canonical_url(x) for x in sent_urls.keys() if x)
+
     pending=load_json(PENDING_FILE,[])
-    if not isinstance(pending,list): pending=[]
+    pending=clean_pending_against_ledger(pending)
 
     pending,pending_removed_invalid=revalidate_pending(pending)
-    seen=set(state.get("seen",[]))
+
+    # V8.14.1 최초 전환 여부를 기록한다.
+    # 기존 state가 존재하면 기존 seen/sent 이력을 그대로 승계하고,
+    # 신규 게시물만 기존 로직에 따라 탐지한다.
+    migrated_from_previous = bool(state.get("updated_at")) and not state.get("v8141_migration_done")
+    state["v8141_migration_done"] = True
+
     results=[]; completed=no_board=errors=posts_checked=new_matches=0
     status_counts={}; error_type_counts={}
     aggregate={"board_candidates":0,"post_candidates":0,"detail_checked":0,
@@ -707,13 +798,19 @@ def main():
 
             for m in result.get("matches",[]):
                 u=m.get("url","")
-                if not u or u in seen or any(pending_key(x)==u for x in pending): continue
+                key=alert_key(m)
+                if (not u or not key or key in seen or key in sent_keys
+                    or any(alert_key(x)==key for x in pending)):
+                    continue
+                m["url"]=canonical_url(u)
                 m["added_at"]=datetime.now(KST).isoformat()
-                pending.append(m); new_matches+=1
+                pending.append(m)
+                new_matches+=1
 
     dedup={}
     for item in pending:
-        if pending_key(item): dedup[pending_key(item)]=item
+        k=alert_key(item)
+        if k: dedup[k]=item
     pending=list(dedup.values())
     pending.sort(key=lambda x:x.get("added_at",""))
     if len(pending)>MAX_PENDING: pending=pending[-MAX_PENDING:]
@@ -721,13 +818,29 @@ def main():
     pending_before_send=len(pending); sent=0; remaining=[]
     for item in pending:
         if sent>=TELEGRAM_MAX_SEND:
-            remaining.append(item); continue
+            remaining.append(item)
+            continue
+
+        key=alert_key(item)
+        if not key:
+            continue
+
+        if key in sent_keys or key in seen:
+            # 과거 실행에서 이미 발송된 항목은 재발송하지 않는다.
+            seen.add(key)
+            continue
+
         if telegram_send(item):
-            sent+=1; seen.add(item.get("url",""))
-        else: remaining.append(item)
+            sent+=1
+            seen.add(key)
+            sent_keys.add(key)
+            sent_urls[key]=datetime.now(KST).isoformat()
+        else:
+            remaining.append(item)
     pending=remaining
 
-    state["seen"]=list(seen)[-50000:]
+    state["seen"]=list(seen)[-100000:]
+    state["sent_urls"]=dict(list(sent_urls.items())[-100000:])
     state["updated_at"]=datetime.now(KST).isoformat()
     state["version"]=VERSION
     save_json(STATE_FILE,state); save_json(PENDING_FILE,pending)
@@ -743,7 +856,7 @@ def main():
         "targets":len(targets),"completed":completed,"no_board":no_board,
         "posts_checked":posts_checked,"new_matches":new_matches,
         "pending_before":pending_before_send,"pending_removed_invalid":pending_removed_invalid,
-        "telegram_sent":sent,"pending_after":len(pending),"errors":errors,
+        "telegram_sent":sent,"pending_after":len(pending),"sent_url_ledger":len(sent_urls),"migrated_from_previous":migrated_from_previous,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":elapsed>=MAX_TOTAL_SECONDS,
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
