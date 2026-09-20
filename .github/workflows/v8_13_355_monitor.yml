@@ -1,4 +1,4 @@
-name: V8.13.0 355기관 최근30일 게시판 + Telegram
+name: V8.14.1 355기관 최근30일 게시판 + Telegram
 
 on:
   workflow_dispatch:
@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: false
+
 jobs:
   monitor:
     runs-on: ubuntu-latest
@@ -16,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Python 설정
         uses: actions/setup-python@v5
@@ -34,11 +40,28 @@ jobs:
         run: |
           python monitor.py
 
-      - name: 상태 저장 및 안전한 Push
+      - name: 상태 저장
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state.json pending.json diagnostics.json
-          git diff --cached --quiet || git commit -m "Update V8.13 monitoring state"
-          git pull --rebase origin main
-          git push
+
+          if git diff --cached --quiet; then
+            echo "변경사항 없음"
+            exit 0
+          fi
+
+          git commit -m "Update V8.14.1 monitoring state"
+
+      - name: 최신 main 반영 후 Push
+        run: |
+          git fetch origin main
+
+          if ! git rebase origin/main; then
+            echo "Rebase conflict detected - keep current run state files."
+            git checkout --theirs state.json pending.json diagnostics.json 2>/dev/null || true
+            git add state.json pending.json diagnostics.json
+            GIT_EDITOR=true git rebase --continue
+          fi
+
+          git push origin HEAD:main
