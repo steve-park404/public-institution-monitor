@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.1"
+VERSION = "V8.14.2"
 
 import os, re, json, time, html, warnings
 from datetime import datetime, timedelta
@@ -647,6 +647,7 @@ def load_targets():
     idx_name=col("기관명","기관")
     idx_home=col("홈페이지URL","URL","홈페이지")
     idx_board=col("공지게시판URL","공지사항URL","게시판URL")
+    idx_type=col("기관유형","기관 유형","유형","기관구분","구분")
     if idx_name is None or idx_home is None: raise ValueError(f"기관명/홈페이지URL 열 없음: {headers}")
     out=[]
     for row in rows[1:]:
@@ -654,13 +655,18 @@ def load_targets():
         name=norm(row[idx_name]) if idx_name<len(row) else ""
         home=norm(row[idx_home]) if idx_home<len(row) else ""
         board=norm(row[idx_board]) if idx_board is not None and idx_board<len(row) else ""
-        if name and home: out.append({"기관명":name,"홈페이지URL":home,"공지게시판URL":board})
+        org_type=norm(row[idx_type]) if idx_type is not None and idx_type<len(row) else ""
+        if name and home:
+            out.append({
+                "기관명":name,"홈페이지URL":home,"공지게시판URL":board,
+                "기관유형":org_type
+            })
     return out
 
 def process(target,state):
     name=target["기관명"]; home=target["홈페이지URL"]; seed=target.get("공지게시판URL","")
-    result={"기관명":name,"home":home,"board":"","status":"","posts_checked":0,"matches":[],
-            "error":"","error_type":"","diag":{},"detail_checked":0,"recent_posts":0,
+    result={"기관명":name,"기관유형":target.get("기관유형",""),"home":home,"board":"","status":"","posts_checked":0,"matches":[],
+            "error":"","error_type":"","diag":{},"post_candidates":0,"detail_checked":0,"recent_posts":0,
             "title_matches":0,"body_matches":0,"excluded_list_pages":0,
             "excluded_generic_pages":0,"excluded_contest_titles":0,"detail_errors":0,
             "excluded_not_post_structure":0,"excluded_no_body":0}
@@ -686,6 +692,7 @@ def process(target,state):
         for item in details:
             u=item.get("url") if isinstance(item,dict) else item
             if u and u not in seen: seen.add(u); unique.append(item)
+        result["post_candidates"]=len(unique)
         result["posts_checked"]=len(unique); result["detail_checked"]=len(unique)
 
         matches=[]
@@ -714,6 +721,111 @@ def process(target,state):
         et=classify_exception(e)
         result.update({"status":"PROCESS_ERROR","error_type":et,"error":str(e)[:500]})
         return result
+
+
+def classify_institution_type(value):
+    """기관유형 원본 표현을 3개 통계군으로 표준화한다."""
+    t=norm(value).replace(" ","")
+    if "공기업" in t:
+        return "공기업"
+    if "준정부기관" in t:
+        return "준정부기관"
+    if "기타공공기관" in t:
+        return "기타공공기관"
+    return "기타/미분류"
+
+def summarize_group(items):
+    total=len(items)
+    ok=sum(1 for x in items if x.get("status") in ("CACHED_OR_SEED","DISCOVERED"))
+    no_board=total-ok
+    rate=(ok/total*100) if total else 0
+    return {"대상":total,"정상확인":ok,"미확인":no_board,"확인율":round(rate,1)}
+
+def telegram_send_text(text):
+    token=os.environ.get("TELEGRAM_BOT_TOKEN","").strip()
+    chat_id=os.environ.get("TELEGRAM_CHAT_ID","").strip()
+    if not token or not chat_id:
+        return False
+    try:
+        r=SESSION.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data={"chat_id":chat_id,"text":text[:4000],
+                  "disable_web_page_preview":True},
+            timeout=20
+        )
+        return r.ok
+    except Exception:
+        return False
+
+def build_monitoring_summary(targets, results, posts_checked, new_matches,
+                             sent, pending_after, errors, aggregate,
+                             status_counts, sent_url_ledger):
+    groups={
+        "공기업": [r for r in results if classify_institution_type(r.get("기관유형",""))=="공기업"],
+        "준정부기관": [r for r in results if classify_institution_type(r.get("기관유형",""))=="준정부기관"],
+        "공기업·준정부기관": [
+            r for r in results
+            if classify_institution_type(r.get("기관유형","")) in ("공기업","준정부기관")
+        ],
+        "기타공공기관": [
+            r for r in results if classify_institution_type(r.get("기관유형",""))=="기타공공기관"
+        ],
+    }
+
+    total=len(targets)
+    processed=len(results)
+    ok=sum(1 for r in results if r.get("status") in ("CACHED_OR_SEED","DISCOVERED"))
+    unconfirmed=[r for r in results if r.get("status") not in ("CACHED_OR_SEED","DISCOVERED")]
+    unprocessed=max(0,total-processed)
+
+    def fmt(g):
+        x=summarize_group(g)
+        return f"• 대상 {x['대상']} / 정상 {x['정상확인']} / 미확인 {x['미확인']} / 확인율 {x['확인율']}%"
+
+    no_candidate=sum(1 for r in results if r.get("status")=="NO_CANDIDATE")
+    home_error=sum(1 for r in results if r.get("status")=="HOME_ERROR")
+    candidate_not_verified=sum(1 for r in results if r.get("status")=="CANDIDATE_NOT_VERIFIED")
+
+    fail_names=[r.get("기관명","") for r in unconfirmed if r.get("기관명")]
+    fail_preview=fail_names[:10]
+
+    lines=[
+        "📊 티끌 모니터링 요약",
+        "━━━━━━━━━━━━━━",
+        f"📅 {datetime.now(KST).strftime('%Y-%m-%d')}",
+        "",
+        "🏢 전체 기관",
+        f"• 대상 {total} / 정상 확인 {ok} / 미확인 {len(unconfirmed)} / 확인율 {(ok/processed*100 if processed else 0):.1f}%",
+        f"• 미처리 {unprocessed}",
+        "",
+        "🏛 공기업·준정부기관",
+        fmt(groups["공기업·준정부기관"]),
+        "",
+        "🏢 기타공공기관",
+        fmt(groups["기타공공기관"]),
+        "",
+        "🔎 오늘 모니터링",
+        f"• 게시물 확인 {posts_checked:,}건",
+        f"• 실제 최근 게시물 {aggregate.get('recent_posts',0):,}건",
+        f"• 신규 키워드 매칭 {new_matches}건",
+        f"• Telegram 참여정보 발송 {sent}건",
+        f"• 대기 {pending_after}건",
+        "",
+        "⚠️ 게시판 미확인",
+        f"• 후보 없음(NO_CANDIDATE) {no_candidate}개",
+        f"• 홈페이지 오류(HOME_ERROR) {home_error}개",
+        f"• 후보 검증 실패 {candidate_not_verified}개",
+        f"• 기타 오류/미처리 {max(0,len(unconfirmed)-no_candidate-home_error-candidate_not_verified)}개",
+        "",
+        f"💾 누적 발송 URL {sent_url_ledger:,}개",
+        f"• 실행 오류 {errors}건",
+    ]
+
+    if fail_preview:
+        lines += ["", "📌 미확인 기관 예시(최대 10개)"]
+        lines += [f"• {x}" for x in fail_preview]
+
+    return "\n".join(lines)
 
 def telegram_send(item):
     token=os.environ.get("TELEGRAM_BOT_TOKEN","").strip()
@@ -851,20 +963,53 @@ def main():
         st=(r.get("diag") or {}).get("status")
         if st: diag_counts[st]=diag_counts.get(st,0)+1
 
+    # 기관유형별 진단 통계
+    type_summary={}
+    for label in ["공기업","준정부기관","공기업·준정부기관","기타공공기관","기타/미분류"]:
+        if label=="공기업":
+            group=[r for r in results if classify_institution_type(r.get("기관유형",""))=="공기업"]
+        elif label=="준정부기관":
+            group=[r for r in results if classify_institution_type(r.get("기관유형",""))=="준정부기관"]
+        elif label=="공기업·준정부기관":
+            group=[r for r in results if classify_institution_type(r.get("기관유형","")) in ("공기업","준정부기관")]
+        elif label=="기타공공기관":
+            group=[r for r in results if classify_institution_type(r.get("기관유형",""))=="기타공공기관"]
+        else:
+            group=[r for r in results if classify_institution_type(r.get("기관유형",""))=="기타/미분류"]
+        type_summary[label]=summarize_group(group)
+
+    summary_text=build_monitoring_summary(
+        targets,results,posts_checked,new_matches,sent,len(pending),errors,
+        aggregate,status_counts,len(sent_urls)
+    )
+    summary_sent=telegram_send_text(summary_text)
+
     diagnostics={
         "version":VERSION,"updated_at":datetime.now(KST).isoformat(),
         "targets":len(targets),"completed":completed,"no_board":no_board,
         "posts_checked":posts_checked,"new_matches":new_matches,
         "pending_before":pending_before_send,"pending_removed_invalid":pending_removed_invalid,
-        "telegram_sent":sent,"pending_after":len(pending),"sent_url_ledger":len(sent_urls),"migrated_from_previous":migrated_from_previous,"errors":errors,
+        "telegram_sent":sent,"summary_telegram_sent":summary_sent,
+        "pending_after":len(pending),"sent_url_ledger":len(sent_urls),"migrated_from_previous":migrated_from_previous,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":elapsed>=MAX_TOTAL_SECONDS,
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
         "error_type_counts":error_type_counts,"pipeline_counts":aggregate,
         "processed_total":len(results),"unprocessed_total":max(0,len(targets)-len(results)),
+        "institution_type_summary":type_summary,
+        "unconfirmed_institutions":[
+            {
+                "기관명":r.get("기관명"),"기관유형":r.get("기관유형",""),
+                "status":r.get("status"),"error_type":r.get("error_type",""),
+                "error":r.get("error","")[:500]
+            }
+            for r in results
+            if r.get("status") not in ("CACHED_OR_SEED","DISCOVERED")
+        ],
         "board_details":[{
-            "기관명":r.get("기관명"),"status":r.get("status"),"board":r.get("board"),
-            "posts_checked":r.get("posts_checked"),"detail_checked":r.get("detail_checked"),
+            "기관명":r.get("기관명"),"기관유형":r.get("기관유형",""),
+            "status":r.get("status"),"board":r.get("board"),
+            "post_candidates":r.get("post_candidates"),"posts_checked":r.get("posts_checked"),"detail_checked":r.get("detail_checked"),
             "recent_posts":r.get("recent_posts"),"title_matches":r.get("title_matches"),
             "body_matches":r.get("body_matches"),
             "excluded_list_pages":r.get("excluded_list_pages"),
