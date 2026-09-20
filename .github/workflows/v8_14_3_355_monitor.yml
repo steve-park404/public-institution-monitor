@@ -1,0 +1,57 @@
+name: V8.14.3 355기관 최근30일 + Telegram + 티끌요약
+
+on:
+  schedule:
+    - cron: "10 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 openpyxl
+
+      - name: Run monitor
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor.py
+
+      - name: Commit generated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json pending.json diagnostics.json board_cache.json || true
+          if git diff --cached --quiet; then
+            echo "No state changes to commit"
+            exit 0
+          fi
+          git commit -m "chore: update V8.14.3 monitor state"
+
+          git fetch origin main
+          git rebase origin/main || {
+            echo "Rebase conflict detected. Auto-resolving generated state files."
+            git checkout --theirs state.json pending.json diagnostics.json board_cache.json 2>/dev/null || true
+            git add state.json pending.json diagnostics.json board_cache.json || true
+            GIT_EDITOR=true git rebase --continue
+          }
+          git push origin HEAD:main
