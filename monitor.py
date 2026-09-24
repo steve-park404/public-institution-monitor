@@ -16,9 +16,9 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.3"
+VERSION = "V8.14.4"
 
-import os, re, json, time, html, warnings
+import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -46,6 +46,8 @@ BOARD_DISCOVERY_MAX_LINKS = 100
 BOARD_DISCOVERY_MAX_FETCH = 35
 BOARD_DISCOVERY_MAX_SECONDARY = 12
 BOARD_CACHE_FILE = "board_cache.json"
+MAX_FINGERPRINTS = 100000
+DAILY_SUMMARY_FILE = "daily_summary.json"
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
 KST = ZoneInfo("Asia/Seoul")
@@ -256,6 +258,7 @@ def visible_main_text(soup):
     return ""
 
 def extract_title(soup):
+    """실제 게시물 제목을 우선 추출한다. 사이트 공통 title은 최후순위로 사용."""
     if not soup: return ""
     def valid(t):
         t=norm(t)
@@ -264,7 +267,10 @@ def extract_title(soup):
         if len(re.sub(r"[^0-9A-Za-z가-힣]","",t)) < 3: return False
         return True
 
+    # 1) 게시물 전용 제목 영역
     selectors=[
+        "h1.view-title","h1.board-title","h1.article-title","h1.bbs-title",
+        ".view-title h1",".board-title h1",".article-title h1",
         ".view-title",".board-title",".article-title",".bbs-title",
         ".board_view .subject",".boardView .subject",".view .subject",
         ".view_subject",".viewSubject",".post-title",".post_title",
@@ -280,20 +286,30 @@ def extract_title(soup):
             t=text_of(tag)
             if valid(t): vals.append(t)
     if vals:
-        # Avoid tiny menu labels; prefer plausible post titles.
         vals.sort(key=lambda x:(len(x)<5, len(x)>180, -len(x)))
-        return vals[0]
+        return vals[0][:300]
 
+    # 2) OpenGraph / social title
     for sel in ["meta[property='og:title']","meta[name='twitter:title']"]:
         og=soup.select_one(sel)
         if og and og.get("content"):
             parts=[norm(x) for x in re.split(r"\s*[|｜]\s*",og.get("content")) if norm(x)]
-            for p in parts:
-                if valid(p): return p[:300]
+            vals=[p for p in parts if valid(p)]
+            if vals:
+                return sorted(vals,key=len,reverse=True)[0][:300]
 
+    # 3) 흔한 게시물 제목 테이블/정의목록 구조
+    for tag in soup.find_all(["th","dt","strong"]):
+        label=norm(tag.get_text(" ",strip=True))
+        if label in ("제목","게시물 제목","글제목","내용"):
+            sib=tag.find_next_sibling()
+            if sib:
+                t=text_of(sib)
+                if valid(t): return t[:300]
+
+    # 4) document title은 공통 사이트 제목을 최대한 배제
     if soup.title:
         parts=[norm(x) for x in re.split(r"\s*[|｜]\s*",soup.title.get_text(" ",strip=True)) if norm(x)]
-        # Prefer the longest plausible segment, not the institution name.
         vals=[p for p in parts if valid(p)]
         if vals:
             return sorted(vals,key=len,reverse=True)[0][:300]
@@ -531,84 +547,107 @@ def match_post_detailed(u):
     if not title: return None,"NO_TITLE",""
     if title in GENERIC_PAGE_TITLES: return None,"GENERIC_TITLE",""
 
-    # Reject site-name-only titles.
+    # 페이지 전체 title과 동일할 때만 공통 페이지 제목으로 간주.
     page_title=norm(soup.title.get_text(" ",strip=True)) if soup.title else ""
     tc=re.sub(r"[^0-9A-Za-z가-힣]","",title).lower()
     pc=re.sub(r"[^0-9A-Za-z가-힣]","",page_title).lower()
-    if tc and pc and (tc==pc or tc in pc and len(tc)>=4 and len(tc)/max(len(pc),1)>0.8):
+    if tc and pc and tc==pc and len(tc)>=6:
         return None,"GENERIC_TITLE",""
 
     if any(x in title for x in EXCLUDE_TITLE): return None,"CONTEST_TITLE",""
-    if not has_post_structure(soup,title): return None,"NOT_POST_STRUCTURE",""
-
-    # TITLE match is strongest and does not require body extraction.
-    for kw in KEYWORDS:
-        if kw in title:
-            return {"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
-                    "keyword":kw,"match_type":"TITLE"},"TITLE_MATCH",kw
 
     body=visible_main_text(soup)
+    # 게시물 검증은 기존보다 완화한다. 상세 URL + 날짜 + 제목 + 내용이 있으면 통과시키고,
+    # 실제 매칭 여부는 아래 제목/본문 단계에서 판단한다.
+    if not body or len(body)<60:
+        if not has_post_structure(soup,title): return None,"NOT_POST_STRUCTURE",""
+
+    for kw in KEYWORDS:
+        if kw in title:
+            item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
+                  "keyword":kw,"match_type":"TITLE","body":body}
+            item["fingerprint"]=make_fingerprint(item,body)
+            item.pop("body",None)
+            return item,"TITLE_MATCH",kw
+
     if not body:
         return None,"NO_BODY",""
 
     for kw in KEYWORDS:
         if meaningful_body_match(body,kw):
-            return {"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
-                    "keyword":kw,"match_type":"BODY"},"BODY_MATCH",kw
+            item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
+                  "keyword":kw,"match_type":"BODY","body":body}
+            item["fingerprint"]=make_fingerprint(item,body)
+            item.pop("body",None)
+            return item,"BODY_MATCH",kw
     return None,"NO_KEYWORD",""
 
 def canonical_url(url):
-    """동일 게시물 URL의 표기 차이를 줄여 중복 알림을 방지한다."""
+    """동일 게시물 URL의 표기 차이를 줄인다."""
     try:
-        p = urlparse(clean_url(url))
-        scheme = (p.scheme or "https").lower()
-        host = (p.netloc or "").lower()
-        if host.startswith("www."):
-            host = host[4:]
-        path = (p.path or "/").rstrip("/") or "/"
-        query = p.query or ""
+        p=urlparse(clean_url(url))
+        scheme=(p.scheme or "https").lower()
+        host=(p.netloc or "").lower()
+        if host.startswith("www."): host=host[4:]
+        path=(p.path or "/").rstrip("/") or "/"
+        query=p.query or ""
         return f"{scheme}://{host}{path}" + (f"?{query}" if query else "")
     except Exception:
         return clean_url(url)
 
+def normalize_fingerprint_text(text):
+    text=norm(text)
+    # 날짜/시간, 조회수 등 실행마다 변할 수 있는 숫자성 표시를 약간 완화한다.
+    text=re.sub(r"20\d{2}[.\-/]\d{1,2}[.\-/]\d{1,2}(?:\s+\d{1,2}:\d{2})?", "DATE", text)
+    text=re.sub(r"\b\d{1,2}:\d{2}(?::\d{2})?\b", "TIME", text)
+    text=re.sub(r"(조회수|조회)\s*[:：]?\s*\d+", r"\1", text)
+    return text[:8000]
+
+def make_fingerprint(item, body=""):
+    """URL이 바뀌어도 같은 게시물로 판별하기 위한 내용 기반 fingerprint."""
+    # 기관명은 제외한다. 기존 V8.14.x 발송 이력에는 기관명이 저장되지 않은 경우가 있어
+    # 과거 URL에서 재생성한 fingerprint와 신규 탐지 fingerprint가 동일해야 한다.
+    date=norm(item.get("date",""))
+    title=normalize_fingerprint_text(item.get("title",""))
+    body_norm=normalize_fingerprint_text(body)
+    # 본문이 너무 긴 경우 앞/뒤를 함께 사용해 동적 footer 영향을 줄인다.
+    if len(body_norm)>5000:
+        body_norm=body_norm[:3500]+body_norm[-1200:]
+    raw="|".join([date,title,body_norm])
+    return "fp:"+hashlib.sha256(raw.encode("utf-8","ignore")).hexdigest()
+
 def alert_key(item):
+    """하위호환용 URL 키. 실제 중복판정은 URL + fingerprint를 함께 사용."""
     return canonical_url(item.get("url", ""))
 
 def migrate_sent_ledger(state):
-    """
-    V8.13.1 이하에서 이미 Telegram 발송 후 seen에 들어간 URL을
-    V8.14.1의 영구 발송 이력으로 승계한다.
-    """
-    if not isinstance(state, dict):
-        state = {}
-    state.setdefault("seen", [])
-    old = state.get("sent_urls", {})
-    if not isinstance(old, dict):
-        old = {}
-
-    migrated = dict(old)
-    for u in state.get("seen", []):
-        k = canonical_url(u)
+    if not isinstance(state,dict): state={}
+    state.setdefault("seen",[])
+    old=state.get("sent_urls",{})
+    if not isinstance(old,dict): old={}
+    migrated=dict(old)
+    for u in state.get("seen",[]):
+        k=canonical_url(u)
         if k and k not in migrated:
-            migrated[k] = state.get("updated_at", datetime.now(KST).isoformat())
-
-    state["sent_urls"] = migrated
+            migrated[k]=state.get("updated_at",datetime.now(KST).isoformat())
+    state["sent_urls"]=migrated
+    state.setdefault("sent_fingerprints",{})
+    if not isinstance(state["sent_fingerprints"],dict): state["sent_fingerprints"]={}
+    state.setdefault("seen_fingerprints",[])
+    if not isinstance(state["seen_fingerprints"],list): state["seen_fingerprints"]=[]
     return state
 
-def clean_pending_against_ledger(pending):
-    """이미 발송된 URL 및 동일 URL 중복 항목을 pending에서 제거한다."""
-    out = []
-    seen_pending = set()
-    for item in pending if isinstance(pending, list) else []:
-        if not isinstance(item, dict):
-            continue
-        k = alert_key(item)
-        if not k or k in sent_keys or k in seen:
-            continue
-        if k in seen_pending:
-            continue
-        item["url"] = k
-        seen_pending.add(k)
+def clean_pending_against_ledger(pending, sent_keys, seen, sent_fingerprints, seen_fingerprints):
+    out=[]; seen_pending=set(); seen_fp_pending=set()
+    for item in pending if isinstance(pending,list) else []:
+        if not isinstance(item,dict): continue
+        u=canonical_url(item.get("url","")); fp=item.get("fingerprint","")
+        if not u: continue
+        if u in sent_keys or u in seen or (fp and (fp in sent_fingerprints or fp in seen_fingerprints)): continue
+        if u in seen_pending or (fp and fp in seen_fp_pending): continue
+        item["url"]=u
+        seen_pending.add(u)
+        if fp: seen_fp_pending.add(fp)
         out.append(item)
     return out
 
@@ -629,35 +668,22 @@ def normalize_pending_item(x):
     return {"url":x.get("url",""),"title":x.get("title","")[:300],
             "date":x.get("date",""),"keyword":x.get("keyword",""),
             "match_type":x.get("match_type",""),"institution":x.get("institution",""),
+            "fingerprint":x.get("fingerprint",""),
             "added_at":x.get("added_at",datetime.now(KST).isoformat())}
 
-def pending_key(x): return x.get("url","") if isinstance(x,dict) else ""
+def pending_key(x): return canonical_url(x.get("url","")) if isinstance(x,dict) else ""
 
-def revalidate_pending(pending):
-    valid=[]
-    removed=0
+def revalidate_pending(pending, seen, sent_keys, seen_fingerprints, sent_fingerprints):
+    valid=[]; removed=0
     for item in pending[:MAX_PENDING]:
         item=normalize_pending_item(item)
         if not item:
-            removed+=1
-            continue
-
-        key=alert_key(item)
-        if not key:
-            removed+=1
-            continue
-
-        # 이미 Telegram으로 보냈거나 seen에 기록된 URL은 절대 재발송하지 않는다.
-        if key in seen or key in sent_keys:
-            removed+=1
-            continue
-
-        r=get(item["url"])
-        if not r:
-            valid.append(item)
-            continue
-
-        m,reason,_=match_post_detailed(item["url"])
+            removed+=1; continue
+        key=canonical_url(item["url"])
+        fp=item.get("fingerprint","")
+        if key in seen or key in sent_keys or (fp and (fp in seen_fingerprints or fp in sent_fingerprints)):
+            removed+=1; continue
+        m,reason,_=match_post_detailed(key)
         if m:
             m["institution"]=item.get("institution","")
             m["added_at"]=item.get("added_at",datetime.now(KST).isoformat())
@@ -894,6 +920,26 @@ def telegram_send(item):
     except Exception:
         return False
 
+def migrate_existing_url_fingerprints(sent_urls, sent_fingerprints):
+    """V8.14.4 최초 1회: 기존 URL 발송 이력에서 내용 fingerprint를 생성해 중복 재발송을 방지."""
+    added=0
+    for u in list(sent_urls.keys())[-500:]:
+        if len(sent_fingerprints)>=MAX_FINGERPRINTS: break
+        try:
+            m,reason,_=match_post_detailed(u)
+            if m and m.get("fingerprint") and m["fingerprint"] not in sent_fingerprints:
+                sent_fingerprints.add(m["fingerprint"]); added+=1
+        except Exception:
+            continue
+    return added
+
+def load_daily_summary_state():
+    x=load_json(DAILY_SUMMARY_FILE,{})
+    return x if isinstance(x,dict) else {}
+
+def save_daily_summary_state(x):
+    save_json(DAILY_SUMMARY_FILE,x)
+
 def main():
     started=time.time()
     targets=load_targets()
@@ -911,11 +957,18 @@ def main():
     seen=set(canonical_url(x) for x in state.get("seen",[]) if x)
     sent_urls=state.get("sent_urls",{})
     sent_keys=set(canonical_url(x) for x in sent_urls.keys() if x)
+    sent_fingerprints=set(state.get("sent_fingerprints",{}).keys())
+    seen_fingerprints=set(state.get("seen_fingerprints",[]))
+    fingerprint_migrated=bool(state.get("v8144_fingerprint_migration_done"))
+    migrated_fingerprint_count=0
+    if not fingerprint_migrated:
+        migrated_fingerprint_count=migrate_existing_url_fingerprints(sent_urls, sent_fingerprints)
+        state["v8144_fingerprint_migration_done"]=True
 
     pending=load_json(PENDING_FILE,[])
-    pending=clean_pending_against_ledger(pending)
+    pending=clean_pending_against_ledger(pending, sent_keys, seen, sent_fingerprints, seen_fingerprints)
 
-    pending,pending_removed_invalid=revalidate_pending(pending)
+    pending,pending_removed_invalid=revalidate_pending(pending, seen, sent_keys, seen_fingerprints, sent_fingerprints)
 
     # V8.14.1 최초 전환 여부를 기록한다.
     # 기존 state가 존재하면 기존 seen/sent 이력을 그대로 승계하고,
@@ -963,8 +1016,10 @@ def main():
             for m in result.get("matches",[]):
                 u=m.get("url","")
                 key=alert_key(m)
+                fp=m.get("fingerprint","")
                 if (not u or not key or key in seen or key in sent_keys
-                    or any(alert_key(x)==key for x in pending)):
+                    or (fp and (fp in seen_fingerprints or fp in sent_fingerprints))
+                    or any(alert_key(x)==key or (fp and x.get("fingerprint")==fp) for x in pending)):
                     continue
                 m["url"]=canonical_url(u)
                 m["added_at"]=datetime.now(KST).isoformat()
@@ -973,7 +1028,7 @@ def main():
 
     dedup={}
     for item in pending:
-        k=alert_key(item)
+        k=item.get("fingerprint") or alert_key(item)
         if k: dedup[k]=item
     pending=list(dedup.values())
     pending.sort(key=lambda x:x.get("added_at",""))
@@ -986,12 +1041,13 @@ def main():
             continue
 
         key=alert_key(item)
+        fp=item.get("fingerprint","")
         if not key:
             continue
 
-        if key in sent_keys or key in seen:
-            # 과거 실행에서 이미 발송된 항목은 재발송하지 않는다.
+        if key in sent_keys or key in seen or (fp and (fp in sent_fingerprints or fp in seen_fingerprints)):
             seen.add(key)
+            if fp: seen_fingerprints.add(fp)
             continue
 
         if telegram_send(item):
@@ -999,12 +1055,16 @@ def main():
             seen.add(key)
             sent_keys.add(key)
             sent_urls[key]=datetime.now(KST).isoformat()
+            if fp:
+                sent_fingerprints.add(fp)
         else:
             remaining.append(item)
     pending=remaining
 
     state["seen"]=list(seen)[-100000:]
+    state["seen_fingerprints"]=list(seen_fingerprints)[-MAX_FINGERPRINTS:]
     state["sent_urls"]=dict(list(sent_urls.items())[-100000:])
+    state["sent_fingerprints"]={fp:datetime.now(KST).isoformat() for fp in list(sent_fingerprints)[-MAX_FINGERPRINTS:]}
     state["updated_at"]=datetime.now(KST).isoformat()
     state["version"]=VERSION
     save_json(STATE_FILE,state); save_json(PENDING_FILE,pending)
@@ -1034,7 +1094,17 @@ def main():
         targets,results,posts_checked,new_matches,sent,len(pending),errors,
         aggregate,status_counts,len(sent_urls)
     )
-    summary_sent=telegram_send_text(summary_text)
+    today_key=datetime.now(KST).strftime("%Y-%m-%d")
+    daily_summary=load_daily_summary_state()
+    if daily_summary.get("last_sent_date")==today_key:
+        summary_sent=False
+        summary_skipped_duplicate=True
+    else:
+        summary_sent=telegram_send_text(summary_text)
+        summary_skipped_duplicate=not summary_sent
+        if summary_sent:
+            daily_summary={"last_sent_date":today_key,"updated_at":datetime.now(KST).isoformat(),"version":VERSION}
+            save_daily_summary_state(daily_summary)
 
     diagnostics={
         "version":VERSION,"updated_at":datetime.now(KST).isoformat(),
@@ -1043,6 +1113,9 @@ def main():
         "pending_before":pending_before_send,"pending_removed_invalid":pending_removed_invalid,
         "telegram_sent":sent,"summary_telegram_sent":summary_sent,
         "pending_after":len(pending),"sent_url_ledger":len(sent_urls),
+        "sent_fingerprint_ledger":len(sent_fingerprints),
+        "migrated_fingerprint_count":migrated_fingerprint_count,
+        "summary_skipped_duplicate":summary_skipped_duplicate,
         "board_cache_total":len(board_cache),
         "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":elapsed>=MAX_TOTAL_SECONDS,
