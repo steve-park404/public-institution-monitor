@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.5"
+VERSION = "V8.14.6"
 
 import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
@@ -36,7 +36,7 @@ EXCLUDE_TITLE = ["공모전"]
 MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
-RECENT_POSTS = 15
+RECENT_POSTS = 10
 RECENT_DAYS = 30
 MAX_TOTAL_SECONDS = 1080
 TELEGRAM_MAX_SEND = 20
@@ -50,6 +50,8 @@ MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
 RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
+CHECKED_POSTS_FILE = "checked_posts.json"
+MAX_CHECKED_POSTS = 50000
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
 KST = ZoneInfo("Asia/Seoul")
@@ -763,7 +765,32 @@ def update_retry_queue(queue,result):
     else:
         queue.pop(name,None)
 
-def process(target,state,board_cache):
+def post_identity(institution, item):
+    """URL이 매번 바뀌는 사이트에서도 이미 확인한 동일 게시물을 식별한다."""
+    date=norm(str(item.get("date") or ""))
+    title=normalize_fingerprint_text(str(item.get("title") or ""))
+    if not date and not title:
+        return ""
+    raw="|".join([norm(institution), date, title])
+    return "pid:"+hashlib.sha256(raw.encode("utf-8","ignore")).hexdigest()
+
+def load_checked_posts():
+    try:
+        with open(CHECKED_POSTS_FILE,"r",encoding="utf-8") as f:
+            x=json.load(f)
+        return x if isinstance(x,dict) else {}
+    except Exception:
+        return {}
+
+def save_checked_posts(data):
+    try:
+        if len(data)>MAX_CHECKED_POSTS:
+            data=dict(list(data.items())[-MAX_CHECKED_POSTS:])
+        atomic_write_json(CHECKED_POSTS_FILE,data)
+    except Exception:
+        pass
+
+def process(target,state,board_cache,checked_posts):
     name=target["기관명"]; home=target["홈페이지URL"]; seed=target.get("공지게시판URL","")
     result={"기관명":name,"기관유형":target.get("기관유형",""),"home":home,"board":"","status":"","posts_checked":0,"matches":[],
             "error":"","error_type":"","diag":{},"post_candidates":0,"detail_checked":0,"recent_posts":0,
@@ -788,14 +815,26 @@ def process(target,state,board_cache):
             else:
                 result["status"]=status; return result
 
-        unique=[]; seen=set()
+        unique=[]; seen=set(); skipped_checked=0
         for item in details:
-            u=item.get("url") if isinstance(item,dict) else item
-            if u and u not in seen: seen.add(u); unique.append(item)
-        result["post_candidates"]=len(unique)
+            if not isinstance(item,dict):
+                item={"url":item}
+            u=item.get("url")
+            if not u or u in seen:
+                continue
+            seen.add(u)
+            pid=post_identity(name,item)
+            if pid and pid in checked_posts:
+                skipped_checked+=1
+                continue
+            item["post_identity"]=pid
+            unique.append(item)
+        result["post_candidates"]=len(details)
+        result["skipped_previously_checked"]=skipped_checked
         result["posts_checked"]=len(unique); result["detail_checked"]=len(unique)
 
         matches=[]
+        checked_ids=[]
         for item in unique:
             u=item.get("url") if isinstance(item,dict) else item
             try:
@@ -812,6 +851,10 @@ def process(target,state,board_cache):
                     m["institution"]=name; matches.append(m)
             except Exception as e:
                 result["detail_errors"]+=1
+            finally:
+                pid=item.get("post_identity","")
+                if pid: checked_ids.append(pid)
+        result["checked_post_identities"]=checked_ids
         result["matches"]=matches
         result["recent_posts"]=max(0,len(unique)-result["excluded_list_pages"]-
             result["excluded_generic_pages"]-result["excluded_contest_titles"]-
@@ -977,6 +1020,7 @@ def main():
     # V8.13.1의 seen 기록을 V8.14.1의 영구 발송 이력으로 승계.
     state=migrate_sent_ledger(state)
     board_cache=load_board_cache()
+    checked_posts=load_checked_posts()
 
     seen=set(canonical_url(x) for x in state.get("seen",[]) if x)
     sent_urls=state.get("sent_urls",{})
@@ -1006,11 +1050,11 @@ def main():
                "recent_posts":0,"title_matches":0,"body_matches":0,
                "excluded_list_pages":0,"excluded_generic_pages":0,
                "excluded_contest_titles":0,"excluded_not_post_structure":0,
-               "excluded_no_body":0,"detail_errors":0}
+               "excluded_no_body":0,"detail_errors":0,"skipped_previously_checked":0,"checked_post_identities":[]}
 
     deadline=started+MAX_TOTAL_SECONDS
     executor=ThreadPoolExecutor(max_workers=MAX_CONCURRENCY)
-    fmap={executor.submit(process,t,state,board_cache):t for t in targets}
+    fmap={executor.submit(process,t,state,board_cache,checked_posts):t for t in targets}
     timed_out=False
     try:
         pending_futures=set(fmap)
@@ -1042,7 +1086,13 @@ def main():
                 else: no_board+=1
 
                 posts_checked+=result.get("posts_checked",0)
-                for k in aggregate: aggregate[k]+=result.get(k,0)
+                for pid in result.get("checked_post_identities",[]):
+                    checked_posts[pid]=datetime.now(KST).isoformat()
+                aggregate.setdefault("skipped_previously_checked",0)
+                aggregate["skipped_previously_checked"]+=result.get("skipped_previously_checked",0)
+                for k in aggregate:
+                    if k=="skipped_previously_checked": continue
+                    aggregate[k]+=result.get(k,0)
                 d=result.get("diag") or {}
                 aggregate["board_candidates"]+=d.get("candidate_count",0) or 0
                 et=result.get("error_type","")
@@ -1066,6 +1116,7 @@ def main():
         update_retry_queue(retry_queue,r)
     retry_queue={k:v for k,v in list(retry_queue.items())[-MAX_RETRY_QUEUE:]}
     save_retry_queue(retry_queue)
+    save_checked_posts(checked_posts)
 
     dedup={}
     for item in pending:
@@ -1156,6 +1207,7 @@ def main():
         "telegram_sent":sent,"summary_telegram_sent":summary_sent,
         "pending_after":len(pending),"sent_url_ledger":len(sent_urls),
         "sent_fingerprint_ledger":len(sent_fingerprints),
+        "checked_post_identity_ledger":len(checked_posts),
         "migrated_fingerprint_count":migrated_fingerprint_count,
         "summary_skipped_duplicate":summary_skipped_duplicate,
         "board_cache_total":len(board_cache),
