@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.4"
+VERSION = "V8.14.5"
 
 import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
@@ -33,21 +33,23 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 KEYWORDS = ["설문조사", "시민참여", "국민참여"]
 EXCLUDE_TITLE = ["공모전"]
 
-MAX_CONCURRENCY = 20
-TIMEOUT_SECONDS = 15
-HTTP_RETRIES = 2
-RECENT_POSTS = 20
+MAX_CONCURRENCY = 25
+TIMEOUT_SECONDS = 8
+HTTP_RETRIES = 1
+RECENT_POSTS = 15
 RECENT_DAYS = 30
-MAX_TOTAL_SECONDS = 1200
+MAX_TOTAL_SECONDS = 1080
 TELEGRAM_MAX_SEND = 20
 MAX_PENDING = 10000
 
 BOARD_DISCOVERY_MAX_LINKS = 100
-BOARD_DISCOVERY_MAX_FETCH = 35
-BOARD_DISCOVERY_MAX_SECONDARY = 12
+BOARD_DISCOVERY_MAX_FETCH = 12
+BOARD_DISCOVERY_MAX_SECONDARY = 6
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
+RETRY_QUEUE_FILE = "retry_queue.json"
+MAX_RETRY_QUEUE = 120
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
 KST = ZoneInfo("Asia/Seoul")
@@ -740,6 +742,27 @@ def board_from_cache(board_cache,home):
     x=board_cache.get(home,{})
     return x.get("게시판URL","") if isinstance(x,dict) else ""
 
+def load_retry_queue():
+    data=load_json(RETRY_QUEUE_FILE,{})
+    return data if isinstance(data,dict) else {}
+
+def save_retry_queue(data):
+    save_json(RETRY_QUEUE_FILE,data)
+
+def update_retry_queue(queue,result):
+    name=result.get("기관명","")
+    if not name: return
+    st=result.get("status","")
+    retryable=st in ("HOME_ERROR","CANDIDATE_NOT_VERIFIED","NO_CANDIDATE")
+    now=datetime.now(KST).isoformat()
+    item=queue.get(name,{}) if isinstance(queue.get(name,{}),dict) else {}
+    if retryable:
+        item.update({"기관명":name,"홈페이지URL":result.get("home",""),"status":st,
+                     "attempts":int(item.get("attempts",0))+1,"last_attempt":now})
+        queue[name]=item
+    else:
+        queue.pop(name,None)
+
 def process(target,state,board_cache):
     name=target["기관명"]; home=target["홈페이지URL"]; seed=target.get("공지게시판URL","")
     result={"기관명":name,"기관유형":target.get("기관유형",""),"home":home,"board":"","status":"","posts_checked":0,"matches":[],
@@ -874,6 +897,7 @@ def build_monitoring_summary(targets, results, posts_checked, new_matches,
         "🏢 전체 기관",
         f"• 대상 {total} / 정상 확인 {ok} / 미확인 {len(unconfirmed)} / 확인율 {(ok/processed*100 if processed else 0):.1f}%",
         f"• 미처리 {unprocessed}",
+        f"• 전체 처리 완료 {processed}/{total}" + (" ⚠️" if unprocessed else ""),
         "",
         "🏛 공기업·준정부기관",
         fmt(groups["공기업·준정부기관"]),
@@ -985,46 +1009,63 @@ def main():
                "excluded_no_body":0,"detail_errors":0}
 
     deadline=started+MAX_TOTAL_SECONDS
-    with ThreadPoolExecutor(max_workers=MAX_CONCURRENCY) as ex:
-        fmap={ex.submit(process,t,state,board_cache):t for t in targets}
-        for fut in as_completed(fmap):
-            if time.time()>=deadline: break
-            try:
-                result=fut.result(); results.append(result)
-            except Exception as e:
-                errors+=1; et=classify_exception(e)
-                error_type_counts[et]=error_type_counts.get(et,0)+1
-                status_counts["FUTURE_EXCEPTION"]=status_counts.get("FUTURE_EXCEPTION",0)+1
+    executor=ThreadPoolExecutor(max_workers=MAX_CONCURRENCY)
+    fmap={executor.submit(process,t,state,board_cache):t for t in targets}
+    timed_out=False
+    try:
+        pending_futures=set(fmap)
+        while pending_futures:
+            remaining=max(0,deadline-time.time())
+            if remaining <= 0:
+                timed_out=True
+                break
+            done_now=set()
+            for fut in list(pending_futures):
+                if fut.done(): done_now.add(fut)
+            if not done_now:
+                time.sleep(0.15)
                 continue
-
-            st=result.get("status") or "UNKNOWN"
-            status_counts[st]=status_counts.get(st,0)+1
-            if result.get("board"):
-                completed+=1; state.setdefault("boards",{})[result["home"]]=result["board"]; cache_board(board_cache,result.get("기관명",""),result["home"],result["board"],"VERIFIED")
-            else: no_board+=1
-
-            posts_checked+=result.get("posts_checked",0)
-            for k in aggregate:
-                aggregate[k]+=result.get(k,0)
-            d=result.get("diag") or {}
-            aggregate["board_candidates"]+=d.get("candidate_count",0) or 0
-
-            et=result.get("error_type","")
-            if et:
-                errors+=1; error_type_counts[et]=error_type_counts.get(et,0)+1
-
-            for m in result.get("matches",[]):
-                u=m.get("url","")
-                key=alert_key(m)
-                fp=m.get("fingerprint","")
-                if (not u or not key or key in seen or key in sent_keys
-                    or (fp and (fp in seen_fingerprints or fp in sent_fingerprints))
-                    or any(alert_key(x)==key or (fp and x.get("fingerprint")==fp) for x in pending)):
+            for fut in done_now:
+                pending_futures.discard(fut)
+                try:
+                    result=fut.result(); results.append(result)
+                except Exception as e:
+                    errors+=1; et=classify_exception(e)
+                    error_type_counts[et]=error_type_counts.get(et,0)+1
+                    status_counts["FUTURE_EXCEPTION"]=status_counts.get("FUTURE_EXCEPTION",0)+1
                     continue
-                m["url"]=canonical_url(u)
-                m["added_at"]=datetime.now(KST).isoformat()
-                pending.append(m)
-                new_matches+=1
+
+                st=result.get("status") or "UNKNOWN"
+                status_counts[st]=status_counts.get(st,0)+1
+                if result.get("board"):
+                    completed+=1; state.setdefault("boards",{})[result["home"]]=result["board"]; cache_board(board_cache,result.get("기관명",""),result["home"],result["board"],"VERIFIED")
+                else: no_board+=1
+
+                posts_checked+=result.get("posts_checked",0)
+                for k in aggregate: aggregate[k]+=result.get(k,0)
+                d=result.get("diag") or {}
+                aggregate["board_candidates"]+=d.get("candidate_count",0) or 0
+                et=result.get("error_type","")
+                if et:
+                    errors+=1; error_type_counts[et]=error_type_counts.get(et,0)+1
+                for m in result.get("matches",[]):
+                    u=m.get("url",""); key=alert_key(m); fp=m.get("fingerprint","")
+                    if (not u or not key or key in seen or key in sent_keys
+                        or (fp and (fp in seen_fingerprints or fp in sent_fingerprints))
+                        or any(alert_key(x)==key or (fp and x.get("fingerprint")==fp) for x in pending)):
+                        continue
+                    m["url"]=canonical_url(u); m["added_at"]=datetime.now(KST).isoformat(); pending.append(m); new_matches+=1
+    finally:
+        if 'pending_futures' in locals() and pending_futures:
+            timed_out=True
+            for fut in pending_futures: fut.cancel()
+        executor.shutdown(wait=False, cancel_futures=True)
+
+    retry_queue=load_retry_queue()
+    for r in results:
+        update_retry_queue(retry_queue,r)
+    retry_queue={k:v for k,v in list(retry_queue.items())[-MAX_RETRY_QUEUE:]}
+    save_retry_queue(retry_queue)
 
     dedup={}
     for item in pending:
@@ -1096,13 +1137,14 @@ def main():
     )
     today_key=datetime.now(KST).strftime("%Y-%m-%d")
     daily_summary=load_daily_summary_state()
-    if daily_summary.get("last_sent_date")==today_key:
+    complete_run=(len(results)==len(targets) and not timed_out)
+    if daily_summary.get("last_sent_date")==today_key and complete_run:
         summary_sent=False
         summary_skipped_duplicate=True
     else:
         summary_sent=telegram_send_text(summary_text)
         summary_skipped_duplicate=not summary_sent
-        if summary_sent:
+        if summary_sent and complete_run:
             daily_summary={"last_sent_date":today_key,"updated_at":datetime.now(KST).isoformat(),"version":VERSION}
             save_daily_summary_state(daily_summary)
 
@@ -1118,11 +1160,12 @@ def main():
         "summary_skipped_duplicate":summary_skipped_duplicate,
         "board_cache_total":len(board_cache),
         "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,"errors":errors,
-        "elapsed_seconds":round(elapsed,1),"timed_out":elapsed>=MAX_TOTAL_SECONDS,
+        "elapsed_seconds":round(elapsed,1),"timed_out":bool(timed_out or len(results)<len(targets)),
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
         "error_type_counts":error_type_counts,"pipeline_counts":aggregate,
         "processed_total":len(results),"unprocessed_total":max(0,len(targets)-len(results)),
+        "retry_queue_total":len(retry_queue),
         "institution_type_summary":type_summary,
         "unconfirmed_institutions":[
             {
@@ -1155,6 +1198,8 @@ def main():
     }
     save_json("diagnostics.json",diagnostics)
     print(json.dumps(diagnostics,ensure_ascii=False,indent=2))
+    if len(results) < len(targets) or timed_out:
+        raise SystemExit(1)
 
 if __name__=="__main__":
     main()
