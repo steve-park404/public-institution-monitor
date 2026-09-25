@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.7"
+VERSION = "V8.14.8"
 
 import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
@@ -1341,8 +1341,15 @@ def main():
         } for r in results]
     }
     csv_rows=save_institution_status_csv(targets,results,timed_out or len(results)<len(targets))
+    csv_exists=os.path.isfile(INSTITUTION_STATUS_CSV)
+    csv_size=os.path.getsize(INSTITUTION_STATUS_CSV) if csv_exists else 0
+    if not csv_exists or csv_size <= 0:
+        raise RuntimeError(f"기관별_상태.csv 생성 검증 실패: exists={csv_exists}, size={csv_size}")
+    print(f"[CSV] 기관별_상태.csv 생성 완료: {csv_rows}개 행, {csv_size:,} bytes")
     diagnostics["institution_status_csv"]=INSTITUTION_STATUS_CSV
     diagnostics["institution_status_csv_rows"]=csv_rows
+    diagnostics["institution_status_csv_exists"]=csv_exists
+    diagnostics["institution_status_csv_size_bytes"]=csv_size
     save_json("diagnostics.json",diagnostics)
     print(json.dumps(diagnostics,ensure_ascii=False,indent=2))
     if len(results) < len(targets) or timed_out:
