@@ -13,3 +13,8 @@
 
 ## 주의
 첫 실행은 기존 checked_posts가 없어 기존과 비슷한 시간이 걸릴 수 있습니다. 이후 일일 실행부터 상세조회가 크게 줄어드는 구조입니다.
+
+
+## V8.14.6.1 hotfix
+- aggregate 숫자형 지표만 누적하도록 수정
+- `checked_post_identities` 리스트가 aggregate 누적 과정에 들어가 `TypeError: int object is not iterable`가 발생하던 오류 수정

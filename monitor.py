@@ -1050,7 +1050,7 @@ def main():
                "recent_posts":0,"title_matches":0,"body_matches":0,
                "excluded_list_pages":0,"excluded_generic_pages":0,
                "excluded_contest_titles":0,"excluded_not_post_structure":0,
-               "excluded_no_body":0,"detail_errors":0,"skipped_previously_checked":0,"checked_post_identities":[]}
+               "excluded_no_body":0,"detail_errors":0,"skipped_previously_checked":0}
 
     deadline=started+MAX_TOTAL_SECONDS
     executor=ThreadPoolExecutor(max_workers=MAX_CONCURRENCY)
@@ -1092,7 +1092,12 @@ def main():
                 aggregate["skipped_previously_checked"]+=result.get("skipped_previously_checked",0)
                 for k in aggregate:
                     if k=="skipped_previously_checked": continue
-                    aggregate[k]+=result.get(k,0)
+                    v=result.get(k,0)
+                    # aggregate에는 숫자형 지표만 누적한다.
+                    # checked_post_identities 같은 리스트형 결과가 섞여도
+                    # int + list TypeError가 발생하지 않도록 방어한다.
+                    if isinstance(v,(int,float)):
+                        aggregate[k]+=v
                 d=result.get("diag") or {}
                 aggregate["board_candidates"]+=d.get("candidate_count",0) or 0
                 et=result.get("error_type","")
