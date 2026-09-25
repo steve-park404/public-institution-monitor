@@ -16,9 +16,9 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.6"
+VERSION = "V8.14.7"
 
-import os, re, json, time, html, warnings, hashlib
+import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -38,7 +38,7 @@ TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
 RECENT_POSTS = 10
 RECENT_DAYS = 30
-MAX_TOTAL_SECONDS = 1080
+MAX_TOTAL_SECONDS = 1500
 TELEGRAM_MAX_SEND = 20
 MAX_PENDING = 10000
 
@@ -52,6 +52,7 @@ RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
 CHECKED_POSTS_FILE = "checked_posts.json"
 MAX_CHECKED_POSTS = 50000
+INSTITUTION_STATUS_CSV = "기관별_상태.csv"
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
 KST = ZoneInfo("Asia/Seoul")
@@ -1007,6 +1008,92 @@ def load_daily_summary_state():
 def save_daily_summary_state(x):
     save_json(DAILY_SUMMARY_FILE,x)
 
+
+def build_institution_status_rows(targets, results, timed_out=False):
+    """355개 기관 전체를 1행씩 기록한다. 미처리 기관도 누락하지 않고 상태를 명시한다."""
+    by_name={}
+    for r in results:
+        name=norm(r.get("기관명",""))
+        if name:
+            by_name[name]=r
+
+    now=datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+    rows=[]
+    for target in targets:
+        name=norm(target.get("기관명",""))
+        r=by_name.get(name)
+        if r is None:
+            status="UNPROCESSED_TIMEOUT" if timed_out else "UNPROCESSED"
+            rows.append({
+                "기관명":name,
+                "기관유형":target.get("기관유형",""),
+                "홈페이지URL":target.get("홈페이지URL",""),
+                "게시판URL":target.get("공지게시판URL",""),
+                "상태":status,
+                "상태설명":"실행시간 제한으로 이번 실행에서 처리되지 않음" if timed_out else "이번 실행 결과 없음",
+                "게시물후보":0,"상세확인":0,"기존확인건너뜀":0,"최근게시물":0,
+                "제목매칭":0,"본문매칭":0,"상세오류":0,
+                "게시판후보수":"","게시판조회수":"","게시판검증수":"",
+                "선정점수":"","재시도대상":"예",
+                "최종확인시각":now
+            })
+            continue
+
+        st=r.get("status") or "UNKNOWN"
+        desc={
+            "CACHED_OR_SEED":"기존 캐시/지정 게시판 확인",
+            "DISCOVERED":"홈페이지에서 게시판을 새로 발견",
+            "HOME_ERROR":"홈페이지 접속 실패",
+            "NO_CANDIDATE":"게시판 후보를 찾지 못함",
+            "CANDIDATE_NOT_VERIFIED":"게시판 후보는 있으나 실제 게시판 검증 실패",
+            "PROCESS_ERROR":"기관 처리 중 오류",
+            "BOARD_FETCH_ERROR":"게시판 접속 실패",
+        }.get(st, r.get("error","") or st)
+
+        d=r.get("diag") or {}
+        retry="예" if st in ("HOME_ERROR","NO_CANDIDATE","CANDIDATE_NOT_VERIFIED","PROCESS_ERROR","BOARD_FETCH_ERROR","UNPROCESSED_TIMEOUT","UNPROCESSED") else "아니오"
+        rows.append({
+            "기관명":name,
+            "기관유형":r.get("기관유형",target.get("기관유형","")),
+            "홈페이지URL":r.get("home",target.get("홈페이지URL","")),
+            "게시판URL":r.get("board",target.get("공지게시판URL","")),
+            "상태":st,
+            "상태설명":desc,
+            "게시물후보":r.get("post_candidates",0) or 0,
+            "상세확인":r.get("detail_checked",0) or 0,
+            "기존확인건너뜀":r.get("skipped_previously_checked",0) or 0,
+            "최근게시물":r.get("recent_posts",0) or 0,
+            "제목매칭":r.get("title_matches",0) or 0,
+            "본문매칭":r.get("body_matches",0) or 0,
+            "상세오류":r.get("detail_errors",0) or 0,
+            "게시판후보수":d.get("candidate_count",""),
+            "게시판조회수":d.get("fetched_count",""),
+            "게시판검증수":d.get("verified_count",""),
+            "선정점수":d.get("selected_score",""),
+            "재시도대상":retry,
+            "최종확인시각":now
+        })
+    return rows
+
+
+def save_institution_status_csv(targets, results, timed_out=False):
+    rows=build_institution_status_rows(targets,results,timed_out)
+    fields=[
+        "기관명","기관유형","홈페이지URL","게시판URL","상태","상태설명",
+        "게시물후보","상세확인","기존확인건너뜀","최근게시물",
+        "제목매칭","본문매칭","상세오류",
+        "게시판후보수","게시판조회수","게시판검증수","선정점수",
+        "재시도대상","최종확인시각"
+    ]
+    tmp=INSTITUTION_STATUS_CSV+".tmp"
+    with open(tmp,"w",encoding="utf-8-sig",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore")
+        w.writeheader()
+        w.writerows(rows)
+    os.replace(tmp,INSTITUTION_STATUS_CSV)
+    return len(rows)
+
+
 def main():
     started=time.time()
     targets=load_targets()
@@ -1253,6 +1340,9 @@ def main():
             "error_type":r.get("error_type",""),"error":r.get("error","")[:500]
         } for r in results]
     }
+    csv_rows=save_institution_status_csv(targets,results,timed_out or len(results)<len(targets))
+    diagnostics["institution_status_csv"]=INSTITUTION_STATUS_CSV
+    diagnostics["institution_status_csv_rows"]=csv_rows
     save_json("diagnostics.json",diagnostics)
     print(json.dumps(diagnostics,ensure_ascii=False,indent=2))
     if len(results) < len(targets) or timed_out:
