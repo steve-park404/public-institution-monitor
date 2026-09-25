@@ -1,0 +1,113 @@
+name: V8.14.8 355기관 최근30일 + Telegram + 티끌요약 + 기관별상태CSV 검증
+
+on:
+  schedule:
+    - cron: "10 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 openpyxl
+
+      - name: Run monitor
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor.py
+
+      - name: Verify institution status CSV
+        if: always()
+        run: |
+          echo "=== 기관별_상태.csv 존재 여부 ==="
+          if [ -f "기관별_상태.csv" ]; then
+            ls -lh "기관별_상태.csv"
+            echo "=== CSV 첫 5줄 ==="
+            head -n 5 "기관별_상태.csv"
+            echo "=== CSV 행 수 ==="
+            wc -l "기관별_상태.csv"
+            echo "=== Git ignore 여부 ==="
+            git check-ignore -v "기관별_상태.csv" || echo "NOT_IGNORED"
+          else
+            echo "ERROR: 기관별_상태.csv 파일이 생성되지 않았습니다."
+            exit 1
+          fi
+
+      - name: Upload institution status CSV artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V8.14.8_기관별_상태CSV
+          path: 기관별_상태.csv
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Commit generated state
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          echo "=== 커밋 전 파일 상태 ==="
+          git status --short
+
+          if [ ! -f "기관별_상태.csv" ]; then
+            echo "ERROR: 커밋 단계에서 기관별_상태.csv가 없습니다."
+            exit 1
+          fi
+
+          # CSV가 .gitignore에 걸리더라도 반드시 추적/커밋
+          git add state.json pending.json diagnostics.json board_cache.json daily_summary.json retry_queue.json checked_posts.json
+          git add -f 기관별_상태.csv
+
+          echo "=== 스테이징 결과 ==="
+          git status --short
+          git diff --cached --stat
+
+          if git diff --cached --quiet; then
+            echo "No state changes to commit"
+            exit 0
+          fi
+
+          git commit -m "chore: update V8.14.8 monitor state"
+
+          git fetch origin main
+          git rebase origin/main || {
+            echo "Rebase conflict detected. Auto-resolving generated state files."
+            git checkout --theirs state.json pending.json diagnostics.json board_cache.json daily_summary.json retry_queue.json checked_posts.json 기관별_상태.csv 2>/dev/null || true
+            git add state.json pending.json diagnostics.json board_cache.json daily_summary.json retry_queue.json checked_posts.json
+            git add -f 기관별_상태.csv
+            GIT_EDITOR=true git rebase --continue
+          }
+
+          git push origin HEAD:main
+
+      - name: Verify CSV committed
+        if: success()
+        run: |
+          echo "=== 최종 커밋 확인 ==="
+          git ls-tree -r HEAD --name-only | grep -Fx "기관별_상태.csv" || {
+            echo "ERROR: 기관별_상태.csv가 최종 커밋에 없습니다."
+            exit 1
+          }
+          echo "OK: 기관별_상태.csv가 GitHub 커밋에 포함되었습니다."
