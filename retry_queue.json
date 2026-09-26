@@ -1,0 +1,835 @@
+{
+  "가축위생방역지원본부": {
+    "기관명": "가축위생방역지원본부",
+    "홈페이지URL": "https://www.lhca.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088880+09:00"
+  },
+  "공간정보산업진흥원": {
+    "기관명": "공간정보산업진흥원",
+    "홈페이지URL": "https://www.spacen.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088893+09:00"
+  },
+  "경상국립대학교병원": {
+    "기관명": "경상국립대학교병원",
+    "홈페이지URL": "http://www.gnuh.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088898+09:00"
+  },
+  "(주)한국가스기술공사": {
+    "기관명": "(주)한국가스기술공사",
+    "홈페이지URL": "https://www.kogas-tech.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088901+09:00"
+  },
+  "강원대학교치과병원": {
+    "기관명": "강원대학교치과병원",
+    "홈페이지URL": "http://www.knudh.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088905+09:00"
+  },
+  "(재)한국통계정보원": {
+    "기관명": "(재)한국통계정보원",
+    "홈페이지URL": "https://www.kosii.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088914+09:00"
+  },
+  "국가아동권리보장원": {
+    "기관명": "국가아동권리보장원",
+    "홈페이지URL": "https://www.ncrc.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088934+09:00"
+  },
+  "과학기술사업화진흥원": {
+    "기관명": "과학기술사업화진흥원",
+    "홈페이지URL": "https://www.compa.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088957+09:00"
+  },
+  "국립농업박물관": {
+    "기관명": "국립농업박물관",
+    "홈페이지URL": "https://namuk.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088960+09:00"
+  },
+  "국립부산과학관": {
+    "기관명": "국립부산과학관",
+    "홈페이지URL": "http://www.sciport.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088963+09:00"
+  },
+  "국립항공박물관": {
+    "기관명": "국립항공박물관",
+    "홈페이지URL": "https://wwww.aviation.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088971+09:00"
+  },
+  "국립대구과학관": {
+    "기관명": "국립대구과학관",
+    "홈페이지URL": "https://www.dnsm.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088977+09:00"
+  },
+  "국립울진해양과학관": {
+    "기관명": "국립울진해양과학관",
+    "홈페이지URL": "https://www.kosm.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088985+09:00"
+  },
+  "건강보험심사평가원": {
+    "기관명": "건강보험심사평가원",
+    "홈페이지URL": "https://www.hira.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088988+09:00"
+  },
+  "국립공원공단": {
+    "기관명": "국립공원공단",
+    "홈페이지URL": "https://www.knps.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088994+09:00"
+  },
+  "국립박물관문화재단": {
+    "기관명": "국립박물관문화재단",
+    "홈페이지URL": "https://www.nmf.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.088996+09:00"
+  },
+  "국립생태원": {
+    "기관명": "국립생태원",
+    "홈페이지URL": "http://www.nie.re.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089011+09:00"
+  },
+  "(재)우체국시설관리단": {
+    "기관명": "(재)우체국시설관리단",
+    "홈페이지URL": "http://www.poma.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089021+09:00"
+  },
+  "국민건강보험공단": {
+    "기관명": "국민건강보험공단",
+    "홈페이지URL": "https://www.nhis.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089024+09:00"
+  },
+  "근로복지공단": {
+    "기관명": "근로복지공단",
+    "홈페이지URL": "https://www.comwel.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089027+09:00"
+  },
+  "그랜드코리아레저(주)": {
+    "기관명": "그랜드코리아레저(주)",
+    "홈페이지URL": "https://www.grandkorea.com/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089030+09:00"
+  },
+  "국방과학연구소": {
+    "기관명": "국방과학연구소",
+    "홈페이지URL": "https://www.add.re.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089041+09:00"
+  },
+  "국방전직교육원": {
+    "기관명": "국방전직교육원",
+    "홈페이지URL": "https://www.moti.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089047+09:00"
+  },
+  "국토교통과학기술진흥원": {
+    "기관명": "국토교통과학기술진흥원",
+    "홈페이지URL": "https://www.kaia.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089051+09:00"
+  },
+  "국립광주과학관": {
+    "기관명": "국립광주과학관",
+    "홈페이지URL": "https://www.sciencecenter.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089054+09:00"
+  },
+  "국토안전관리원": {
+    "기관명": "국토안전관리원",
+    "홈페이지URL": "http://www.kalis.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089062+09:00"
+  },
+  "농림수산식품교육문화정보원": {
+    "기관명": "농림수산식품교육문화정보원",
+    "홈페이지URL": "https://www.epis.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089065+09:00"
+  },
+  "국제방송교류재단": {
+    "기관명": "국제방송교류재단",
+    "홈페이지URL": "https://www.arirang.com/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089071+09:00"
+  },
+  "대한장애인체육회": {
+    "기관명": "대한장애인체육회",
+    "홈페이지URL": "http://www.koreanpc.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089081+09:00"
+  },
+  "(재)우체국물류지원단": {
+    "기관명": "(재)우체국물류지원단",
+    "홈페이지URL": "http://www.pola.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089098+09:00"
+  },
+  "민주화운동기념사업회": {
+    "기관명": "민주화운동기념사업회",
+    "홈페이지URL": "https://www.kdemo.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089103+09:00"
+  },
+  "북한이탈주민지원재단": {
+    "기관명": "북한이탈주민지원재단",
+    "홈페이지URL": "https://www.koreahana.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089114+09:00"
+  },
+  "사립학교교직원연금공단": {
+    "기관명": "사립학교교직원연금공단",
+    "홈페이지URL": "https://www.tp.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089117+09:00"
+  },
+  "소상공인시장진흥공단": {
+    "기관명": "소상공인시장진흥공단",
+    "홈페이지URL": "https://www.semas.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089125+09:00"
+  },
+  "서민금융진흥원": {
+    "기관명": "서민금융진흥원",
+    "홈페이지URL": "https://www.kinfa.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089166+09:00"
+  },
+  "여수광양항만공사": {
+    "기관명": "여수광양항만공사",
+    "홈페이지URL": "https://www.ygpa.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089172+09:00"
+  },
+  "신용보증재단중앙회": {
+    "기관명": "신용보증재단중앙회",
+    "홈페이지URL": "http://www.koreg.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089175+09:00"
+  },
+  "육아정책연구소": {
+    "기관명": "육아정책연구소",
+    "홈페이지URL": "https://www.kicce.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089178+09:00"
+  },
+  "국방기술진흥연구소": {
+    "기관명": "국방기술진흥연구소",
+    "홈페이지URL": "https://www.krit.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089182+09:00"
+  },
+  "신용보증기금": {
+    "기관명": "신용보증기금",
+    "홈페이지URL": "http://www.kodit.co.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089185+09:00"
+  },
+  "인천국제공항공사": {
+    "기관명": "인천국제공항공사",
+    "홈페이지URL": "https://www.airport.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089188+09:00"
+  },
+  "재단법인 한국에너지재단": {
+    "기관명": "재단법인 한국에너지재단",
+    "홈페이지URL": "https://www.koref.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089193+09:00"
+  },
+  "식품안전정보원": {
+    "기관명": "식품안전정보원",
+    "홈페이지URL": "http://www.foodinfo.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089199+09:00"
+  },
+  "재외동포협력센터": {
+    "기관명": "재외동포협력센터",
+    "홈페이지URL": "https://www.okocc.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089202+09:00"
+  },
+  "영화진흥위원회": {
+    "기관명": "영화진흥위원회",
+    "홈페이지URL": "https://www.kofic.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089220+09:00"
+  },
+  "정부법무공단": {
+    "기관명": "정부법무공단",
+    "홈페이지URL": "http://www.kgls.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089228+09:00"
+  },
+  "전쟁기념사업회": {
+    "기관명": "전쟁기념사업회",
+    "홈페이지URL": "https://www.warmemo.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089231+09:00"
+  },
+  "제주국제자유도시개발센터": {
+    "기관명": "제주국제자유도시개발센터",
+    "홈페이지URL": "https://www.jdcenter.com/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089237+09:00"
+  },
+  "정보통신정책연구원": {
+    "기관명": "정보통신정책연구원",
+    "홈페이지URL": "http://www.kisdi.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089240+09:00"
+  },
+  "중앙사회서비스원": {
+    "기관명": "중앙사회서비스원",
+    "홈페이지URL": "https://www.kcpass.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089252+09:00"
+  },
+  "전국재해구호협회": {
+    "기관명": "전국재해구호협회",
+    "홈페이지URL": "https://hopebridge.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089258+09:00"
+  },
+  "재단법인 건설기술교육원": {
+    "기관명": "재단법인 건설기술교육원",
+    "홈페이지URL": "https://www.kicte.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089271+09:00"
+  },
+  "통일연구원": {
+    "기관명": "통일연구원",
+    "홈페이지URL": "https://www.kinu.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089315+09:00"
+  },
+  "코레일테크(주)": {
+    "기관명": "코레일테크(주)",
+    "홈페이지URL": "https://www.korailtech.com/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089327+09:00"
+  },
+  "코레일네트웍스(주)": {
+    "기관명": "코레일네트웍스(주)",
+    "홈페이지URL": "https://www.korailnetworks.com/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089333+09:00"
+  },
+  "수도권매립지관리공사": {
+    "기관명": "수도권매립지관리공사",
+    "홈페이지URL": "http://www.slc.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089338+09:00"
+  },
+  "한국고용정보원": {
+    "기관명": "한국고용정보원",
+    "홈페이지URL": "https://keis.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089349+09:00"
+  },
+  "한국교육과정평가원": {
+    "기관명": "한국교육과정평가원",
+    "홈페이지URL": "https://www.kice.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089366+09:00"
+  },
+  "한국공정거래조정원": {
+    "기관명": "한국공정거래조정원",
+    "홈페이지URL": "https://www.kofair.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089369+09:00"
+  },
+  "한국국제협력단": {
+    "기관명": "한국국제협력단",
+    "홈페이지URL": "https://www.koica.go.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089375+09:00"
+  },
+  "한국남부발전(주)": {
+    "기관명": "한국남부발전(주)",
+    "홈페이지URL": "https://www.kospo.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089383+09:00"
+  },
+  "주택도시보증공사": {
+    "기관명": "주택도시보증공사",
+    "홈페이지URL": "https://www.khug.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089386+09:00"
+  },
+  "한국나노기술원": {
+    "기관명": "한국나노기술원",
+    "홈페이지URL": "https://www.kanc.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089394+09:00"
+  },
+  "한국기술교육대학교": {
+    "기관명": "한국기술교육대학교",
+    "홈페이지URL": "https://www.koreatech.ac.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089400+09:00"
+  },
+  "한국도로공사서비스(주)": {
+    "기관명": "한국도로공사서비스(주)",
+    "홈페이지URL": "https://www.exservice.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089419+09:00"
+  },
+  "한국동서발전(주)": {
+    "기관명": "한국동서발전(주)",
+    "홈페이지URL": "https://www.ewp.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089429+09:00"
+  },
+  "부산대학교치과병원": {
+    "기관명": "부산대학교치과병원",
+    "홈페이지URL": "https://www.pnudh.co.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089437+09:00"
+  },
+  "정보통신기획평가원": {
+    "기관명": "정보통신기획평가원",
+    "홈페이지URL": "http://www.iitp.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089440+09:00"
+  },
+  "한국마약퇴치운동본부": {
+    "기관명": "한국마약퇴치운동본부",
+    "홈페이지URL": "https://drugfree.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089450+09:00"
+  },
+  "한국도로공사": {
+    "기관명": "한국도로공사",
+    "홈페이지URL": "https://www.ex.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089455+09:00"
+  },
+  "한국도로교통공단": {
+    "기관명": "한국도로교통공단",
+    "홈페이지URL": "https://www.koroad.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089472+09:00"
+  },
+  "한국보건의료연구원": {
+    "기관명": "한국보건의료연구원",
+    "홈페이지URL": "https://www.neca.re.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089484+09:00"
+  },
+  "한국사학진흥재단": {
+    "기관명": "한국사학진흥재단",
+    "홈페이지URL": "https://www.kasfo.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089492+09:00"
+  },
+  "한국산업단지공단": {
+    "기관명": "한국산업단지공단",
+    "홈페이지URL": "https://www.kicox.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089504+09:00"
+  },
+  "한국산업안전보건공단": {
+    "기관명": "한국산업안전보건공단",
+    "홈페이지URL": "https://kosha.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089507+09:00"
+  },
+  "한국상하수도협회": {
+    "기관명": "한국상하수도협회",
+    "홈페이지URL": "https://www.kwwa.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089515+09:00"
+  },
+  "한국산업기술시험원": {
+    "기관명": "한국산업기술시험원",
+    "홈페이지URL": "https://www.ktl.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089523+09:00"
+  },
+  "한국산림복지진흥원": {
+    "기관명": "한국산림복지진흥원",
+    "홈페이지URL": "https://www.fowi.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089526+09:00"
+  },
+  "한국소비자원": {
+    "기관명": "한국소비자원",
+    "홈페이지URL": "https://www.kca.go.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089534+09:00"
+  },
+  "한국산업은행": {
+    "기관명": "한국산업은행",
+    "홈페이지URL": "http://www.kdb.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089538+09:00"
+  },
+  "한국서부발전(주)": {
+    "기관명": "한국서부발전(주)",
+    "홈페이지URL": "https://www.iwest.co.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089543+09:00"
+  },
+  "한국남동발전(주)": {
+    "기관명": "한국남동발전(주)",
+    "홈페이지URL": "https://www.koenergy.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089556+09:00"
+  },
+  "한국수출입은행": {
+    "기관명": "한국수출입은행",
+    "홈페이지URL": "https://www.koreaexim.go.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089559+09:00"
+  },
+  "한국사회복지협의회": {
+    "기관명": "한국사회복지협의회",
+    "홈페이지URL": "https://www.bokji.net/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089565+09:00"
+  },
+  "한국소방산업기술원": {
+    "기관명": "한국소방산업기술원",
+    "홈페이지URL": "https://www.kfi.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089582+09:00"
+  },
+  "한국어촌어항공단": {
+    "기관명": "한국어촌어항공단",
+    "홈페이지URL": "https://www.fipa.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089594+09:00"
+  },
+  "한국식품안전관리인증원": {
+    "기관명": "한국식품안전관리인증원",
+    "홈페이지URL": "https://www.haccp.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089610+09:00"
+  },
+  "한국의료기기안전정보원": {
+    "기관명": "한국의료기기안전정보원",
+    "홈페이지URL": "http://www.nids.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089628+09:00"
+  },
+  "한국인터넷진흥원": {
+    "기관명": "한국인터넷진흥원",
+    "홈페이지URL": "https://www.kisa.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089632+09:00"
+  },
+  "한국원자력환경공단": {
+    "기관명": "한국원자력환경공단",
+    "홈페이지URL": "https://www.korad.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089645+09:00"
+  },
+  "한국여성과학기술인육성재단": {
+    "기관명": "한국여성과학기술인육성재단",
+    "홈페이지URL": "https://www.wiset.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089661+09:00"
+  },
+  "한국재정정보원": {
+    "기관명": "한국재정정보원",
+    "홈페이지URL": "https://www.fis.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089666+09:00"
+  },
+  "한국보건의료인국가시험원": {
+    "기관명": "한국보건의료인국가시험원",
+    "홈페이지URL": "https://www.kuksiwon.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089669+09:00"
+  },
+  "한국여성정책연구원": {
+    "기관명": "한국여성정책연구원",
+    "홈페이지URL": "https://www.kwdi.re.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089673+09:00"
+  },
+  "한국중부발전(주)": {
+    "기관명": "한국중부발전(주)",
+    "홈페이지URL": "https://www.komipo.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089683+09:00"
+  },
+  "한국중소벤처기업유통원": {
+    "기관명": "한국중소벤처기업유통원",
+    "홈페이지URL": "https://www.kodma.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089687+09:00"
+  },
+  "한국전력공사": {
+    "기관명": "한국전력공사",
+    "홈페이지URL": "https://kepco.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089690+09:00"
+  },
+  "한국조폐공사": {
+    "기관명": "한국조폐공사",
+    "홈페이지URL": "https://www.komsco.com/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089695+09:00"
+  },
+  "한국지식재산연구원": {
+    "기관명": "한국지식재산연구원",
+    "홈페이지URL": "https://www.kiip.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089706+09:00"
+  },
+  "한국자산관리공사": {
+    "기관명": "한국자산관리공사",
+    "홈페이지URL": "http://www.kamco.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089711+09:00"
+  },
+  "한국청소년활동진흥원": {
+    "기관명": "한국청소년활동진흥원",
+    "홈페이지URL": "https://www.kywa.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089715+09:00"
+  },
+  "한국치산기술협회": {
+    "기관명": "한국치산기술협회",
+    "홈페이지URL": "https://www.kafet.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089718+09:00"
+  },
+  "한국철도공사": {
+    "기관명": "한국철도공사",
+    "홈페이지URL": "https://info.korail.com/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089727+09:00"
+  },
+  "한국잡월드": {
+    "기관명": "한국잡월드",
+    "홈페이지URL": "http://www.koreajobworld.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089732+09:00"
+  },
+  "한국지역난방공사": {
+    "기관명": "한국지역난방공사",
+    "홈페이지URL": "https://www.kdhc.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089738+09:00"
+  },
+  "한국청소년상담복지개발원": {
+    "기관명": "한국청소년상담복지개발원",
+    "홈페이지URL": "http://www.kyci.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089756+09:00"
+  },
+  "한국특허정보원": {
+    "기관명": "한국특허정보원",
+    "홈페이지URL": "https://www.kipi.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089758+09:00"
+  },
+  "한국해양수산연수원": {
+    "기관명": "한국해양수산연수원",
+    "홈페이지URL": "https://www.seaman.or.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089764+09:00"
+  },
+  "한국한의약진흥원": {
+    "기관명": "한국한의약진흥원",
+    "홈페이지URL": "https://www.nikom.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089770+09:00"
+  },
+  "한국해양진흥공사": {
+    "기관명": "한국해양진흥공사",
+    "홈페이지URL": "https://www.kobc.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089773+09:00"
+  },
+  "한국전기안전공사": {
+    "기관명": "한국전기안전공사",
+    "홈페이지URL": "http://www.kesco.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089786+09:00"
+  },
+  "한국행정연구원": {
+    "기관명": "한국행정연구원",
+    "홈페이지URL": "https://www.kipa.re.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089789+09:00"
+  },
+  "한국해양조사협회": {
+    "기관명": "한국해양조사협회",
+    "홈페이지URL": "https://www.khra.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089793+09:00"
+  },
+  "해양수산과학기술진흥원": {
+    "기관명": "해양수산과학기술진흥원",
+    "홈페이지URL": "https://www.kimst.re.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089796+09:00"
+  },
+  "한전원자력연료주식회사": {
+    "기관명": "한전원자력연료주식회사",
+    "홈페이지URL": "https://www.knfc.co.kr/",
+    "status": "HOME_ERROR",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089799+09:00"
+  },
+  "한국환경보전원": {
+    "기관명": "한국환경보전원",
+    "홈페이지URL": "https://www.keci.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089805+09:00"
+  },
+  "해양환경공단": {
+    "기관명": "해양환경공단",
+    "홈페이지URL": "https://www.koem.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089830+09:00"
+  },
+  "한국해양수산개발원": {
+    "기관명": "한국해양수산개발원",
+    "홈페이지URL": "https://www.kmi.re.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089838+09:00"
+  },
+  "한국해양교통안전공단": {
+    "기관명": "한국해양교통안전공단",
+    "홈페이지URL": "https://www.komsa.or.kr/",
+    "status": "CANDIDATE_NOT_VERIFIED",
+    "attempts": 1,
+    "last_attempt": "2026-09-26T09:29:41.089858+09:00"
+  }
+}

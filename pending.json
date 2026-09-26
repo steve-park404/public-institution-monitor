@@ -1,29 +1,12 @@
 [
   {
-    "url": "https://koda1458.kr/communication/participation/events/GPPrK-mxB2zDd3_MHO78msi9SpP158oClBN51_GzEhQ",
-    "title": "한국장기조직기증원 - 행사소식",
-    "date": "2026-09-18",
+    "url": "https://koti.re.kr/user/bbs/noticeView.do?bbs_no=74597",
+    "title": "설문조사 2026 KOTI 연구원 홈페이지 사용자 만족도 조사 이벤트 2026.09.22",
+    "date": "2026-09-22",
     "keyword": "설문조사",
-    "match_type": "BODY",
-    "institution": "재단법인 한국장기조직기증원",
-    "added_at": "2026-09-22T09:17:53.519244+09:00"
-  },
-  {
-    "url": "https://koda1458.kr/communication/participation/events/mgxC9Napoz-VkmzwLpY5GcFJJ9d30Rt_v8JSP40MURk",
-    "title": "한국장기조직기증원 - 행사소식",
-    "date": "2026-09-02",
-    "keyword": "설문조사",
-    "match_type": "BODY",
-    "institution": "재단법인 한국장기조직기증원",
-    "added_at": "2026-09-22T09:17:53.519299+09:00"
-  },
-  {
-    "url": "https://koda1458.kr/communication/participation/events/DFCqjLzotEmbVAKfx6vvjuS0agzmtTuMgSwfvFmZI1o",
-    "title": "한국장기조직기증원 - 행사소식",
-    "date": "2026-09-03",
-    "keyword": "설문조사",
-    "match_type": "BODY",
-    "institution": "재단법인 한국장기조직기증원",
-    "added_at": "2026-09-22T09:17:53.519343+09:00"
+    "match_type": "TITLE",
+    "fingerprint": "fp:4cadd8be163ef6a6fce919bd6c11f5a70fa49335e3a94aef4cef0e2c0b4255e4",
+    "institution": "한국교통연구원",
+    "added_at": "2026-09-26T09:19:48.449689+09:00"
   }
 ]
