@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.9"
+VERSION = "V8.14.11"
 
 import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
@@ -48,6 +48,7 @@ BOARD_DISCOVERY_MAX_SECONDARY = 6
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
+DAILY_SUMMARY_SENT_FILE = "daily_summary_sent.json"
 RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
 CHECKED_POSTS_FILE = "checked_posts.json"
