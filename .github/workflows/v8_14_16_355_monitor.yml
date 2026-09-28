@@ -1,0 +1,104 @@
+name: V8.14.16 355기관 게시판검증 + 기관별상태CSV 강제보존
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 0 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: true
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run monitor
+        run: python monitor.py
+
+      - name: Generate institution status CSV
+        run: python generate_institution_status_csv.py
+
+      - name: Verify institution status CSV
+        shell: bash
+        run: |
+          set -e
+          test -f "기관별_상태.csv"
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          p=Path("기관별_상태.csv")
+          with p.open("r",encoding="utf-8-sig",newline="") as f:
+              rows=list(csv.DictReader(f))
+          print(f"[CSV] {p.name}: {len(rows)}개 행, {p.stat().st_size:,} bytes")
+          if len(rows)!=355:
+              raise SystemExit(f"CSV 행 수 오류: {len(rows)}")
+          if p.stat().st_size<=100:
+              raise SystemExit("CSV 파일 크기가 비정상입니다.")
+          PY
+
+      - name: Upload institution status CSV artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8-14-16-institution-status
+          path: |
+            기관별_상태.csv
+            diagnostics.json
+            daily_summary.json
+            retry_queue.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit generated state
+        shell: bash
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config core.quotePath false
+
+          git add -A
+          echo "=== staged files ==="
+          git diff --cached --name-only
+
+          if git diff --cached --quiet; then
+            echo "변경사항 없음 - 커밋하지 않습니다."
+            exit 0
+          fi
+
+          git commit -m "chore: update V8.14.16 monitor state"
+
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify CSV committed
+        shell: bash
+        run: |
+          set -e
+          git show HEAD:"기관별_상태.csv" > /tmp/기관별_상태.csv
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          p=Path("/tmp/기관별_상태.csv")
+          with p.open("r",encoding="utf-8-sig",newline="") as f:
+              rows=list(csv.DictReader(f))
+          print(f"[CSV] Git HEAD 커밋본: {len(rows)}개 행")
+          if len(rows)!=355:
+              raise SystemExit(f"커밋된 CSV 행 수 오류: {len(rows)}")
+          PY
