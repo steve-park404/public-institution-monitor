@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.11"
+VERSION = "V8.14.12"
 
 import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
