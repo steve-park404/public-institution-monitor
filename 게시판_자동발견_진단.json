@@ -1,0 +1,10 @@
+{
+  "version": "V8.15",
+  "updated_at": "2026-09-28T17:48:48.356049+09:00",
+  "input_csv": "/home/runner/work/public-institution-monitor/public-institution-monitor/기관별_상태.csv",
+  "targets": 0,
+  "new_or_verified": 0,
+  "status_counts": {},
+  "output_csv": "/home/runner/work/public-institution-monitor/public-institution-monitor/게시판_자동발견_결과.csv",
+  "cache": "/home/runner/work/public-institution-monitor/public-institution-monitor/board_cache.json"
+}
