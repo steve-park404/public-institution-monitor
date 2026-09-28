@@ -1,0 +1,35 @@
+name: V8.14.18 미확인120 진단
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Run diagnostic
+        run: python v8_14_18_unconfirmed_diagnostic.py
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8-14-18-unconfirmed-diagnostic
+          path: |
+            기관별_미확인120_진단.csv
+            기관별_미확인120_진단.json
+          retention-days: 30
