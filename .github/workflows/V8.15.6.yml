@@ -1,0 +1,41 @@
+name: V8.15.6 게시판URL 병렬검색
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 0 * * *"
+permissions:
+  contents: write
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements.txt
+      - name: Run V8.15.6
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WORKERS: "12"
+          REQUEST_TIMEOUT: "10"
+          MAX_LIST_LINKS: "120"
+          MAX_DETAIL_PER_BOARD: "15"
+        run: python monitor_v8_15_6.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: V8.15.6-results
+          path: |
+            검색결과_V8.15.6.csv
+            게시판검증결과_V8.15.6.csv
+            summary_V8.15.6.json
+            *_ledger.json
+          if-no-files-found: warn
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 검색결과_V8.15.6.csv 게시판검증결과_V8.15.6.csv summary_V8.15.6.json *_ledger.json || true
+          git diff --cached --quiet || git commit -m "V8.15.6 병렬검색 결과"
+          git push || true
