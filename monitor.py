@@ -16,9 +16,9 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.20"
+VERSION = "V8.14.21"
 
-import os, re, json, time, html, warnings, hashlib
+import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -48,6 +48,7 @@ BOARD_DISCOVERY_MAX_SECONDARY = 6
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
+DIAGNOSTIC_CSV_FILE = "진단_후보.csv"
 RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
 CHECKED_POSTS_FILE = "checked_posts.json"
@@ -905,7 +906,8 @@ def process(target,state,board_cache,checked_posts):
             "error":"","error_type":"","diag":{},"post_candidates":0,"detail_checked":0,"recent_posts":0,
             "title_matches":0,"body_matches":0,"excluded_list_pages":0,
             "excluded_generic_pages":0,"excluded_contest_titles":0,"detail_errors":0,
-            "excluded_not_post_structure":0,"excluded_no_body":0}
+            "excluded_not_post_structure":0,"excluded_no_body":0,
+            "diagnostic_rows":[],"reason_counts":{}}
     try:
         board=seed or board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"")
         details=[]
@@ -948,6 +950,19 @@ def process(target,state,board_cache,checked_posts):
             u=item.get("url") if isinstance(item,dict) else item
             try:
                 m,reason,kw=match_post_detailed(u)
+                result["reason_counts"][reason]=result["reason_counts"].get(reason,0)+1
+                # 상세페이지 판정 결과를 진단용으로 보존한다.
+                # 특히 NO_KEYWORD / RESULT_ANNOUNCEMENT_TITLE / GENERIC_PAGE를
+                # 확인하면 실제 미탐·오탐 원인을 추적할 수 있다.
+                if reason not in ("BODY_MATCH","TITLE_MATCH") or m:
+                    result["diagnostic_rows"].append({
+                        "기관명": name,
+                        "기관유형": target.get("기관유형",""),
+                        "제목": str(item.get("title",""))[:300],
+                        "URL": u,
+                        "판정": reason,
+                        "키워드": kw,
+                    })
                 if reason=="LIST_PAGE": result["excluded_list_pages"]+=1
                 elif reason in ("GENERIC_PAGE","GENERIC_TITLE"): result["excluded_generic_pages"]+=1
                 elif reason=="CONTEST_TITLE": result["excluded_contest_titles"]+=1
@@ -1277,6 +1292,23 @@ def main():
     state["version"]=VERSION
     save_json(STATE_FILE,state); save_json(PENDING_FILE,pending)
 
+    # 상세 판정 진단 CSV 생성: Telegram 발송에는 영향을 주지 않는다.
+    diagnostic_rows=[]
+    reason_counts={}
+    for rr in results:
+        for row in rr.get("diagnostic_rows",[]):
+            diagnostic_rows.append(row)
+        for k,v in rr.get("reason_counts",{}).items():
+            reason_counts[k]=reason_counts.get(k,0)+v
+    diagnostic_rows.sort(key=lambda x:(x.get("판정",""),x.get("기관명",""),x.get("제목","")))
+    try:
+        with open(DIAGNOSTIC_CSV_FILE,"w",encoding="utf-8-sig",newline="") as f:
+            w=csv.DictWriter(f,fieldnames=["기관명","기관유형","제목","URL","판정","키워드"])
+            w.writeheader()
+            w.writerows(diagnostic_rows)
+    except Exception as e:
+        print("진단 CSV 저장 실패:",type(e).__name__,str(e)[:200])
+
     elapsed=time.time()-started
     diag_counts={}
     for r in results:
@@ -1327,7 +1359,9 @@ def main():
         "migrated_fingerprint_count":migrated_fingerprint_count,
         "summary_skipped_duplicate":summary_skipped_duplicate,
         "board_cache_total":len(board_cache),
-        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,"errors":errors,
+        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,
+        "diagnostic_csv":DIAGNOSTIC_CSV_FILE,"diagnostic_rows":len(diagnostic_rows),
+        "reason_counts":reason_counts,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":bool(timed_out or len(results)<len(targets)),
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
