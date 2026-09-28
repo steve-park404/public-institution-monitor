@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.12"
+VERSION = "V8.14.13"
 
 import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
@@ -44,7 +44,7 @@ MAX_PENDING = 10000
 
 BOARD_DISCOVERY_MAX_LINKS = 100
 BOARD_DISCOVERY_MAX_FETCH = 12
-BOARD_DISCOVERY_MAX_SECONDARY = 6
+BOARD_DISCOVERY_MAX_SECONDARY = 12
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
@@ -485,7 +485,7 @@ def secondary_discovery(home):
     return candidates[:BOARD_DISCOVERY_MAX_SECONDARY]
 
 def discover_board(home):
-    diag={"home":home,"status":"START","candidate_count":0,"fetched_count":0,"verified_count":0,"selected":"","selected_score":None,"candidates":[],"secondary_candidate_count":0}
+    diag={"home":home,"status":"START","candidate_count":0,"primary_candidate_count":0,"secondary_candidate_count":0,"total_candidate_count":0,"fetched_count":0,"primary_fetched_count":0,"secondary_fetched_count":0,"verified_count":0,"primary_verified_count":0,"secondary_verified_count":0,"selected":"","selected_score":None,"candidates":[]}
     r=get(home)
     if not r:
         diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
@@ -493,32 +493,39 @@ def discover_board(home):
     links=extract_links(r.url,soup)
     scored=sorted([(board_score(u,t),u,t) for u,t in links],reverse=True)
     diag["candidate_count"]=len(scored)
+    diag["primary_candidate_count"]=len(scored)
     best=None
     for score,u,t in scored[:BOARD_DISCOVERY_MAX_FETCH]:
         if score < -8: continue
         diag["fetched_count"]+=1
+        diag["primary_fetched_count"]+=1
         try: bu,details,info=inspect_board(u)
         except Exception as e:
             diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","error_type":type(e).__name__}); continue
         diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":info.get("status"),"candidate_posts":info.get("candidate_posts",0),"source":"primary"})
         if info.get("status")!="VERIFIED": continue
         diag["verified_count"]+=1
+        diag["primary_verified_count"]+=1
         combined=score+min(info.get("candidate_posts",0),10)
         if any(k in info.get("recent_titles","") for k in KEYWORDS): combined+=2
         if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
     if best is None:
-        secondary=secondary_discovery(home); diag["secondary_candidate_count"]=len(secondary)
+        secondary=secondary_discovery(home); diag["secondary_candidate_count"]=len(secondary); diag["total_candidate_count"]=diag["primary_candidate_count"]+diag["secondary_candidate_count"]
         for score,u,t in secondary:
             diag["fetched_count"]+=1
+            diag["secondary_fetched_count"]+=1
             try: bu,details,info=inspect_board(u)
             except Exception as e:
                 diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","source":"secondary","error_type":type(e).__name__}); continue
             diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":info.get("status"),"candidate_posts":info.get("candidate_posts",0),"source":"secondary"})
             if info.get("status")!="VERIFIED": continue
             diag["verified_count"]+=1
+            diag["secondary_verified_count"]+=1
             combined=score+min(info.get("candidate_posts",0),10)
             if any(k in info.get("recent_titles","") for k in KEYWORDS): combined+=2
             if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
+    if diag["total_candidate_count"]==0:
+        diag["total_candidate_count"]=diag["primary_candidate_count"]+diag["secondary_candidate_count"]
     if best:
         diag["status"]="VERIFIED"; diag["selected"]=best["url"]; diag["selected_score"]=best["score"]
         return best["url"],best["details"][:RECENT_POSTS],"DISCOVERED",diag
@@ -1068,8 +1075,15 @@ def build_institution_status_rows(targets, results, timed_out=False):
             "본문매칭":r.get("body_matches",0) or 0,
             "상세오류":r.get("detail_errors",0) or 0,
             "게시판후보수":d.get("candidate_count",""),
+            "1차게시판후보수":d.get("primary_candidate_count",d.get("candidate_count","")),
+            "2차게시판후보수":d.get("secondary_candidate_count",""),
+            "총게시판후보수":d.get("total_candidate_count",""),
             "게시판조회수":d.get("fetched_count",""),
+            "1차조회수":d.get("primary_fetched_count",""),
+            "2차조회수":d.get("secondary_fetched_count",""),
             "게시판검증수":d.get("verified_count",""),
+            "1차검증수":d.get("primary_verified_count",""),
+            "2차검증수":d.get("secondary_verified_count",""),
             "선정점수":d.get("selected_score",""),
             "재시도대상":retry,
             "최종확인시각":now
@@ -1083,7 +1097,8 @@ def save_institution_status_csv(targets, results, timed_out=False):
         "기관명","기관유형","홈페이지URL","게시판URL","상태","상태설명",
         "게시물후보","상세확인","기존확인건너뜀","최근게시물",
         "제목매칭","본문매칭","상세오류",
-        "게시판후보수","게시판조회수","게시판검증수","선정점수",
+        "게시판후보수","1차게시판후보수","2차게시판후보수","총게시판후보수",
+        "게시판조회수","1차조회수","2차조회수","게시판검증수","1차검증수","2차검증수","선정점수",
         "재시도대상","최종확인시각"
     ]
     tmp=INSTITUTION_STATUS_CSV+".tmp"
