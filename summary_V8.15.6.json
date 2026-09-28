@@ -1,0 +1,12 @@
+{
+  "version": "V8.15.6",
+  "targets_total": 355,
+  "board_url_targets": 348,
+  "board_url_missing": 7,
+  "board_verified": 305,
+  "board_failed": 43,
+  "posts_checked": 25263,
+  "new_matches": 41,
+  "telegram_sent": 20,
+  "elapsed_seconds": null
+}
