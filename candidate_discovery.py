@@ -26,7 +26,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup, NavigableString
 
-VERSION = "V1.3"
+VERSION = "V1.4"
 ALIO_ORG = "https://www.alioplus.go.kr/organization/organByTypeList.do"
 ALIO_REGION = "https://www.alioplus.go.kr/organization/organByRegionList.do"
 ALIO_POLL = "https://www.alioplus.go.kr/nation/pollList.do"
@@ -105,7 +105,8 @@ def clean_candidate_name(name):
     # 주소가 기관명 뒤에 이어지는 ALIO 카드 텍스트를 잘라낸다.
     # 예: '근로복지공단 울산광역시 중구 종가로 340 ...' -> '근로복지공단'
     addr_patterns = [
-        r"\s+(?:서울특별시|부산광역시|대구광역시|인천광역시|광주광역시|대전광역시|울산광역시|세종특별자치시|제주특별자치도|경기도|강원특별자치도|충청북도|충청남도|전북특별자치도|전라남도|경상북도|경상남도)\s+",
+        # 시·도 명칭은 현행 명칭뿐 아니라 ALIO에 남아 있을 수 있는 구명칭도 포함한다.
+        r"\s+(?:서울특별시|부산광역시|대구광역시|인천광역시|광주광역시|대전광역시|울산광역시|세종특별자치시|세종시|제주특별자치도|제주도|경기도|강원특별자치도|강원도|충청북도|충북|충청남도|충남|전북특별자치도|전라북도|전북|전라남도|전남|경상북도|경북|경상남도|경남|전남광주통합특별시)\s+",
         r"\s+(?:서울|부산|대구|인천|광주|대전|울산|세종)\s+(?:시|특별시|광역시)\s+",
     ]
     for pat in addr_patterns:
@@ -113,6 +114,19 @@ def clean_candidate_name(name):
         if m:
             name = name[:m.start()].strip()
             break
+
+    # 주소 제거 후 ALIO 카드가 '기관명 + 주소 + 기관명'처럼 합쳐지는 경우가 있다.
+    # 정확히 같은 기관명이 연속 2회 남으면 앞쪽 하나만 보존한다.
+    m = re.fullmatch(r"(.{2,80}?)\s+\1", name)
+    if m:
+        name = m.group(1).strip()
+
+    # 동일 기관명이 3회 이상 반복되는 변형도 마지막 반복을 제거한다.
+    for _ in range(2):
+        m = re.fullmatch(r"(.{2,80}?)\s+\1", name)
+        if not m:
+            break
+        name = m.group(1).strip()
 
     # 슬래시 뒤에 붙는 유형/메타 제거
     name = re.sub(r"\s*/\s*(?:공기업|준정부기관|기타공공기관).*$", "", name)
