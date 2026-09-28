@@ -1,4 +1,4 @@
-name: 기관 후보 발굴 - 주간 V1.1
+name: 기관 후보 발굴 - 주간 V1.2
 
 on:
   workflow_dispatch:
@@ -8,10 +8,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: institution-candidate-discovery
+  cancel-in-progress: true
+
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,22 +26,58 @@ jobs:
           python-version: "3.11"
 
       - name: Install
-        run: pip install -q requests beautifulsoup4 pandas lxml
+        run: pip install -q requests beautifulsoup4 pandas lxml openpyxl
 
-      - name: Run candidate discovery
+      - name: Check input
+        shell: bash
         run: |
+          set -e
+          if [ -f "기관별_상태.csv" ]; then echo "입력: 기관별_상태.csv";
+          elif [ -f "monitor_targets.xlsx" ]; then echo "입력: monitor_targets.xlsx";
+          elif [ -f "url.xlsx" ]; then echo "입력: url.xlsx";
+          else echo "기관 목록 입력파일이 없습니다."; exit 1; fi
+
+      - name: Run candidate discovery V1.2
+        run: |
+          set -e
+          if [ -f "기관별_상태.csv" ]; then INPUT="기관별_상태.csv";
+          elif [ -f "monitor_targets.xlsx" ]; then INPUT="monitor_targets.xlsx";
+          else INPUT="url.xlsx"; fi
           python candidate_discovery.py \
-            --input 기관별_상태.csv \
+            --input "$INPUT" \
             --output 기관후보_발굴결과.csv
 
+      - name: Validate result quality
+        shell: bash
+        run: |
+          set -e
+          test -s 기관후보_발굴결과.csv
+          test -s 기관후보_발굴결과_요약.json
+          test -s 기관후보_발굴결과_진단.json
+          python - <<'PY'
+          import pandas as pd, json, re
+          p='기관후보_발굴결과.csv'
+          df=pd.read_csv(p,encoding='utf-8-sig')
+          required=['기관명','기관유형','기존355','후보점수','추천등급']
+          missing=[x for x in required if x not in df.columns]
+          if missing: raise SystemExit(f'필수 열 누락: {missing}')
+          if df['기관명'].duplicated().any(): raise SystemExit('중복 기관명이 존재합니다.')
+          bad_pat=re.compile(r'기관 홈페이지|인스타그램|페이스북|유튜브|Q-net|KIPRO|TAAS|공공누리|통합접수시스템|전자신고포털|정보포털|정보시스템|통합전산망|포털|시스템|홈페이지|공기업\(시장형\)|공기업\(준시장형\)|준정부기관\(기금관리형\)|준정부기관\(위탁집행형\)|기타공공기관')
+          bad=[x for x in df['기관명'].astype(str) if bad_pat.search(x)]
+          if bad: raise SystemExit(f'명백한 비기관 후보 발견: {bad[:10]}')
+          print('V1.2 품질검증 통과:',len(df),'개')
+          print(df.head(20).to_string(index=False))
+          with open('기관후보_발굴결과_요약.json',encoding='utf-8') as f: print(json.load(f))
+          PY
 
       - name: Upload candidate discovery results
         uses: actions/upload-artifact@v4
         with:
-          name: institution-candidate-discovery-v1-1
+          name: institution-candidate-discovery-v1-2
           path: |
             기관후보_발굴결과.csv
             기관후보_발굴결과_요약.json
+            기관후보_발굴결과_진단.json
           if-no-files-found: error
           retention-days: 30
 
@@ -48,24 +88,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config core.quotePath false
-
-          echo "=== generated files ==="
-          ls -lh 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json
-
-          git add -A -- 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json
-
-          echo "=== staged files ==="
-          git diff --cached --name-only
-
+          git add -A -- 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json 기관후보_발굴결과_진단.json
           if git diff --cached --quiet; then
             echo "변경사항 없음 - 커밋하지 않습니다."
             exit 0
           fi
-
-          git commit -m "chore: update institution candidate discovery results"
-
-          # Sync safely in case the repository changed after checkout.
+          git commit -m "chore: update institution candidate discovery v1.2"
           git fetch origin main
           git rebase origin/main
-
           git push origin HEAD:main
