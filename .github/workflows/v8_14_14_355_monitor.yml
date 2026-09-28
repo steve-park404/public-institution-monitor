@@ -1,0 +1,62 @@
+name: V8.14.14 355기관 게시판검증개선 + 홈페이지복구
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 0 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: true
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run monitor
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor.py
+
+      - name: Verify institution status CSV
+        run: |
+          test -s 기관별_상태.csv
+          echo "기관별_상태.csv OK"
+          wc -l 기관별_상태.csv
+
+      - name: Upload institution status CSV artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: institution-status-v8-14-14
+          path: 기관별_상태.csv
+          retention-days: 30
+
+      - name: Commit generated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config core.quotePath false
+          git add -A
+          git diff --cached --name-only -z | python -c "import sys; x=sys.stdin.buffer.read().split(b'\0'); print('STAGED:', [a.decode('utf-8') for a in x if a])"
+          git diff --cached --quiet || git commit -m "chore: update V8.14.14 monitor state"
+          git fetch origin main
+          git rebase origin/main || true
+          git push origin HEAD:main
