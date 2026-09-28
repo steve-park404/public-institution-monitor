@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.13"
+VERSION = "V8.14.14"
 
 import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
@@ -37,6 +37,13 @@ MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
 RECENT_POSTS = 10
+
+# V8.14.14 게시판 검증 개선
+BOARD_SCORE_VERIFIED = 8
+BOARD_SCORE_PROBABLE = 5
+BOARD_SCORE_WEAK = 3
+HOME_RECOVERY_VARIANTS = 4
+
 RECENT_DAYS = 30
 MAX_TOTAL_SECONDS = 1500
 TELEGRAM_MAX_SEND = 20
@@ -1109,6 +1116,79 @@ def save_institution_status_csv(targets, results, timed_out=False):
     os.replace(tmp,INSTITUTION_STATUS_CSV)
     return len(rows)
 
+
+def score_board_candidate_v81414(candidate_url, html_text="", post_links=None, titles=None, dates=None):
+    """게시판 후보를 이진 검증하지 않고 구조적 증거를 점수화한다."""
+    score = 0
+    reasons = []
+    url_l = (candidate_url or "").lower()
+    html_l = (html_text or "").lower()
+    post_links = post_links or []
+    titles = titles or []
+    dates = dates or []
+
+    if post_links:
+        score += 3
+        reasons.append("게시물링크")
+    if len(post_links) >= 3:
+        score += 2
+        reasons.append("복수게시물")
+    if titles:
+        score += 2
+        reasons.append("제목확인")
+    if dates:
+        score += 2
+        reasons.append("날짜확인")
+    if any(k in url_l for k in ("notice", "board", "bbs", "news", "community", "brd", "p/")):
+        score += 1
+        reasons.append("게시판URL형태")
+    if any(k in html_l for k in ("공지사항", "알림", "게시판", "등록일", "작성일")):
+        score += 1
+        reasons.append("게시판구조문구")
+    if "page" in html_l or "paging" in html_l or "페이지" in html_l:
+        score += 1
+        reasons.append("페이지네이션")
+
+    if score >= BOARD_SCORE_VERIFIED:
+        status = "VERIFIED"
+    elif score >= BOARD_SCORE_PROBABLE:
+        status = "PROBABLE_BOARD"
+    elif score >= BOARD_SCORE_WEAK:
+        status = "WEAK_CANDIDATE"
+    else:
+        status = "REJECT"
+
+    return {"score": score, "status": status, "reasons": reasons}
+
+
+def build_home_recovery_urls(url):
+    """HOME_ERROR 기관의 흔한 URL 변형을 생성한다."""
+    if not url:
+        return []
+    from urllib.parse import urlsplit, urlunsplit
+    try:
+        p = urlsplit(url.strip())
+        host = p.netloc
+        path = p.path or "/"
+        variants = []
+        schemes = ["https", "http"]
+        hosts = [host]
+        if host.startswith("www."):
+            hosts.append(host[4:])
+        else:
+            hosts.append("www." + host)
+        for s in schemes:
+            for h in hosts:
+                variants.append(urlunsplit((s, h, path, p.query, "")))
+        # 원 URL이 포함된 중복 제거
+        out=[]
+        seen=set()
+        for x in variants:
+            if x not in seen:
+                seen.add(x); out.append(x)
+        return out[:HOME_RECOVERY_VARIANTS]
+    except Exception:
+        return [url]
 
 def main():
     started=time.time()
