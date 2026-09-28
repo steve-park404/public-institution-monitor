@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.17"
+VERSION = "V8.14.18"
 
 import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
@@ -36,16 +36,15 @@ EXCLUDE_TITLE = ["공모전"]
 MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
-HOME_RECOVERY_MAX_TRIES = 6
 RECENT_POSTS = 10
 RECENT_DAYS = 30
-MAX_TOTAL_SECONDS = 1200
+MAX_TOTAL_SECONDS = 1080
 TELEGRAM_MAX_SEND = 20
 MAX_PENDING = 10000
 
 BOARD_DISCOVERY_MAX_LINKS = 100
 BOARD_DISCOVERY_MAX_FETCH = 12
-BOARD_DISCOVERY_MAX_SECONDARY = 8
+BOARD_DISCOVERY_MAX_SECONDARY = 6
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
@@ -483,104 +482,11 @@ def secondary_discovery(home):
     candidates.sort(reverse=True)
     return candidates[:BOARD_DISCOVERY_MAX_SECONDARY]
 
-
-def homepage_variants(home):
-    """오래된/오타/리다이렉트 URL을 복구하기 위한 제한된 URL 변형."""
-    out=[]; seen=set()
-    try:
-        raw=clean_url(home)
-        p=urlparse(raw)
-        host=p.netloc.split(":")[0].lower()
-        # 명백한 wwww 오타 보정
-        host=re.sub(r"^w{4,}\.", "www.", host)
-        host=re.sub(r"^wwwwww\.", "www.", host)
-        bare=host.removeprefix("www.")
-        hosts=[host, "www."+bare, bare]
-        schemes=[p.scheme or "https", "https", "http"]
-        for scheme in schemes:
-            for h in hosts:
-                if not h: continue
-                u=urlparse(raw)._replace(scheme=scheme,netloc=h).geturl()
-                u=clean_url(u)
-                if u not in seen:
-                    seen.add(u); out.append(u)
-    except Exception:
-        return [home] if home else []
-    return out[:6]
-
-def recover_homepage(home):
-    attempts=[]
-    for u in homepage_variants(home):
-        attempts.append(u)
-        r=get(u)
-        if r:
-            return r,attempts
-    return None,attempts
-
-def relaxed_post_candidates(base,soup):
-    """엄격한 detail-link 판정에 실패한 국내 기관 게시판용 보조 추출기."""
-    out=[]; seen=set()
-    if not soup: return out
-    for row in soup.find_all("tr"):
-        row_text=text_of(row)
-        row_date=parse_date_text(row_text)
-        links=row.find_all("a",href=True)
-        for a in links:
-            title=norm(" ".join([text_of(a),a.get("title",""),a.get("aria-label","")]))
-            u=clean_url(absolute(base,a.get("href","")))
-            if not u or not same_domain(base,u) or u in seen or len(title)<2: continue
-            full=(lower_url(u)+" "+title).lower()
-            if any(x in full for x in ["login","logout","sitemap","privacy","terms","javascript:"]): continue
-            # 목록/메뉴 링크는 제외하되, 행에 날짜가 있거나 게시물 식별자가 있으면 허용
-            identifiable=bool(row_date) or bool(re.search(r"(?:seq|ntt|idx|article|view|read|no=|board|bbs)",full))
-            if not identifiable: continue
-            seen.add(u); out.append({"url":u,"title":title,"date":row_date})
-    # 카드형 게시판
-    for a in soup.find_all("a",href=True):
-        title=norm(" ".join([text_of(a),a.get("title",""),a.get("aria-label","")]))
-        u=clean_url(absolute(base,a.get("href","")))
-        if not u or not same_domain(base,u) or u in seen or len(title)<3: continue
-        full=(lower_url(u)+" "+title).lower()
-        if any(x in full for x in ["login","logout","sitemap","privacy","terms","javascript:"]): continue
-        parent=text_of(a.parent)
-        dt=parse_date_text(parent)
-        identifiable=bool(dt) or bool(re.search(r"(?:seq|ntt|idx|article|view|read|no=|board|bbs)",full))
-        if not identifiable: continue
-        seen.add(u); out.append({"url":u,"title":title,"date":dt})
-        if len(out)>=RECENT_POSTS: break
-    return out[:RECENT_POSTS]
-
-def inspect_board_relaxed(board_url):
-    r=get(board_url)
-    if not r:
-        return None,[],{"status":"BOARD_FETCH_ERROR","url":board_url,"candidate_posts":0}
-    soup=BeautifulSoup(r.text,"html.parser")
-    c=relaxed_post_candidates(r.url,soup)
-    if c:
-        return r.url,c,{"status":"PROBABLE_BOARD","url":r.url,"candidate_posts":len(c),
-                        "recent_titles":" ".join(x.get("title","") for x in c[:10])[:1000]}
-    return r.url,[],{"status":"NO_RECENT_CANDIDATE","url":r.url,"candidate_posts":0}
-
 def discover_board(home):
     diag={"home":home,"status":"START","candidate_count":0,"fetched_count":0,"verified_count":0,"selected":"","selected_score":None,"candidates":[],"secondary_candidate_count":0}
     r=get(home)
-    recovery_attempts=[]
-    recovered_url=""
     if not r:
-        r,recovery_attempts=recover_homepage(home)
-        if r:
-            recovered_url=r.url
-            diag["homepage_recovery_attempted"]=True
-            diag["homepage_recovery_success"]=True
-            diag["recovered_home"]=r.url
-        else:
-            diag["homepage_recovery_attempted"]=True
-            diag["homepage_recovery_success"]=False
-            diag["recovery_attempts"]=recovery_attempts
-            diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
-    else:
-        diag["homepage_recovery_attempted"]=False
-        diag["homepage_recovery_success"]=False
+        diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
     soup=BeautifulSoup(r.text,"html.parser")
     links=extract_links(r.url,soup)
     scored=sorted([(board_score(u,t),u,t) for u,t in links],reverse=True)
@@ -613,30 +519,7 @@ def discover_board(home):
             if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
     if best:
         diag["status"]="VERIFIED"; diag["selected"]=best["url"]; diag["selected_score"]=best["score"]
-        if recovered_url: diag["recovered_home"]=r.url
         return best["url"],best["details"][:RECENT_POSTS],"DISCOVERED",diag
-
-    # V8.14.17: 엄격 검증 실패 시 상위 후보에 대해 보조 추출을 수행한다.
-    relaxed_best=None
-    relaxed_pool=[]
-    for score,u,t in scored[:min(12,BOARD_DISCOVERY_MAX_FETCH)]:
-        if score < -8: continue
-        relaxed_pool.append((score,u,t))
-    for score,u,t in relaxed_pool:
-        try:
-            bu,details,info=inspect_board_relaxed(u)
-        except Exception as e:
-            diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"RELAXED_INSPECT_ERROR","source":"relaxed","error_type":type(e).__name__})
-            continue
-        if info.get("status")!="PROBABLE_BOARD": continue
-        diag["verified_count"]+=1
-        combined=score+min(len(details),10)
-        if relaxed_best is None or combined>relaxed_best["score"]:
-            relaxed_best={"score":combined,"url":bu,"details":details}
-    if relaxed_best:
-        diag["status"]="PROBABLE_BOARD"; diag["selected"]=relaxed_best["url"]; diag["selected_score"]=relaxed_best["score"]; diag["verification_mode"]="RELAXED"
-        return relaxed_best["url"],relaxed_best["details"][:RECENT_POSTS],"PROBABLE_BOARD",diag
-
     if not scored and not diag["secondary_candidate_count"]:
         diag["status"]="NO_CANDIDATE"; return None,[],"NO_CANDIDATE",diag
     diag["status"]="CANDIDATE_NOT_VERIFIED"; return None,[],"CANDIDATE_NOT_VERIFIED",diag
@@ -818,6 +701,40 @@ def find_target_file():
         if os.path.exists(f): return f
     return None
 
+def load_manual_board_overrides():
+    """
+    V8.14.18:
+    사용자가 직접 확인한 기관별_상태.csv의 게시판URL을
+    기존 355기관 원본 목록에 병합한다.
+    검색 알고리즘은 변경하지 않는다.
+    """
+    candidates = [
+        "기관별_상태.csv",
+        "기관별_상태 (2).csv",
+        "manual_board_urls.csv",
+    ]
+    path = next((p for p in candidates if os.path.exists(p)), None)
+    if not path:
+        return {}
+
+    overrides = {}
+    try:
+        import csv
+        with open(path, "r", encoding="utf-8-sig", newline="") as f:
+            rows = list(csv.DictReader(f))
+        for row in rows:
+            name = norm(row.get("기관명", ""))
+            board = norm(row.get("게시판URL", ""))
+            if not name or not board:
+                continue
+            if not re.match(r"^https?://", board, re.I):
+                continue
+            overrides[name] = board
+    except Exception:
+        return {}
+    return overrides
+
+
 def load_targets():
     path=find_target_file()
     if not path: raise FileNotFoundError(f"기관 목록 파일이 없습니다: {TARGET_FILE_CANDIDATES}")
@@ -835,6 +752,9 @@ def load_targets():
     idx_board=col("공지게시판URL","공지사항URL","게시판URL")
     idx_type=col("기관유형","기관 유형","유형","기관구분","구분")
     if idx_name is None or idx_home is None: raise ValueError(f"기관명/홈페이지URL 열 없음: {headers}")
+
+    manual_boards = load_manual_board_overrides()
+
     out=[]
     for row in rows[1:]:
         if not row: continue
@@ -842,9 +762,17 @@ def load_targets():
         home=norm(row[idx_home]) if idx_home<len(row) else ""
         board=norm(row[idx_board]) if idx_board is not None and idx_board<len(row) else ""
         org_type=norm(row[idx_type]) if idx_type is not None and idx_type<len(row) else ""
+
+        # 수동 확인 URL이 있으면 기존 자동발견/기존 엑셀 URL보다 우선한다.
+        manual_board = manual_boards.get(name, "")
+        if manual_board:
+            board = manual_board
+
         if name and home:
             out.append({
-                "기관명":name,"홈페이지URL":home,"공지게시판URL":board,
+                "기관명":name,
+                "홈페이지URL":home,
+                "공지게시판URL":board,
                 "기관유형":org_type
             })
     return out
@@ -915,7 +843,7 @@ def process(target,state,board_cache,checked_posts):
             "excluded_generic_pages":0,"excluded_contest_titles":0,"detail_errors":0,
             "excluded_not_post_structure":0,"excluded_no_body":0}
     try:
-        board=board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"") or seed
+        board=seed or board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"")
         details=[]
         if board:
             try: bu,details,info=inspect_board(board)
@@ -928,8 +856,7 @@ def process(target,state,board_cache,checked_posts):
             bu,details,status,diag=discover_board(home)
             result["diag"]=diag or {}
             if bu and details:
-                board=bu; result["board"]=bu; result["status"]=status if status in ("PROBABLE_BOARD","USABLE_LIST") else "DISCOVERED"
-                cache_board(board_cache,name,home,bu,"PROBABLE_BOARD" if status=="PROBABLE_BOARD" else "VERIFIED")
+                board=bu; result["board"]=bu; result["status"]="DISCOVERED"; cache_board(board_cache,name,home,bu,"VERIFIED")
             else:
                 result["status"]=status; return result
 
@@ -1128,6 +1055,8 @@ def save_daily_summary_state(x):
 def main():
     started=time.time()
     targets=load_targets()
+    manual_url_count=sum(1 for x in targets if x.get("공지게시판URL"))
+    print(f"V8.14.18 manual board URL targets: {manual_url_count}", flush=True)
     state=load_json(
         STATE_FILE,
         {"seen":[],"sent_urls":{},"boards":{},"updated_at":"","version":VERSION}
