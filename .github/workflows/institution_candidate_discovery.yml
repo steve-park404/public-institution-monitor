@@ -1,4 +1,4 @@
-name: 기관 후보 발굴 - 주간
+name: 기관 후보 발굴 - 주간 V1.1
 
 on:
   workflow_dispatch:
@@ -30,15 +30,42 @@ jobs:
             --input 기관별_상태.csv \
             --output 기관후보_발굴결과.csv
 
+
+      - name: Upload candidate discovery results
+        uses: actions/upload-artifact@v4
+        with:
+          name: institution-candidate-discovery-v1-1
+          path: |
+            기관후보_발굴결과.csv
+            기관후보_발굴결과_요약.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Commit candidate files
+        shell: bash
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json
+          git config core.quotePath false
+
+          echo "=== generated files ==="
+          ls -lh 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json
+
+          git add -A -- 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json
+
+          echo "=== staged files ==="
+          git diff --cached --name-only
+
           if git diff --cached --quiet; then
-            echo "변경 없음"
-          else
-            git commit -m "chore: update institution candidate discovery"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            echo "변경사항 없음 - 커밋하지 않습니다."
+            exit 0
           fi
+
+          git commit -m "chore: update institution candidate discovery results"
+
+          # Sync safely in case the repository changed after checkout.
+          git fetch origin main
+          git rebase origin/main
+
+          git push origin HEAD:main
