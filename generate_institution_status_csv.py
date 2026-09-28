@@ -49,6 +49,8 @@ def status_desc(status):
     return {
         "CACHED_OR_SEED":"기존 캐시/지정 게시판 확인",
         "DISCOVERED":"홈페이지에서 게시판을 새로 발견",
+        "PROBABLE_BOARD":"완전 검증은 아니지만 실제 게시물 추출이 가능한 게시판 후보",
+        "USABLE_LIST":"게시물 목록 추출이 가능한 목록형 페이지",
         "HOME_ERROR":"홈페이지 접속 실패",
         "NO_CANDIDATE":"게시판 후보를 찾지 못함",
         "CANDIDATE_NOT_VERIFIED":"게시판 후보는 있으나 실제 게시판 검증 실패",
@@ -102,10 +104,13 @@ def main():
             "선정점수":r.get("selected_score",""),
             "재시도대상":"예" if status in {"HOME_ERROR","NO_CANDIDATE","CANDIDATE_NOT_VERIFIED","BOARD_FETCH_ERROR","PROCESS_ERROR"} else "아니오",
             "최종확인시각":now,
-            "게시판판정":r.get("diag_status",""),
-            "게시판판정근거":"",
-            "최고후보URL":"",
-            "최고후보점수":""
+            "홈페이지복구시도":"예" if (r.get("diag") or {}).get("homepage_recovery_attempted") else "아니오",
+            "홈페이지복구성공":"예" if (r.get("diag") or {}).get("homepage_recovery_success") else "아니오",
+            "복구URL":(r.get("diag") or {}).get("recovered_home", ""),
+            "게시판판정":r.get("diag_status", ""),
+            "게시판판정근거":r.get("verification_mode", ""),
+            "최고후보URL":r.get("selected", ""),
+            "최고후보점수":r.get("selected_score", "")
         })
     # Exact target count is a hard invariant.
     if len(rows)!=len(targets) or len(rows)!=355:
