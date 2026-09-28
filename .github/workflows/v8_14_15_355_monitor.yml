@@ -1,0 +1,21 @@
+name: V8.14.15 355기관 게시판검증점수화 + 홈페이지복구
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 0 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: true
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python monitor.py
