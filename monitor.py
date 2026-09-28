@@ -16,7 +16,7 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.18"
+VERSION = "V8.14.20"
 
 import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
@@ -91,21 +91,38 @@ GENERIC_URL_HINTS = [
 ]
 
 PARTICIPATION_CONTEXT = [
-    "설문","의견수렴","의견조사","만족도","조사","응답","설문지",
-    "참여단","시민의견","국민의견","의견","참여기간","응답기간",
-    "조사기간","참여방법","응답방법","참여해 주세요","응답해 주세요",
-    "설문에 참여","조사에 참여","의견을 제출","의견을 남겨",
-    "설문링크","조사대상","응답자","참여자"
+    "설문", "의견수렴", "의견조사", "만족도 조사", "조사", "응답",
+    "설문지", "참여단", "시민의견", "국민의견", "의견 제출", "의견을 제출",
+    "의견을 남겨", "참여기간", "응답기간", "조사기간", "참여방법", "응답방법",
+    "참여해 주세요", "참여해주시기 바랍니다", "응답해 주세요", "응답해주시기 바랍니다",
+    "설문에 참여", "조사에 참여", "설문링크", "설문 링크", "조사대상", "응답자",
+    "참여자 모집", "모집합니다", "모집 안내", "국민 의견", "시민 의견"
 ]
 SURVEY_ACTION_CONTEXT = [
-    "설문","조사","응답","만족도","의견수렴","의견조사","설문지",
-    "참여기간","응답기간","조사기간","참여방법","응답방법",
-    "참여해 주세요","응답해 주세요","설문에 참여","조사에 참여",
-    "의견을 제출","의견을 남겨","설문링크","조사대상","응답자","참여자"
+    "설문 참여", "설문에 참여", "설문조사 참여", "조사 참여", "조사에 참여",
+    "응답기간", "참여기간", "조사기간", "설문기간", "설문대상", "조사대상",
+    "응답방법", "참여방법", "응답자", "설문지", "설문 링크", "설문링크",
+    "온라인 설문", "온라인 설문조사", "만족도 조사 참여", "의견조사 참여",
+    "설문에 응답", "조사에 응답", "응답해 주세요", "응답해주시기 바랍니다",
+    "참여해 주세요", "참여해주시기 바랍니다"
 ]
-SENTENCE_MARKERS = [
-    "안내","참여","신청","설문","의견","조사","응답","만족도",
-    "기간","대상","방법","모집","제출","온라인","링크"
+# 메뉴/푸터의 '참여'를 실제 참여기회로 오인하지 않기 위한 강한 행동 신호
+PARTICIPATION_ACTION_SIGNALS = [
+    "참여해 주세요", "참여해주시기 바랍니다", "참여 바랍니다", "참여 바랍니다.",
+    "의견을 제출", "의견을 남겨", "의견 제출", "의견수렴", "의견조사",
+    "설문에 참여", "설문 참여", "조사에 참여", "조사 참여", "응답해 주세요",
+    "응답해주시기 바랍니다", "응답 바랍니다", "참여기간", "응답기간", "조사기간",
+    "참여방법", "응답방법", "설문기간", "설문대상", "조사대상", "온라인 설문",
+    "설문 링크", "설문링크", "참여자 모집", "모집합니다", "모집 안내", "신청기간",
+    "신청방법", "제안 접수", "의견 접수"
+]
+GENERIC_BODY_NOISE = [
+    "국민참여", "시민참여", "참여마당", "국민소통", "소통마당", "홈페이지",
+    "사이트맵", "개인정보처리방침", "이용약관", "만족도", "오류신고", "고객센터"
+]
+RESULT_TITLE_PATTERNS = [
+    "당첨자", "결과발표", "결과 발표", "조사결과", "조사 결과", "설문결과", "설문 결과",
+    "선정결과", "선정 결과", "참여자 발표", "수상자", "결과 안내", "결과안내"
 ]
 
 DATE_PATTERNS = [
@@ -355,17 +372,57 @@ def looks_like_list_dom(soup):
     return False
 
 def meaningful_body_match(body,keyword):
+    """본문의 실제 참여행동만 통과시키고 메뉴/푸터 공통문구 오탐을 차단한다."""
     body=norm(body)
     if len(body)<120: return False
-    for m in re.finditer(re.escape(keyword),body,re.I):
+
+    # 페이지 공통영역에서 반복되는 키워드만으로는 매칭하지 않는다.
+    for m in re.finditer(re.escape(keyword), body, re.I):
         idx=m.start()
-        ctx=body[max(0,idx-350):min(len(body),idx+500)]
+        ctx=body[max(0,idx-450):min(len(body),idx+650)]
+
+        # 국민참여/시민참여는 '참여'라는 단어 자체가 아니라 실제 행동 증거가 필요하다.
         if keyword in ("국민참여","시민참여"):
-            if not any(x in ctx for x in PARTICIPATION_CONTEXT): continue
-        if keyword=="설문조사":
-            if not any(x in ctx for x in SURVEY_ACTION_CONTEXT): continue
-        if sum(x in ctx for x in SENTENCE_MARKERS)>=1:
+            action_hits=[x for x in PARTICIPATION_ACTION_SIGNALS if x in ctx]
+            strong=[x for x in PARTICIPATION_CONTEXT if x in ctx]
+            # 강한 행동신호 1개 + 참여/조사 관련 보조신호 1개 이상
+            if not action_hits:
+                continue
+            if len(set(strong)) < 2 and not any(x in ctx for x in ["설문", "의견", "응답", "모집", "신청", "제안", "조사"]):
+                continue
+            # 공통 메뉴성 단어가 지나치게 많은 문맥은 추가 검증
+            noise_hits=sum(1 for x in GENERIC_BODY_NOISE if x in ctx)
+            if noise_hits >= 3 and len(action_hits) < 2:
+                continue
             return True
+
+        # 설문조사는 실제 응답/기간/대상/방법 등이 확인되어야 한다.
+        if keyword=="설문조사":
+            action_hits=[x for x in SURVEY_ACTION_CONTEXT if x in ctx]
+            if not action_hits:
+                continue
+            # '설문조사' 단어와 별개로 실제 참여/응답 관련 증거가 최소 1개 필요
+            if not any(x in ctx for x in ["참여", "응답", "기간", "대상", "방법", "설문지", "링크"]):
+                continue
+            noise_hits=sum(1 for x in GENERIC_BODY_NOISE if x in ctx)
+            if noise_hits >= 3 and len(set(action_hits)) < 2:
+                continue
+            return True
+    return False
+
+def is_result_or_announcement_title(title):
+    t=norm(title)
+    return any(x in t for x in RESULT_TITLE_PATTERNS)
+
+def is_probably_site_title(title, page_title=""):
+    """기관명/사이트명 같은 짧은 제목이 상세 게시물로 오인되는 것을 차단."""
+    t=norm(title)
+    p=norm(page_title)
+    tc=re.sub(r"[^0-9A-Za-z가-힣]","",t).lower()
+    pc=re.sub(r"[^0-9A-Za-z가-힣]","",p).lower()
+    if not tc: return True
+    if len(tc)<=10 and pc and (pc.startswith(tc) or pc.endswith(tc) or tc in pc):
+        return True
     return False
 
 def extract_links(base,soup):
@@ -541,7 +598,9 @@ def match_post_detailed(u):
     if looks_like_list_dom(soup): return None,"LIST_PAGE",""
 
     path=(urlparse(r.url).path or "").lower().rstrip("/")
-    if generic_url(r.url) or path in ("","/main","/home","/homepage"):
+    # 대표 홈페이지 자체를 게시물로 오인하지 않는다.
+    if generic_url(r.url) or path in ("","/main","/home","/homepage","/index.do","/index.jsp","/main.do","/main.jsp") \
+       or path.endswith(("/index.do","/index.jsp","/main.do","/main.jsp")):
         return None,"GENERIC_PAGE",""
 
     dt=extract_detail_date(soup)
@@ -557,8 +616,13 @@ def match_post_detailed(u):
     pc=re.sub(r"[^0-9A-Za-z가-힣]","",page_title).lower()
     if tc and pc and tc==pc and len(tc)>=6:
         return None,"GENERIC_TITLE",""
+    if is_probably_site_title(title,page_title):
+        return None,"GENERIC_TITLE",""
 
     if any(x in title for x in EXCLUDE_TITLE): return None,"CONTEST_TITLE",""
+    # 당첨자/결과발표 등은 신규 참여기회가 아니므로 알림에서 제외한다.
+    if is_result_or_announcement_title(title):
+        return None,"RESULT_ANNOUNCEMENT_TITLE",""
 
     body=visible_main_text(soup)
     # 게시물 검증은 기존보다 완화한다. 상세 URL + 날짜 + 제목 + 내용이 있으면 통과시키고,
@@ -703,7 +767,7 @@ def find_target_file():
 
 def load_manual_board_overrides():
     """
-    V8.14.18:
+    V8.14.20:
     사용자가 직접 확인한 기관별_상태.csv의 게시판URL을
     기존 355기관 원본 목록에 병합한다.
     검색 알고리즘은 변경하지 않는다.
@@ -1056,7 +1120,7 @@ def main():
     started=time.time()
     targets=load_targets()
     manual_url_count=sum(1 for x in targets if x.get("공지게시판URL"))
-    print(f"V8.14.18 manual board URL targets: {manual_url_count}", flush=True)
+    print(f"V8.14.20 manual board URL targets: {manual_url_count}", flush=True)
     state=load_json(
         STATE_FILE,
         {"seen":[],"sent_urls":{},"boards":{},"updated_at":"","version":VERSION}
