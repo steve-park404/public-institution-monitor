@@ -26,7 +26,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup, NavigableString
 
-VERSION = "V1.2"
+VERSION = "V1.3"
 ALIO_ORG = "https://www.alioplus.go.kr/organization/organByTypeList.do"
 ALIO_REGION = "https://www.alioplus.go.kr/organization/organByRegionList.do"
 ALIO_POLL = "https://www.alioplus.go.kr/nation/pollList.do"
@@ -87,13 +87,36 @@ def get(session, url, params=None, timeout=20):
 
 
 def clean_candidate_name(name):
+    """ALIO 카드의 한 줄 텍스트에서 실제 기관명만 안정적으로 추출한다.
+
+    V1.2에서 발생한 핵심 오류는 기관명/주소/기관유형이 하나의 텍스트 노드로
+    반환되는 경우 전체 문자열을 기관명으로 채택한 것이었다. V1.3에서는
+    주소 시작점과 기관유형을 각각 경계로 사용해 기관명만 남긴다.
+    """
     name = norm(name)
     if not name:
         return ""
-    # 기관유형/기타 메타가 이름 뒤에 붙는 경우 제거
+
+    # 기관유형은 가장 먼저 제거한다. 중간에 붙은 경우도 대응한다.
     for t in sorted(ALLOWED_TYPES, key=len, reverse=True):
-        name = re.sub(rf"\s*/\s*{re.escape(t)}$", "", name)
+        name = re.sub(rf"\s*/?\s*{re.escape(t)}\s*$", "", name).strip()
+        name = re.sub(rf"\s+{re.escape(t)}\s*$", "", name).strip()
+
+    # 주소가 기관명 뒤에 이어지는 ALIO 카드 텍스트를 잘라낸다.
+    # 예: '근로복지공단 울산광역시 중구 종가로 340 ...' -> '근로복지공단'
+    addr_patterns = [
+        r"\s+(?:서울특별시|부산광역시|대구광역시|인천광역시|광주광역시|대전광역시|울산광역시|세종특별자치시|제주특별자치도|경기도|강원특별자치도|충청북도|충청남도|전북특별자치도|전라남도|경상북도|경상남도)\s+",
+        r"\s+(?:서울|부산|대구|인천|광주|대전|울산|세종)\s+(?:시|특별시|광역시)\s+",
+    ]
+    for pat in addr_patterns:
+        m = re.search(pat, name)
+        if m:
+            name = name[:m.start()].strip()
+            break
+
+    # 슬래시 뒤에 붙는 유형/메타 제거
     name = re.sub(r"\s*/\s*(?:공기업|준정부기관|기타공공기관).*$", "", name)
+    name = re.sub(r"\s+(?:공기업|준정부기관|기타공공기관)\s*$", "", name)
     name = re.sub(r"^\d{1,6}$", "", name).strip()
     return name
 
@@ -421,13 +444,16 @@ def discover(input_path, out_csv, max_org_pages=160, max_poll_pages=30, sleep=0.
     print(f"생성: {summary_path}")
     print(f"생성: {diag_path}")
 
-    # 최소 품질검증: 후보 중 명백한 오탐 패턴이 남아 있으면 실패
+    # V1.3 품질검증: 실제 기관명에 주소/기관유형이 붙어 있는지 검사한다.
     bad_left = []
     for n in df["기관명"].tolist() if len(df) else []:
         if is_bad_name(n):
             bad_left.append(n)
+            continue
+        if ADDRESS_RE.search(n) or any(t in n for t in ALLOWED_TYPES):
+            bad_left.append(n)
     if bad_left:
-        raise SystemExit(f"V1.2 품질검증 실패: 명백한 비기관 후보 {bad_left[:10]}")
+        raise SystemExit(f"V1.3 품질검증 실패: 기관명 정규화 오류 {bad_left[:10]}")
 
 
 if __name__ == "__main__":
