@@ -1,0 +1,44 @@
+name: 기관 후보 발굴 - 주간
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 1 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install -q requests beautifulsoup4 pandas lxml
+
+      - name: Run candidate discovery
+        run: |
+          python candidate_discovery.py \
+            --input 기관별_상태.csv \
+            --output 기관후보_발굴결과.csv
+
+      - name: Commit candidate files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 기관후보_발굴결과.csv 기관후보_발굴결과_요약.json
+          if git diff --cached --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "chore: update institution candidate discovery"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
