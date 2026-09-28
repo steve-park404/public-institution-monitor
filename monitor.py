@@ -16,9 +16,9 @@ Title exclusion:
 - 공모전
 """
 
-VERSION = "V8.14.14"
+VERSION = "V8.14.15"
 
-import os, re, json, time, html, warnings, hashlib, csv
+import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -36,31 +36,23 @@ EXCLUDE_TITLE = ["공모전"]
 MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
+HOME_RECOVERY_MAX_TRIES = 6
 RECENT_POSTS = 10
-
-# V8.14.14 게시판 검증 개선
-BOARD_SCORE_VERIFIED = 8
-BOARD_SCORE_PROBABLE = 5
-BOARD_SCORE_WEAK = 3
-HOME_RECOVERY_VARIANTS = 4
-
 RECENT_DAYS = 30
-MAX_TOTAL_SECONDS = 1500
+MAX_TOTAL_SECONDS = 1080
 TELEGRAM_MAX_SEND = 20
 MAX_PENDING = 10000
 
 BOARD_DISCOVERY_MAX_LINKS = 100
 BOARD_DISCOVERY_MAX_FETCH = 12
-BOARD_DISCOVERY_MAX_SECONDARY = 12
+BOARD_DISCOVERY_MAX_SECONDARY = 6
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
-DAILY_SUMMARY_SENT_FILE = "daily_summary_sent.json"
 RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
 CHECKED_POSTS_FILE = "checked_posts.json"
 MAX_CHECKED_POSTS = 50000
-INSTITUTION_STATUS_CSV = "기관별_상태.csv"
 
 UA = f"Mozilla/5.0 (compatible; PublicInstitutionMonitor/{VERSION})"
 KST = ZoneInfo("Asia/Seoul")
@@ -492,7 +484,7 @@ def secondary_discovery(home):
     return candidates[:BOARD_DISCOVERY_MAX_SECONDARY]
 
 def discover_board(home):
-    diag={"home":home,"status":"START","candidate_count":0,"primary_candidate_count":0,"secondary_candidate_count":0,"total_candidate_count":0,"fetched_count":0,"primary_fetched_count":0,"secondary_fetched_count":0,"verified_count":0,"primary_verified_count":0,"secondary_verified_count":0,"selected":"","selected_score":None,"candidates":[]}
+    diag={"home":home,"status":"START","candidate_count":0,"fetched_count":0,"verified_count":0,"selected":"","selected_score":None,"candidates":[],"secondary_candidate_count":0}
     r=get(home)
     if not r:
         diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
@@ -500,39 +492,32 @@ def discover_board(home):
     links=extract_links(r.url,soup)
     scored=sorted([(board_score(u,t),u,t) for u,t in links],reverse=True)
     diag["candidate_count"]=len(scored)
-    diag["primary_candidate_count"]=len(scored)
     best=None
     for score,u,t in scored[:BOARD_DISCOVERY_MAX_FETCH]:
         if score < -8: continue
         diag["fetched_count"]+=1
-        diag["primary_fetched_count"]+=1
         try: bu,details,info=inspect_board(u)
         except Exception as e:
             diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","error_type":type(e).__name__}); continue
         diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":info.get("status"),"candidate_posts":info.get("candidate_posts",0),"source":"primary"})
         if info.get("status")!="VERIFIED": continue
         diag["verified_count"]+=1
-        diag["primary_verified_count"]+=1
         combined=score+min(info.get("candidate_posts",0),10)
         if any(k in info.get("recent_titles","") for k in KEYWORDS): combined+=2
         if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
     if best is None:
-        secondary=secondary_discovery(home); diag["secondary_candidate_count"]=len(secondary); diag["total_candidate_count"]=diag["primary_candidate_count"]+diag["secondary_candidate_count"]
+        secondary=secondary_discovery(home); diag["secondary_candidate_count"]=len(secondary)
         for score,u,t in secondary:
             diag["fetched_count"]+=1
-            diag["secondary_fetched_count"]+=1
             try: bu,details,info=inspect_board(u)
             except Exception as e:
                 diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"INSPECT_ERROR","source":"secondary","error_type":type(e).__name__}); continue
             diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":info.get("status"),"candidate_posts":info.get("candidate_posts",0),"source":"secondary"})
             if info.get("status")!="VERIFIED": continue
             diag["verified_count"]+=1
-            diag["secondary_verified_count"]+=1
             combined=score+min(info.get("candidate_posts",0),10)
             if any(k in info.get("recent_titles","") for k in KEYWORDS): combined+=2
             if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
-    if diag["total_candidate_count"]==0:
-        diag["total_candidate_count"]=diag["primary_candidate_count"]+diag["secondary_candidate_count"]
     if best:
         diag["status"]="VERIFIED"; diag["selected"]=best["url"]; diag["selected_score"]=best["score"]
         return best["url"],best["details"][:RECENT_POSTS],"DISCOVERED",diag
@@ -1023,173 +1008,6 @@ def load_daily_summary_state():
 def save_daily_summary_state(x):
     save_json(DAILY_SUMMARY_FILE,x)
 
-
-def build_institution_status_rows(targets, results, timed_out=False):
-    """355개 기관 전체를 1행씩 기록한다. 미처리 기관도 누락하지 않고 상태를 명시한다."""
-    by_name={}
-    for r in results:
-        name=norm(r.get("기관명",""))
-        if name:
-            by_name[name]=r
-
-    now=datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
-    rows=[]
-    for target in targets:
-        name=norm(target.get("기관명",""))
-        r=by_name.get(name)
-        if r is None:
-            status="UNPROCESSED_TIMEOUT" if timed_out else "UNPROCESSED"
-            rows.append({
-                "기관명":name,
-                "기관유형":target.get("기관유형",""),
-                "홈페이지URL":target.get("홈페이지URL",""),
-                "게시판URL":target.get("공지게시판URL",""),
-                "상태":status,
-                "상태설명":"실행시간 제한으로 이번 실행에서 처리되지 않음" if timed_out else "이번 실행 결과 없음",
-                "게시물후보":0,"상세확인":0,"기존확인건너뜀":0,"최근게시물":0,
-                "제목매칭":0,"본문매칭":0,"상세오류":0,
-                "게시판후보수":"","게시판조회수":"","게시판검증수":"",
-                "선정점수":"","재시도대상":"예",
-                "최종확인시각":now
-            })
-            continue
-
-        st=r.get("status") or "UNKNOWN"
-        desc={
-            "CACHED_OR_SEED":"기존 캐시/지정 게시판 확인",
-            "DISCOVERED":"홈페이지에서 게시판을 새로 발견",
-            "HOME_ERROR":"홈페이지 접속 실패",
-            "NO_CANDIDATE":"게시판 후보를 찾지 못함",
-            "CANDIDATE_NOT_VERIFIED":"게시판 후보는 있으나 실제 게시판 검증 실패",
-            "PROCESS_ERROR":"기관 처리 중 오류",
-            "BOARD_FETCH_ERROR":"게시판 접속 실패",
-        }.get(st, r.get("error","") or st)
-
-        d=r.get("diag") or {}
-        retry="예" if st in ("HOME_ERROR","NO_CANDIDATE","CANDIDATE_NOT_VERIFIED","PROCESS_ERROR","BOARD_FETCH_ERROR","UNPROCESSED_TIMEOUT","UNPROCESSED") else "아니오"
-        rows.append({
-            "기관명":name,
-            "기관유형":r.get("기관유형",target.get("기관유형","")),
-            "홈페이지URL":r.get("home",target.get("홈페이지URL","")),
-            "게시판URL":r.get("board",target.get("공지게시판URL","")),
-            "상태":st,
-            "상태설명":desc,
-            "게시물후보":r.get("post_candidates",0) or 0,
-            "상세확인":r.get("detail_checked",0) or 0,
-            "기존확인건너뜀":r.get("skipped_previously_checked",0) or 0,
-            "최근게시물":r.get("recent_posts",0) or 0,
-            "제목매칭":r.get("title_matches",0) or 0,
-            "본문매칭":r.get("body_matches",0) or 0,
-            "상세오류":r.get("detail_errors",0) or 0,
-            "게시판후보수":d.get("candidate_count",""),
-            "1차게시판후보수":d.get("primary_candidate_count",d.get("candidate_count","")),
-            "2차게시판후보수":d.get("secondary_candidate_count",""),
-            "총게시판후보수":d.get("total_candidate_count",""),
-            "게시판조회수":d.get("fetched_count",""),
-            "1차조회수":d.get("primary_fetched_count",""),
-            "2차조회수":d.get("secondary_fetched_count",""),
-            "게시판검증수":d.get("verified_count",""),
-            "1차검증수":d.get("primary_verified_count",""),
-            "2차검증수":d.get("secondary_verified_count",""),
-            "선정점수":d.get("selected_score",""),
-            "재시도대상":retry,
-            "최종확인시각":now
-        })
-    return rows
-
-
-def save_institution_status_csv(targets, results, timed_out=False):
-    rows=build_institution_status_rows(targets,results,timed_out)
-    fields=[
-        "기관명","기관유형","홈페이지URL","게시판URL","상태","상태설명",
-        "게시물후보","상세확인","기존확인건너뜀","최근게시물",
-        "제목매칭","본문매칭","상세오류",
-        "게시판후보수","1차게시판후보수","2차게시판후보수","총게시판후보수",
-        "게시판조회수","1차조회수","2차조회수","게시판검증수","1차검증수","2차검증수","선정점수",
-        "재시도대상","최종확인시각"
-    ]
-    tmp=INSTITUTION_STATUS_CSV+".tmp"
-    with open(tmp,"w",encoding="utf-8-sig",newline="") as f:
-        w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore")
-        w.writeheader()
-        w.writerows(rows)
-    os.replace(tmp,INSTITUTION_STATUS_CSV)
-    return len(rows)
-
-
-def score_board_candidate_v81414(candidate_url, html_text="", post_links=None, titles=None, dates=None):
-    """게시판 후보를 이진 검증하지 않고 구조적 증거를 점수화한다."""
-    score = 0
-    reasons = []
-    url_l = (candidate_url or "").lower()
-    html_l = (html_text or "").lower()
-    post_links = post_links or []
-    titles = titles or []
-    dates = dates or []
-
-    if post_links:
-        score += 3
-        reasons.append("게시물링크")
-    if len(post_links) >= 3:
-        score += 2
-        reasons.append("복수게시물")
-    if titles:
-        score += 2
-        reasons.append("제목확인")
-    if dates:
-        score += 2
-        reasons.append("날짜확인")
-    if any(k in url_l for k in ("notice", "board", "bbs", "news", "community", "brd", "p/")):
-        score += 1
-        reasons.append("게시판URL형태")
-    if any(k in html_l for k in ("공지사항", "알림", "게시판", "등록일", "작성일")):
-        score += 1
-        reasons.append("게시판구조문구")
-    if "page" in html_l or "paging" in html_l or "페이지" in html_l:
-        score += 1
-        reasons.append("페이지네이션")
-
-    if score >= BOARD_SCORE_VERIFIED:
-        status = "VERIFIED"
-    elif score >= BOARD_SCORE_PROBABLE:
-        status = "PROBABLE_BOARD"
-    elif score >= BOARD_SCORE_WEAK:
-        status = "WEAK_CANDIDATE"
-    else:
-        status = "REJECT"
-
-    return {"score": score, "status": status, "reasons": reasons}
-
-
-def build_home_recovery_urls(url):
-    """HOME_ERROR 기관의 흔한 URL 변형을 생성한다."""
-    if not url:
-        return []
-    from urllib.parse import urlsplit, urlunsplit
-    try:
-        p = urlsplit(url.strip())
-        host = p.netloc
-        path = p.path or "/"
-        variants = []
-        schemes = ["https", "http"]
-        hosts = [host]
-        if host.startswith("www."):
-            hosts.append(host[4:])
-        else:
-            hosts.append("www." + host)
-        for s in schemes:
-            for h in hosts:
-                variants.append(urlunsplit((s, h, path, p.query, "")))
-        # 원 URL이 포함된 중복 제거
-        out=[]
-        seen=set()
-        for x in variants:
-            if x not in seen:
-                seen.add(x); out.append(x)
-        return out[:HOME_RECOVERY_VARIANTS]
-    except Exception:
-        return [url]
-
 def main():
     started=time.time()
     targets=load_targets()
@@ -1436,16 +1254,6 @@ def main():
             "error_type":r.get("error_type",""),"error":r.get("error","")[:500]
         } for r in results]
     }
-    csv_rows=save_institution_status_csv(targets,results,timed_out or len(results)<len(targets))
-    csv_exists=os.path.isfile(INSTITUTION_STATUS_CSV)
-    csv_size=os.path.getsize(INSTITUTION_STATUS_CSV) if csv_exists else 0
-    if not csv_exists or csv_size <= 0:
-        raise RuntimeError(f"기관별_상태.csv 생성 검증 실패: exists={csv_exists}, size={csv_size}")
-    print(f"[CSV] 기관별_상태.csv 생성 완료: {csv_rows}개 행, {csv_size:,} bytes")
-    diagnostics["institution_status_csv"]=INSTITUTION_STATUS_CSV
-    diagnostics["institution_status_csv_rows"]=csv_rows
-    diagnostics["institution_status_csv_exists"]=csv_exists
-    diagnostics["institution_status_csv_size_bytes"]=csv_size
     save_json("diagnostics.json",diagnostics)
     print(json.dumps(diagnostics,ensure_ascii=False,indent=2))
     if len(results) < len(targets) or timed_out:
