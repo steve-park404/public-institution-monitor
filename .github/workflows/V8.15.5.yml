@@ -1,0 +1,50 @@
+name: V8.15.5 게시판URL 직접검색
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 0 * * *"   # KST 09:20
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Run V8.15.5
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor_v8_15_5.py
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: V8.15.5-results
+          path: |
+            검색결과_V8.15.5.csv
+            게시판검증결과_V8.15.5.csv
+            summary_V8.15.5.json
+            *_ledger.json
+          if-no-files-found: warn
+
+      - name: Commit ledgers/results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 검색결과_V8.15.5.csv 게시판검증결과_V8.15.5.csv summary_V8.15.5.json *_ledger.json || true
+          git diff --cached --quiet || git commit -m "V8.15.5 게시판URL 직접검색 결과"
+          git push || true
