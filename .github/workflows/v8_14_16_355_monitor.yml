@@ -1,4 +1,4 @@
-name: V8.14.16 355기관 게시판검증 + 기관별상태CSV 강제보존
+name: V8.14.17 355기관 게시판검증 + 기관별상태CSV 강제보존
 
 on:
   workflow_dispatch:
@@ -55,7 +55,7 @@ jobs:
       - name: Upload institution status CSV artifact
         uses: actions/upload-artifact@v4
         with:
-          name: v8-14-16-institution-status
+          name: v8-14-17-institution-status
           path: |
             기관별_상태.csv
             diagnostics.json
@@ -81,7 +81,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: update V8.14.16 monitor state"
+          git commit -m "chore: update V8.14.17 monitor state"
 
           git fetch origin main
           git rebase origin/main
