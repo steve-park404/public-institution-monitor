@@ -1,0 +1,722 @@
+{
+  "sent": {
+    "8f80be08b99edcc0814d": "2026-09-28T17:00:46.677053+09:00",
+    "815a396f43d99f7fcf25": "2026-09-28T17:00:46.677278+09:00",
+    "d7f42d48bb7eca332096": "2026-09-28T17:00:46.677295+09:00",
+    "97d739fdccb42a8b9b6e": "2026-09-28T17:00:46.677308+09:00",
+    "3803624103766969ce35": "2026-09-28T17:00:46.677321+09:00",
+    "64fc6071202604ce68e1": "2026-09-28T17:00:46.677332+09:00",
+    "22eb8273e94a51aea560": "2026-09-28T17:00:46.677341+09:00",
+    "a6225efc8ef45e815569": "2026-09-28T17:00:46.677351+09:00",
+    "e64408a88ef20076ba84": "2026-09-28T17:00:46.677364+09:00",
+    "09df50d667020c34c5e8": "2026-09-28T17:00:46.677376+09:00",
+    "7add781ba02f4ee8ac67": "2026-09-28T17:00:46.677384+09:00",
+    "590aa697cc7e81f72fc3": "2026-09-28T17:00:46.677392+09:00",
+    "01f38b9a6fe5896b96dd": "2026-09-28T17:00:46.677401+09:00",
+    "9b4c3b468c11205abc45": "2026-09-28T17:00:46.677409+09:00",
+    "6557118cdbe1b2115045": "2026-09-28T17:00:46.677418+09:00",
+    "c45fefe246eef9cba244": "2026-09-28T17:00:46.677426+09:00",
+    "830c3952532cfda9eeed": "2026-09-28T17:00:46.677433+09:00",
+    "71f00c8e103b3d596e10": "2026-09-28T17:00:46.677440+09:00",
+    "2e14f85d4aa72ae46893": "2026-09-28T17:00:46.677447+09:00",
+    "aed611e25c3fa7c788fb": "2026-09-28T17:00:46.677455+09:00"
+  },
+  "seen": {
+    "8f80be08b99edcc0814d": {
+      "title": "2026년 설문조사 기프티콘 완벽 가이드 | 경품 선택부터 세금 처리·대량 발송까지",
+      "url": "https://sendbee.co.kr/archive/설문조사-기프티콘-참여자에게-줘도-되나요/",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "815a396f43d99f7fcf25": {
+      "title": "설문 참여자 모집 서비스 - 크몽기업, 논문 설문조사 대행 업체네이버 폼[모집] 백신 접종 관련 AI 라이브 설문조사 참여자 모집 (사례비 2.5...티핑:::자기계발 커리어 플랫폼",
+      "url": "https://kmong.com/gig/431188",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "d7f42d48bb7eca332096": {
+      "title": "현금/기프티콘 교환이 가능한, 직접 해보고 추천하는 설문조사 아르바...",
+      "url": "https://m.blog.naver.com/kuber21love/222407790294",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "97d739fdccb42a8b9b6e": {
+      "title": "[동작구 주민 인터뷰 (FGI) 참여자 모집 / 사례비 지급] | 사당제3동 ...",
+      "url": "https://www.daangn.com/kr/community/동작구-주민-인터뷰-fgi-참여자-모집-사례비-지급-3bj33kzr3mag/",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "3803624103766969ce35": {
+      "title": "[인터뷰 참여자 모집] Replika AI 사용자 대상 졸업논문 연구 (사례비...",
+      "url": "https://community.linkareer.com/employed/5530299",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "64fc6071202604ce68e1": {
+      "title": "FGI? IDI? 익숙한 듯 어려운 유저/고객 인터뷰 가이드: 개념부터 실전...",
+      "url": "https://pickply.com/blog/user-interview-guide-tips",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "22eb8273e94a51aea560": {
+      "title": "서울시지역 사회서비스 지원단 > 정보마당 > 알림마당 > 상...",
+      "url": "https://csi.welfare.seoul.kr/front/info/detailNotice.do?no=1142&gubun=notice",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "a6225efc8ef45e815569": {
+      "title": "알바단지 - 시장조사 좌담회 모집 정보",
+      "url": "https://www.albadanji.com/",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "e64408a88ef20076ba84": {
+      "title": "[재공지] 좌담회/설문 알바 - 좌담회뱅크",
+      "url": "https://albabank.pe.kr/category/refgd/",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "09df50d667020c34c5e8": {
+      "title": "[모요] 사례비 3만원 / 서비스 사용성 테스트 참가자를 모집합니다. -...",
+      "url": "https://www.ppomppu.co.kr/zboard/view.php?id=experience&no=10337",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "7add781ba02f4ee8ac67": {
+      "title": "UX리서치 전문 에이전시 슈퍼플래닝 | FGI·UT·사용자 인터뷰",
+      "url": "https://www.superplanning.co.kr/ux-research/",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "590aa697cc7e81f72fc3": {
+      "title": "블라블라: [인터뷰] 맛집서비스 테스트 및 인터뷰 참여자모집 (강남/...",
+      "url": "https://www.teamblind.com/kr/post/[인터뷰]-맛집서비스-테스트-및-인터뷰-참여자모집-강남역삼-o7EdKZwo",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "01f38b9a6fe5896b96dd": {
+      "title": "패퍼하츠 베타테스터 모집 공고",
+      "url": "https://www.contestkorea.com/sub/view.php?str_no=202309200024",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "9b4c3b468c11205abc45": {
+      "title": "부산 북구 청년 정책 설문 조사 - 5천원 상당 기프티콘 마감임박 : 네...",
+      "url": "https://m.blog.naver.com/mcw02150/223597234110",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "6557118cdbe1b2115045": {
+      "title": "소비자 조사 패널 모집 (2시간 인터뷰에 10만원 사례비 제공) | 보배...",
+      "url": "https://www.bobaedream.co.kr/view?code=freeb&No=1564531",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "c45fefe246eef9cba244": {
+      "title": "엠브레인 패널파워 음료 맛테스트 후기｜1시간 30분 참여하고 사례비 ...",
+      "url": "https://blog.naver.com/eternallov_/224361300278",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "830c3952532cfda9eeed": {
+      "title": "70. 이벤트하우스 - 인스타그램 경품이벤트!!",
+      "url": "https://www.eventhouse.kr/site/instagram.php",
+      "first_seen": "2026-09-28",
+      "score": 100
+    },
+    "71f00c8e103b3d596e10": {
+      "title": "한국 설문 패널 모집! 모은 포인트로 기프티콘, 문상,...",
+      "url": "https://gyeonbon.tistory.com/127",
+      "first_seen": "2026-09-28",
+      "score": 99
+    },
+    "2e14f85d4aa72ae46893": {
+      "title": "[아모레퍼시픽 고객연구패널] 대학생/대학원생 고객연구패널 모집 (기...",
+      "url": "https://linkareer.com/activity/300168",
+      "first_seen": "2026-09-28",
+      "score": 99
+    },
+    "aed611e25c3fa7c788fb": {
+      "title": "여행 관련 사용자 인터뷰 대상자 모집 스벅 상품권",
+      "url": "https://www.myrealtrip.com/community/posts/65308",
+      "first_seen": "2026-09-28",
+      "score": 99
+    },
+    "1f7eb5765a3e7e327411": {
+      "title": "2026 오리온 소비자 패널 활동 모집과 2025 활동 후...",
+      "url": "https://m.blog.naver.com/yogi-jogi/224121154232",
+      "first_seen": "2026-09-28",
+      "score": 99
+    },
+    "5532f87a3770a84368d0": {
+      "title": "비대면 인터뷰 참여자 모집 - 2만원 상품권 제공 | 산본동 | 당근 동...",
+      "url": "https://www.daangn.com/kr/community/비대면-인터뷰-참여자-모집-2만원-상품권-제공-w5tapsusn87j/",
+      "first_seen": "2026-09-28",
+      "score": 96
+    },
+    "08fe325f9ec21ab65395": {
+      "title": "[만19세~29세 대상/추첨 기프티콘]심리학 연구 설문조사 참여 부탁드립니다 (10~15분 소요) | 그라밋",
+      "url": "https://gradmeet.co.kr/post/0QZT7Y92S64CK",
+      "first_seen": "2026-09-28",
+      "score": 95
+    },
+    "69ef4186029a3b2ffd5c": {
+      "title": "과제를 위해 사용성 테스트 인터뷰에 참여해 주실 결혼3년차 이상의 ...",
+      "url": "https://disquiet.io/articles/0LsbYv",
+      "first_seen": "2026-09-28",
+      "score": 95
+    },
+    "1151398ff83ebb19d8d3": {
+      "title": "베타 테스터 모집 방법: AI 스타트업이 일주일 만에 현직자 50명 모은...",
+      "url": "https://www.careerday.jobs/blog/beta-tester-strategy-ai-startup",
+      "first_seen": "2026-09-28",
+      "score": 95
+    },
+    "a041f1a51deb8b3e41e4": {
+      "title": "광주시, 공익활동 참여 시민 문화상품권 지급 이벤트 확대 : 네이트 ...",
+      "url": "https://news.nate.com/view/20250828n09161",
+      "first_seen": "2026-09-28",
+      "score": 95
+    },
+    "9e80b593abc25258573f": {
+      "title": "광주광역시 시민참여수당- 걷고!타고!느끼고!-워크온 3만원 온누리상...",
+      "url": "https://blog.naver.com/secondtime22/223976929109",
+      "first_seen": "2026-09-28",
+      "score": 95
+    },
+    "1cb9bf1e7c48cca9ee45": {
+      "title": "[비대면] 크리에이터 패널 모집–만16~44세 남녀 유튜브·인스타·틱톡 ...",
+      "url": "https://m.cafe.daum.net/researchi/LRuK/29801",
+      "first_seen": "2026-09-28",
+      "score": 94
+    },
+    "09dbece71b6abcfc3714": {
+      "title": "[비대면] 온라인·모바일 게임 유저 온라인 패널 모집-만18~30세 남녀 ...",
+      "url": "https://m.cafe.daum.net/researchi/LRuK/30217",
+      "first_seen": "2026-09-28",
+      "score": 94
+    },
+    "46fc6b41e48ccf0d9659": {
+      "title": "[3만원 상품권/온라인 인터뷰 참여자 모집] 아동용 ar/vr 놀이 서비스...",
+      "url": "https://gradmeet.co.kr/post/0Q3PM504X67V2",
+      "first_seen": "2026-09-28",
+      "score": 94
+    },
+    "72d9008b9d420d0b20ba": {
+      "title": "에너지 참여교육 국민참여심사하고 커피 기프티콘 받으러 가자 : 네이...",
+      "url": "https://m.blog.naver.com/0129jk/223665284463",
+      "first_seen": "2026-09-28",
+      "score": 89
+    },
+    "83228053a386c75cc698": {
+      "title": "신생아~대형사용아가 패널모집 [GS모바일 상품권 2만원 지급] - 신규...",
+      "url": "https://m.cafe.daum.net/researchi/LRuK/25628",
+      "first_seen": "2026-09-28",
+      "score": 87
+    },
+    "0ded69b81a52c771ab53": {
+      "title": "한국리서치 좌담회 후기 꿀알바 (사기X 다단계X) : 네이버 블로그",
+      "url": "https://blog.naver.com/moment_storage/223979740444",
+      "first_seen": "2026-09-28",
+      "score": 87
+    },
+    "b5650a0572a0f0de983f": {
+      "title": "설문조사 경품 답례품(모바일쿠폰_스타벅스,신세계상품권,편의점금액권) 대량발송 꿀팁 (5분 컷)",
+      "url": "https://sendbeecokr.tistory.com/28",
+      "first_seen": "2026-09-28",
+      "score": 86
+    },
+    "e91887da05800ff89eae": {
+      "title": "유튜브 인터뷰 참여자 모집 방법: 검증된 출연자 섭외 사례 (애큐온) ...",
+      "url": "https://www.careerday.jobs/blog/youtube-interview-participants-recruitment",
+      "first_seen": "2026-09-28",
+      "score": 85
+    },
+    "38065e33e72858d40eab": {
+      "title": "[모집 완료] 코레일톡 모바일 앱 사용성 테스트 참여자 모집 (사례비 ...",
+      "url": "https://www.wedesignx.com/portfolio/korailtalk-usability-test-recruitment",
+      "first_seen": "2026-09-28",
+      "score": 82
+    },
+    "264d8f200ac54165200b": {
+      "title": "경기도교육청 ‘2026년 학부모정책 모니터단’ 2500여 명 모집",
+      "url": "https://www.m-i.kr/news/articleView.html?idxno=1362231",
+      "first_seen": "2026-09-28",
+      "score": 82
+    },
+    "c8ced6851d2129e48ee3": {
+      "title": "이벤트 모음 사이트 추천 — 경품·응모·설문 이벤트 500개를 한 화면에...",
+      "url": "https://eyulog.tistory.com/115",
+      "first_seen": "2026-09-28",
+      "score": 82
+    },
+    "a0057d4a728df216a71d": {
+      "title": "기업, 논문 설문조사 대행 업체",
+      "url": "https://growthhelper.kr/",
+      "first_seen": "2026-09-28",
+      "score": 81
+    },
+    "d6419bb34cf73f4655e3": {
+      "title": "#4 설문조사 응답자 추첨 및 기프티콘 발송 (유니피커, 센드비) - 그...",
+      "url": "https://blog.naver.com/PostView.nhn?blogId=bluetr2e&logNo=222880883590",
+      "first_seen": "2026-09-28",
+      "score": 81
+    },
+    "51f03d58570911110367": {
+      "title": "바이널씨 - 자세한 사항은 바이널씨 홈페이지 패널모집 참조 바랍니다...",
+      "url": "https://www.facebook.com/VinylConvergence/photos/자세한-사항은-바이널씨-홈페이지-패널모집-참조-바랍니다-대면조사-1회당-최대-10만원-사례비-지급-비대면조사-1회당-최대-5만원-사례비-지급ht/1242983887831857/",
+      "first_seen": "2026-09-28",
+      "score": 81
+    },
+    "855ec0ff266a1c388a6b": {
+      "title": "바이널씨 VinylC | 자세한 사항은 바이널씨 홈페이지 패널모집 참조 ...",
+      "url": "https://www.instagram.com/p/DILBqlAJ7r8/",
+      "first_seen": "2026-09-28",
+      "score": 81
+    },
+    "5906367c78ada3a7c569": {
+      "title": "2026 오리온 소비자 패널 모집 (~12/28) : 네이버 블로그",
+      "url": "https://m.blog.naver.com/orionblog/224112635955",
+      "first_seen": "2026-09-28",
+      "score": 81
+    },
+    "c70b211ad35f16fd37ba": {
+      "title": "[마감] 소상공인∙창작자를 위한 AI 서비스 베타 테스터 모집 (~7/1) :...",
+      "url": "https://m.blog.naver.com/n_cloudplatform/223484158954",
+      "first_seen": "2026-09-28",
+      "score": 80
+    },
+    "2ac2563a9d8018eb4ba8": {
+      "title": "[만40~54세 남녀]건강기능식품 관련 좌담회 참여자 모집! [사례비 5만...",
+      "url": "https://m.cafe.daum.net/researchi/LvrS/201",
+      "first_seen": "2026-09-28",
+      "score": 80
+    },
+    "a38feae6d492bd4381f4": {
+      "title": "[주부아르바이트] 2022 오리온 소비자 패널 모집, 사례비 지급 : 네이...",
+      "url": "https://m.blog.naver.com/0104849/222762849630",
+      "first_seen": "2026-09-28",
+      "score": 79
+    },
+    "4605b61406a79542e843": {
+      "title": "[EVENT] 설문조사 참여하고, 네이버페이 포인트 상품권 받아가세요! : 네이버 블로그",
+      "url": "https://m.blog.naver.com/mabik/223666357732",
+      "first_seen": "2026-09-28",
+      "score": 77
+    },
+    "653c42cf990d22f39527": {
+      "title": "소개 < 시민e이사회 < 국민의 소리 < 국민참여 < 한국산...",
+      "url": "https://www.hrdkorea.or.kr/2/2/4/1",
+      "first_seen": "2026-09-28",
+      "score": 76
+    },
+    "334c0b35c4bf29a5a3cf": {
+      "title": "[40~54세 남녀] 공진단 구매자 좌담회 참여자 모집 [사례비 5만원] - ...",
+      "url": "https://researchi.co.kr/newjob/15999",
+      "first_seen": "2026-09-28",
+      "score": 75
+    },
+    "427b39306a737ed36d88": {
+      "title": "[20~59세 남녀] 아웃도어 제품 구매자 좌담회 모집 [사례비 5만원] - ...",
+      "url": "https://researchi.co.kr/newjob/16000",
+      "first_seen": "2026-09-28",
+      "score": 75
+    },
+    "9688cf1c7ab98bfc219b": {
+      "title": "- 설문조사 > 공지사항 | 삼척생활관",
+      "url": "https://dormitory.kangwon.ac.kr/bbs/board.php?bo_table=4_1&wr_id=2436&page=1",
+      "first_seen": "2026-09-28",
+      "score": 74
+    },
+    "0aba73c30d23cc19bb83": {
+      "title": "설문조사어플 입소스 아이세이로 기프티콘 모아보자",
+      "url": "https://semi4789.tistory.com/entry/설문조사어플-입소스-아이세이로-기프티콘-모아보자",
+      "first_seen": "2026-09-28",
+      "score": 72
+    },
+    "18e493155f9b649e948d": {
+      "title": "엠브레인 좌담회 알바 신청부터 사례비까지 솔직 후기 : 네이버 블로...",
+      "url": "https://blog.naver.com/goodnhappyrich7/224364160277",
+      "first_seen": "2026-09-28",
+      "score": 71
+    },
+    "c224b0f6dc10ef8d6bac": {
+      "title": "위디엑스 we design experience. 사용자 경험 컨설턴시 & 디자인 에이...",
+      "url": "https://www.wedesignx.com/",
+      "first_seen": "2026-09-28",
+      "score": 71
+    },
+    "d7ea1c08981275b64e58": {
+      "title": "2025년 통계청 통계정보서비스 모니터단 및 서포터즈 모집",
+      "url": "https://linkareer.com/activity/223527",
+      "first_seen": "2026-09-28",
+      "score": 70
+    },
+    "9610e7b5a4af75aa50de": {
+      "title": "광주시, 공익활동 참여 시민 문화상품권 지급 이벤트 확대 - 파이낸셜...",
+      "url": "https://www.fnnews.com/news/202508280956106921",
+      "first_seen": "2026-09-28",
+      "score": 70
+    },
+    "f6f2d83d74c3dba36448": {
+      "title": "5분에 끝내는 설문 조사 기프티콘 구매 방법 (할인 & 대량 구매)",
+      "url": "https://jbescape.com/설문-조사-기프티콘/",
+      "first_seen": "2026-09-28",
+      "score": 69
+    },
+    "62a8d7c1e53b6129cbe1": {
+      "title": "설문조사 이벤트",
+      "url": "https://open.shinhansec.com/m/event2/230324_surveyEvent/event.jsp",
+      "first_seen": "2026-09-28",
+      "score": 68
+    },
+    "7f775ca140fced3e08a6": {
+      "title": "TV 촬영 인터뷰 참여자 모집! 사례비 지급, 건당 50,000원",
+      "url": "https://jobs.daangn.com/job-posts/tv-촬영-인터뷰-참여자-모집-사례비-지급-q32gk293bvfm",
+      "first_seen": "2026-09-28",
+      "score": 68
+    },
+    "4a73fa191e9f41806b4e": {
+      "title": "통계청 2025 인구주택총조사 조사항목에 대한 국민 의견수렴 설문조사...",
+      "url": "https://blog.naver.com/skdksi159/223513874583",
+      "first_seen": "2026-09-28",
+      "score": 68
+    },
+    "05439aebd6c0ee5262d3": {
+      "title": "[참여자 1만원 상품권 지급] 인터뷰 참여자 모집",
+      "url": "https://a-app.co.kr/방명록-2-2/?board_name=aapp_board&order_by=fn_hit&order_type=asc&board_gid=180&vid=18632",
+      "first_seen": "2026-09-28",
+      "score": 66
+    },
+    "341ce2fc61508a3e5182": {
+      "title": "한국차 설문 참여하고 'Amazon 상품권' 받으세요 | 미주중앙일보",
+      "url": "https://www.koreadaily.com/article/20250922173126895",
+      "first_seen": "2026-09-28",
+      "score": 64
+    },
+    "e14e1527713777fdcb90": {
+      "title": "울산시, 열린시장실 누리집 개편…시민참여 모바일 상품권 행사 | 연합...",
+      "url": "https://www.yna.co.kr/view/AKR20260906034200057",
+      "first_seen": "2026-09-28",
+      "score": 61
+    },
+    "7cf1743b5011dc5d827f": {
+      "title": "설문조사 응답률과 완료율을 높이는 경품 증정 가이드와 팁",
+      "url": "https://ko-blog.smore.im/marketing-insights/response-completion-rates-guide/",
+      "first_seen": "2026-09-28",
+      "score": 61
+    },
+    "1fa1ea3525318785db60": {
+      "title": "중고폰 구매·판매 경험 소비자 포커스그룹 인터뷰 (F.G.I) 참여자 모...",
+      "url": "https://cuk.or.kr/introduce/04_view.asp?TnNo=11&no=72",
+      "first_seen": "2026-09-28",
+      "score": 60
+    },
+    "910da2f9441739107bb3": {
+      "title": "청년 온라인 패널 모집!",
+      "url": "https://www.molit.go.kr/2024onlinepanel/main.jsp",
+      "first_seen": "2026-09-28",
+      "score": 59
+    },
+    "4f66147efc02f772cb36": {
+      "title": "온라인에서 설문조사, 인터뷰 참여자를 모집할 수 있는 방법과 채널 ...",
+      "url": "https://pickply.com/blog/online-survey-participant-recruitment-methods",
+      "first_seen": "2026-09-28",
+      "score": 57
+    },
+    "8f434787ff213c150e35": {
+      "title": "[25-59 남여]즉석밥, 분말형 쉐이크 시식 조사 참여자 모집 [사례비 3...",
+      "url": "https://researchi.co.kr/newjob/15925",
+      "first_seen": "2026-09-28",
+      "score": 55
+    },
+    "a02591a402d25904c794": {
+      "title": "국세청 - 시장조사용역업을 영위하는 법인의 시장조사비용의 접대비 ...",
+      "url": "https://casenote.kr/국세청/법인22601-368-06320a",
+      "first_seen": "2026-09-28",
+      "score": 54
+    },
+    "6417969180b0a6ef4e10": {
+      "title": "설문조사 < 국민참여·제안 < 민원·부패공익신고 산업통상부 홈페이지",
+      "url": "https://www.motir.go.kr/kor/contents/101",
+      "first_seen": "2026-09-28",
+      "score": 52
+    },
+    "632028f46459d84e7628": {
+      "title": "여성과학기술인 정책 설문조사 (기프티콘 등 )전원~10.02 : 네이버 블...",
+      "url": "https://blog.naver.com/marketzone/224016786700",
+      "first_seen": "2026-09-28",
+      "score": 52
+    },
+    "7f181f28eeae78271542": {
+      "title": "온라인 설문조사 잘 만드는 법 — 기획부터 경품 발송까지 한 번에",
+      "url": "https://biz.giftishow.com/blog/online-survey-creation-guide",
+      "first_seen": "2026-09-28",
+      "score": 52
+    },
+    "0ac77e5957571c8e9ad5": {
+      "title": "예비창업자, 기창업자 분들 설문조사 참여하시고 커피 쿠폰 받아가세...",
+      "url": "https://eopla.net/magazines/21491",
+      "first_seen": "2026-09-28",
+      "score": 51
+    },
+    "4d49b2f308750813e8b9": {
+      "title": "인기 많은 이벤트 경품 추천 & 당첨 축하 문구",
+      "url": "https://sendbee.co.kr/archive/인기-많은-이벤트-경품-top4-문구-추천/",
+      "first_seen": "2026-09-28",
+      "score": 51
+    },
+    "5ee26386a1a4e74e84a7": {
+      "title": "에너지 참여교육 국민참여 심사 및 기프티콘 이벤트",
+      "url": "https://info.jejunettv.kr/생활정보/에너지-참여교육-국민참여-심사-및-기프티콘-이벤트/",
+      "first_seen": "2026-09-28",
+      "score": 50
+    },
+    "58272f1484c2c31c5976": {
+      "title": "검색엔진 관련 조사–만 18~45세 남녀 1월 5째주 예정 [사례비 안내] -...",
+      "url": "https://researchi.co.kr/newjob/22999",
+      "first_seen": "2026-09-28",
+      "score": 49
+    },
+    "9f65d299a6e58cdd1bf8": {
+      "title": "설문조사·이벤트 모바일 쿠폰 경품 대량 발송 | 비즈팝콘",
+      "url": "https://bizpopcon.com/solutions/customer-rewards",
+      "first_seen": "2026-09-28",
+      "score": 49
+    },
+    "c04fb52686ec9111df4a": {
+      "title": "설문조사 - 픽플리 블로그: 소비자 데이터 트렌드 리포트 & 데이터 활용 팁",
+      "url": "https://pickply.com/blog/category/survey",
+      "first_seen": "2026-09-28",
+      "score": 47
+    },
+    "9d59436c4a9845cbe02e": {
+      "title": "위디엑스 UX/UI 디자인 컨설팅 에이전시 | 선착순 모집] 대한민국 1...",
+      "url": "https://www.instagram.com/p/DZYqQkVE8f_/",
+      "first_seen": "2026-09-28",
+      "score": 47
+    },
+    "334d5d37bd76ace9140a": {
+      "title": "설문조사 플랫폼 5가지 추천! 질문 예시부터 경품 추천까지 : 썸띵 매...",
+      "url": "https://www.sumthing.co.kr/magazine/?bmode=view&idx=167185142",
+      "first_seen": "2026-09-28",
+      "score": 45
+    },
+    "72500d016b83a48d1eb3": {
+      "title": "[ 10만 원 상품권 ] 쓴맛 민감도 유형화 및 개인차 분석 연구를 위한 ...",
+      "url": "https://www.daangn.com/kr/community/10만-원-상품권-쓴맛-민감도-유형화-및-개인차-분석-연구를-위한-소비자-패널-모집-wktb7nejy6si/",
+      "first_seen": "2026-09-28",
+      "score": 42
+    },
+    "86814e82c550232b7da0": {
+      "title": "설문조사 만들기부터 경품 기프티콘 발송까지, 이렇게 하면 됩니다 : 네이버 블로그",
+      "url": "https://blog.naver.com/ktalpha_giftishowbiz/224302556676",
+      "first_seen": "2026-09-28",
+      "score": 40
+    },
+    "2d1375ddab66cfb49fe0": {
+      "title": "설문조사 이벤트 신청접수 기프티콘 발송 | 개인정보 수집 동의, 왜 필요할까? | 진학사가 만든 폼빌더, 아라폼 (araform)",
+      "url": "https://www.araform.kr/blog/17",
+      "first_seen": "2026-09-28",
+      "score": 40
+    },
+    "6329cbd65a2a69113492": {
+      "title": "영덕군 일자리정책 설문 참여자에 커피쿠폰 증정 | 경북진",
+      "url": "https://gyeongbukzine.com/7418",
+      "first_seen": "2026-09-28",
+      "score": 40
+    },
+    "ec2300f5aca5a911b08f": {
+      "title": "국토교통부, 정기적인 정책 설문참여 추첨으로 기프티콘 : 네이버 블...",
+      "url": "https://m.blog.naver.com/kyoyo21/222169975526",
+      "first_seen": "2026-09-28",
+      "score": 40
+    },
+    "da00caa35ee13eb0df34": {
+      "title": "국토교통부, 정기적인 정책 설문참여 추첨으로 기프티콘",
+      "url": "https://www.keyzard.cc/kyoyo21/nb/222169975526",
+      "first_seen": "2026-09-28",
+      "score": 40
+    },
+    "d0b6b88cf1554e76afd9": {
+      "title": "설문조사 참여 (5분 이내)하고 커피쿠폰 받아가세요! - 김박사넷 커뮤...",
+      "url": "https://phdkim.net/board/promotion/415",
+      "first_seen": "2026-09-28",
+      "score": 39
+    },
+    "3d9d28def8f9f703ba7a": {
+      "title": "[1년 진행]SKT 통신사 장기 이용자 연간 패널 모집–만 16~65세 남녀 1...",
+      "url": "https://cafe.daum.net/researchi/LRuK/28818",
+      "first_seen": "2026-09-28",
+      "score": 39
+    },
+    "72a0effe262517591cfe": {
+      "title": "[비대면] 크리에이터 패널 모집–만16~44세 남녀 유튜브·인스타·틱톡 ...",
+      "url": "https://cafe.daum.net/researchi/bbs_read?grpid=vlJ5&fldid=LRuK&datanum=29801",
+      "first_seen": "2026-09-28",
+      "score": 39
+    },
+    "cb9f39a3bae20063ddfd": {
+      "title": "서울푸드 - ☕ SEOUL FOOD 2026 설문조사 이벤트! 설문 참여하고 커피 ...",
+      "url": "https://www.facebook.com/SeoulFoodKorea/posts/-seoul-food-2026-설문조사-이벤트설문-참여하고-커피-쿠폰-받자더-나은-seoul-food를-만들기-위해여러분의-소중한-의견을-듣고자/1547607370490976/",
+      "first_seen": "2026-09-28",
+      "score": 38
+    },
+    "ff1f70d7372f99653fd4": {
+      "title": "본 이벤트는 국가교육위원회 유튜브 영상 댓글로 참여하실 수 있습니...",
+      "url": "https://x.com/korea_nec/status/2072558342506225915",
+      "first_seen": "2026-09-28",
+      "score": 38
+    },
+    "adbb4f652897124e30d1": {
+      "title": "갤럭시워치 vs 가민 유저 추천 ㅣ 한국리서치 꿀알바 + 예상 사례비 공...",
+      "url": "https://blog.naver.com/runner_hongth/224186382640",
+      "first_seen": "2026-09-28",
+      "score": 37
+    },
+    "e6fd2c0a2ded7a0131df": {
+      "title": "소통24 (구 온국민소통)",
+      "url": "https://sotong.go.kr/front/qustnrNew/qustnrNewListPage.do",
+      "first_seen": "2026-09-28",
+      "score": 34
+    },
+    "b5b1404fd571f088a4de": {
+      "title": "홈>시민참여>설문조사 | 인천은 소통이 가득",
+      "url": "https://www.incheon.go.kr/cool/COOL070002",
+      "first_seen": "2026-09-28",
+      "score": 34
+    },
+    "28db7aaef47ff16e300d": {
+      "title": "설문조사 응답률과 완료율을 높이는 경품 : 네이버 블로그",
+      "url": "https://blog.naver.com/PostView.naver?blogId=dodateam&logNo=223244339481",
+      "first_seen": "2026-09-28",
+      "score": 34
+    },
+    "ae0c976bc5388cc1df2d": {
+      "title": "설문과 보상, 한 번에 끝내는 방법 (기프티콘 자동 발송 사례)",
+      "url": "https://mobiletown.tistory.com/entry/설문과-보상-한-번에-끝내는-방법-기프티콘-자동-발송-사례",
+      "first_seen": "2026-09-28",
+      "score": 33
+    },
+    "d1eb0951bf4ce4276346": {
+      "title": "[비대면] 온라인·모바일 게임 유저 온라인 패널 모집-만18~30세 남녀[...",
+      "url": "http://researchi.co.kr/newjob/27354",
+      "first_seen": "2026-09-28",
+      "score": 32
+    },
+    "c03a550492bd8dcbb7bf": {
+      "title": "[비대면] 온라인·모바일 게임 유저 온라인 패널 모집-만18~30세 남녀[...",
+      "url": "http://researchi.co.kr/additional/27955",
+      "first_seen": "2026-09-28",
+      "score": 32
+    },
+    "11e42f171faf03179c36": {
+      "title": "[비대면] 온라인·모바일 게임 유저 온라인 패널 모집-만18~30세 남녀[...",
+      "url": "https://cafe.daum.net/researchi/LRow/22415",
+      "first_seen": "2026-09-28",
+      "score": 32
+    },
+    "503ca5b20b6797020743": {
+      "title": "국토교통부 온라인 패널 모집 ( ~ 7. 31), 활동확인서, 기프티콘",
+      "url": "https://blog.naver.com/88miles-/223527929887",
+      "first_seen": "2026-09-28",
+      "score": 32
+    },
+    "20492869822270da6e35": {
+      "title": "정보공유 : 네이버 블로그",
+      "url": "https://blog.naver.com/kimyoonhy7/223486468098",
+      "first_seen": "2026-09-28",
+      "score": 32
+    },
+    "a49a8e1e3a18267fb618": {
+      "title": "설문조사 기프티콘 지급, 아직도 한 명씩 보내시나요? 리워드 일괄 발송 방법 : 네이버 블로그",
+      "url": "https://blog.naver.com/sendbeecokr/224303556721",
+      "first_seen": "2026-09-28",
+      "score": 30
+    },
+    "8f8c3c2f613d04c5cccc": {
+      "title": "[설문조사] 부모 대상 설문 참여자 모집 (기프티콘 지급) - 자유소통♡ - 대전세종맘카페 - 대전맘카페 세종맘까페 대세맘 ...",
+      "url": "https://m.cafe.daum.net/beanpolo/OnML/6039",
+      "first_seen": "2026-09-28",
+      "score": 30
+    },
+    "fa0e5f1d5cb94bb01460": {
+      "title": "설문조사 기프티콘 지급해도 될까? 세금부터 대량 발송까지 실무 가이...",
+      "url": "https://blog.naver.com/sendbeecokr/224373927772",
+      "first_seen": "2026-09-28",
+      "score": 30
+    },
+    "099ceb82d80487cb048f": {
+      "title": "광주시, 공익활동 참여 시민 문화상품권 지급 이벤트 확대",
+      "url": "https://www.msn.com/ko-kr/도시-인프라/주택-및-도시-개발/광주시-공익활동-참여-시민-문화상품권-지급-이벤트-확대/ar-AA1LmcVP",
+      "first_seen": "2026-09-28",
+      "score": 30
+    },
+    "45e5d9b4b277df45d0d4": {
+      "title": "[전원 ️] 여성과학기술인 정책 설문조사 기프티콘제공 (~10/2) : 네이...",
+      "url": "https://blog.naver.com/moxxsoul/224016782106",
+      "first_seen": "2026-09-28",
+      "score": 30
+    },
+    "9a02dce0e0b638909b4a": {
+      "title": "[청년고용정책] 설문조사하시고 기프티콘받아가세요! - 자유홍보 - 건...",
+      "url": "https://kung.kr/ku_ad/5882157",
+      "first_seen": "2026-09-28",
+      "score": 30
+    },
+    "5e51822c1480c3aa82fc": {
+      "title": "[이벤트] 설문조사 참여하고, 커피쿠폰☕ 받아가세요! : 네이버 블로그",
+      "url": "https://blog.naver.com/mybcf/223588843536",
+      "first_seen": "2026-09-28",
+      "score": 28
+    },
+    "b18d12b995bd02669a13": {
+      "title": "지역상품권 chak 카드사용 < 시민소통신문고 < 시민참여 - 목포...",
+      "url": "https://www.mokpo.go.kr/www/citizen_participation/to_mayor?idx=538889&mode=view",
+      "first_seen": "2026-09-28",
+      "score": 28
+    },
+    "3e5f9cdf2b295e1d56fd": {
+      "title": "[EVENT] 의견수렴 이벤트 응모하고 상품권 받아가세요! : 네이버 블로...",
+      "url": "https://blog.naver.com/slcdream/221871860467",
+      "first_seen": "2026-09-28",
+      "score": 28
+    },
+    "58a039a5f811c4ca4814": {
+      "title": "국가교육위원회 | 국가교육위원회 국민 참여 #이벤트 국민과 함께 만...",
+      "url": "https://www.instagram.com/p/DaMvRhDnUYD/",
+      "first_seen": "2026-09-28",
+      "score": 28
+    },
+    "6dab027ba3e1c11c255a": {
+      "title": "설문조사 < 정책참여 < 국민참여 < 민원·제안 : 법제처",
+      "url": "https://www.moleg.go.kr/menu.es?mid=a10602030300",
+      "first_seen": "2026-09-28",
+      "score": 27
+    },
+    "6203ea434068dabdb032": {
+      "title": "설문조사 - 국민제안 - 국민참여 - 민원참여 - 중소벤처기업부",
+      "url": "https://www.mss.go.kr/site/smba/contents/view.do?menuCd=20404010300002024122902&siteCd=smba",
+      "first_seen": "2026-09-28",
+      "score": 27
+    },
+    "d92e89eb41de7f37b0aa": {
+      "title": "[기프티콘 증정 마감] 아모레퍼시픽 대학생/대학원생 고객연구패널 모...",
+      "url": "https://www.campuspick.com/activity/view?id=32383",
+      "first_seen": "2026-09-28",
+      "score": 25
+    },
+    "04436b4745b7e623cafe": {
+      "title": "[기프티콘 증정 마감] 아모레퍼시픽 대학생/대학원생 고객연구패널 모...",
+      "url": "https://www2.campuspick.com/activity/view?id=32383&menu=comment",
+      "first_seen": "2026-09-28",
+      "score": 25
+    },
+    "5323d6918846f4658c26": {
+      "title": "생성형 AI 관련 조사-만 18~65세 남녀 8월 둘째 주 [사례비 추후 안내...",
+      "url": "https://researchi.co.kr/newjob/26815",
+      "first_seen": "2026-09-28",
+      "score": 25
+    }
+  }
+}
