@@ -213,3 +213,13 @@ if __name__ == "__main__":
     ap.add_argument("--poll-pages", type=int, default=30)
     args=ap.parse_args()
     discover(args.input,args.output,args.org_pages,args.poll_pages)
+
+
+# V1.1 output verification
+from pathlib import Path as _Path
+_csv_out = _Path("기관후보_발굴결과.csv")
+_summary_out = _Path("기관후보_발굴결과_요약.json")
+print(f"[V1.1] CSV 확인: {_csv_out} / 존재={_csv_out.exists()} / 크기={_csv_out.stat().st_size if _csv_out.exists() else 0} bytes")
+print(f"[V1.1] 요약 JSON 확인: {_summary_out} / 존재={_summary_out.exists()} / 크기={_summary_out.stat().st_size if _summary_out.exists() else 0} bytes")
+if not _csv_out.exists():
+    raise SystemExit("기관후보_발굴결과.csv가 생성되지 않았습니다.")
