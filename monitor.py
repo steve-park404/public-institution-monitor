@@ -11,14 +11,14 @@ Operational keywords:
 - 설문조사
 - 시민참여
 - 국민참여
-
-Title exclusion:
 - 공모전
+- 퀴즈 이벤트
+- 평가단 모집
 """
 
-VERSION = "V8.14.20"
+VERSION = "V8.14.22"
 
-import os, re, json, time, html, warnings, hashlib
+import os, re, json, time, html, warnings, hashlib, csv
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -30,8 +30,8 @@ import openpyxl
 
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
-KEYWORDS = ["설문조사", "시민참여", "국민참여"]
-EXCLUDE_TITLE = ["공모전"]
+KEYWORDS = ["설문조사", "시민참여", "국민참여", "공모전", "퀴즈 이벤트", "평가단 모집"]
+EXCLUDE_TITLE = []
 
 MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
@@ -48,6 +48,7 @@ BOARD_DISCOVERY_MAX_SECONDARY = 6
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
+DIAGNOSTIC_CSV_FILE = "진단_후보.csv"
 RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
 CHECKED_POSTS_FILE = "checked_posts.json"
@@ -120,6 +121,22 @@ GENERIC_BODY_NOISE = [
     "국민참여", "시민참여", "참여마당", "국민소통", "소통마당", "홈페이지",
     "사이트맵", "개인정보처리방침", "이용약관", "만족도", "오류신고", "고객센터"
 ]
+CONTEST_ACTION_CONTEXT = [
+    "공모 접수", "공모전 접수", "참가 신청", "참가접수", "응모", "출품",
+    "신청기간", "접수기간", "모집기간", "참여기간", "신청방법", "접수방법",
+    "참가방법", "작품 제출", "작품접수", "시상", "참가자 모집", "모집합니다"
+]
+QUIZ_EVENT_ACTION_CONTEXT = [
+    "퀴즈 참여", "퀴즈에 참여", "정답을 맞혀", "정답을 맞춰", "정답 제출",
+    "응모", "참여방법", "참여기간", "이벤트 기간", "이벤트기간", "응모기간",
+    "응모방법", "참여해 주세요", "참여해주시기 바랍니다", "문제", "정답"
+]
+EVALUATOR_ACTION_CONTEXT = [
+    "평가단 모집", "평가단 신청", "평가단에 신청", "평가단을 모집",
+    "신청기간", "모집기간", "신청방법", "모집방법", "지원방법", "지원기간",
+    "평가단 활동", "평가단 참여", "선정인원", "모집인원", "지원자", "신청자"
+]
+
 RESULT_TITLE_PATTERNS = [
     "당첨자", "결과발표", "결과 발표", "조사결과", "조사 결과", "설문결과", "설문 결과",
     "선정결과", "선정 결과", "참여자 발표", "수상자", "결과 안내", "결과안내"
@@ -372,41 +389,53 @@ def looks_like_list_dom(soup):
     return False
 
 def meaningful_body_match(body,keyword):
-    """본문의 실제 참여행동만 통과시키고 메뉴/푸터 공통문구 오탐을 차단한다."""
+    """키워드별 실제 참여행동 문맥을 확인해 메뉴/푸터 오탐을 차단한다."""
     body=norm(body)
     if len(body)<120: return False
 
-    # 페이지 공통영역에서 반복되는 키워드만으로는 매칭하지 않는다.
+    context_map={
+        "공모전": CONTEST_ACTION_CONTEXT,
+        "퀴즈 이벤트": QUIZ_EVENT_ACTION_CONTEXT,
+        "평가단 모집": EVALUATOR_ACTION_CONTEXT,
+    }
+
     for m in re.finditer(re.escape(keyword), body, re.I):
         idx=m.start()
-        ctx=body[max(0,idx-450):min(len(body),idx+650)]
+        ctx=body[max(0,idx-500):min(len(body),idx+750)]
 
-        # 국민참여/시민참여는 '참여'라는 단어 자체가 아니라 실제 행동 증거가 필요하다.
         if keyword in ("국민참여","시민참여"):
             action_hits=[x for x in PARTICIPATION_ACTION_SIGNALS if x in ctx]
             strong=[x for x in PARTICIPATION_CONTEXT if x in ctx]
-            # 강한 행동신호 1개 + 참여/조사 관련 보조신호 1개 이상
-            if not action_hits:
+            if not action_hits: continue
+            if len(set(strong)) < 2 and not any(x in ctx for x in ["설문","의견","응답","모집","신청","제안","조사"]):
                 continue
-            if len(set(strong)) < 2 and not any(x in ctx for x in ["설문", "의견", "응답", "모집", "신청", "제안", "조사"]):
-                continue
-            # 공통 메뉴성 단어가 지나치게 많은 문맥은 추가 검증
             noise_hits=sum(1 for x in GENERIC_BODY_NOISE if x in ctx)
-            if noise_hits >= 3 and len(action_hits) < 2:
-                continue
+            if noise_hits >= 3 and len(action_hits) < 2: continue
             return True
 
-        # 설문조사는 실제 응답/기간/대상/방법 등이 확인되어야 한다.
-        if keyword=="설문조사":
+        elif keyword=="설문조사":
             action_hits=[x for x in SURVEY_ACTION_CONTEXT if x in ctx]
-            if not action_hits:
-                continue
-            # '설문조사' 단어와 별개로 실제 참여/응답 관련 증거가 최소 1개 필요
-            if not any(x in ctx for x in ["참여", "응답", "기간", "대상", "방법", "설문지", "링크"]):
+            if not action_hits: continue
+            if not any(x in ctx for x in ["참여","응답","기간","대상","방법","설문지","링크"]):
                 continue
             noise_hits=sum(1 for x in GENERIC_BODY_NOISE if x in ctx)
-            if noise_hits >= 3 and len(set(action_hits)) < 2:
+            if noise_hits >= 3 and len(set(action_hits)) < 2: continue
+            return True
+
+        else:
+            signals=context_map.get(keyword,[])
+            hits=[x for x in signals if x in ctx]
+            if not hits: continue
+            # 새 3개 키워드는 키워드 자체 + 실제 행동신호가 함께 있어야 한다.
+            # 메뉴/푸터에서 반복되는 단어만으로는 통과시키지 않는다.
+            if keyword=="공모전" and not any(x in ctx for x in ["접수","응모","출품","신청","모집","참가","작품"]):
                 continue
+            if keyword=="퀴즈 이벤트" and not any(x in ctx for x in ["참여","응모","정답","문제","기간","방법"]):
+                continue
+            if keyword=="평가단 모집" and not any(x in ctx for x in ["신청","모집","지원","기간","방법","선정"]):
+                continue
+            noise_hits=sum(1 for x in GENERIC_BODY_NOISE if x in ctx)
+            if noise_hits >= 3 and len(set(hits)) < 2: continue
             return True
     return False
 
@@ -619,7 +648,7 @@ def match_post_detailed(u):
     if is_probably_site_title(title,page_title):
         return None,"GENERIC_TITLE",""
 
-    if any(x in title for x in EXCLUDE_TITLE): return None,"CONTEST_TITLE",""
+    # 공모전은 이제 검색 대상이므로 기존 제외 규칙을 적용하지 않는다.
     # 당첨자/결과발표 등은 신규 참여기회가 아니므로 알림에서 제외한다.
     if is_result_or_announcement_title(title):
         return None,"RESULT_ANNOUNCEMENT_TITLE",""
@@ -905,7 +934,8 @@ def process(target,state,board_cache,checked_posts):
             "error":"","error_type":"","diag":{},"post_candidates":0,"detail_checked":0,"recent_posts":0,
             "title_matches":0,"body_matches":0,"excluded_list_pages":0,
             "excluded_generic_pages":0,"excluded_contest_titles":0,"detail_errors":0,
-            "excluded_not_post_structure":0,"excluded_no_body":0}
+            "excluded_not_post_structure":0,"excluded_no_body":0,
+            "diagnostic_rows":[],"reason_counts":{}}
     try:
         board=seed or board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"")
         details=[]
@@ -948,6 +978,19 @@ def process(target,state,board_cache,checked_posts):
             u=item.get("url") if isinstance(item,dict) else item
             try:
                 m,reason,kw=match_post_detailed(u)
+                result["reason_counts"][reason]=result["reason_counts"].get(reason,0)+1
+                # 상세페이지 판정 결과를 진단용으로 보존한다.
+                # 특히 NO_KEYWORD / RESULT_ANNOUNCEMENT_TITLE / GENERIC_PAGE를
+                # 확인하면 실제 미탐·오탐 원인을 추적할 수 있다.
+                if reason not in ("BODY_MATCH","TITLE_MATCH") or m:
+                    result["diagnostic_rows"].append({
+                        "기관명": name,
+                        "기관유형": target.get("기관유형",""),
+                        "제목": str(item.get("title",""))[:300],
+                        "URL": u,
+                        "판정": reason,
+                        "키워드": kw,
+                    })
                 if reason=="LIST_PAGE": result["excluded_list_pages"]+=1
                 elif reason in ("GENERIC_PAGE","GENERIC_TITLE"): result["excluded_generic_pages"]+=1
                 elif reason=="CONTEST_TITLE": result["excluded_contest_titles"]+=1
@@ -1120,7 +1163,7 @@ def main():
     started=time.time()
     targets=load_targets()
     manual_url_count=sum(1 for x in targets if x.get("공지게시판URL"))
-    print(f"V8.14.20 manual board URL targets: {manual_url_count}", flush=True)
+    print(f"V8.14.22 manual board URL targets: {manual_url_count}", flush=True)
     state=load_json(
         STATE_FILE,
         {"seen":[],"sent_urls":{},"boards":{},"updated_at":"","version":VERSION}
@@ -1277,6 +1320,23 @@ def main():
     state["version"]=VERSION
     save_json(STATE_FILE,state); save_json(PENDING_FILE,pending)
 
+    # 상세 판정 진단 CSV 생성: Telegram 발송에는 영향을 주지 않는다.
+    diagnostic_rows=[]
+    reason_counts={}
+    for rr in results:
+        for row in rr.get("diagnostic_rows",[]):
+            diagnostic_rows.append(row)
+        for k,v in rr.get("reason_counts",{}).items():
+            reason_counts[k]=reason_counts.get(k,0)+v
+    diagnostic_rows.sort(key=lambda x:(x.get("판정",""),x.get("기관명",""),x.get("제목","")))
+    try:
+        with open(DIAGNOSTIC_CSV_FILE,"w",encoding="utf-8-sig",newline="") as f:
+            w=csv.DictWriter(f,fieldnames=["기관명","기관유형","제목","URL","판정","키워드"])
+            w.writeheader()
+            w.writerows(diagnostic_rows)
+    except Exception as e:
+        print("진단 CSV 저장 실패:",type(e).__name__,str(e)[:200])
+
     elapsed=time.time()-started
     diag_counts={}
     for r in results:
@@ -1327,7 +1387,9 @@ def main():
         "migrated_fingerprint_count":migrated_fingerprint_count,
         "summary_skipped_duplicate":summary_skipped_duplicate,
         "board_cache_total":len(board_cache),
-        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,"errors":errors,
+        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,
+        "diagnostic_csv":DIAGNOSTIC_CSV_FILE,"diagnostic_rows":len(diagnostic_rows),
+        "reason_counts":reason_counts,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":bool(timed_out or len(results)<len(targets)),
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
