@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-V8.23 유사기관 URL 병합
-- 기존 monitor.py의 검색 로직은 수정하지 않음
-- 기존 355기관 원본 Excel에 사용자가 수동 확인한 유사기관 게시판 URL을 추가
-- 기관명 중복은 1개로 유지
+V8.23.1 유사기관 URL 병합
+- 기존 monitor.py 검색 로직은 변경하지 않음
+- 사용자가 수동 입력한 게시판URL만 추가
+- read_only worksheet의 max_row=None 문제를 방지하기 위해 iter_rows 사용
 """
 
 from pathlib import Path
 import re
-import shutil
-from datetime import datetime
 import openpyxl
 
 BASE_CANDIDATES = ["monitor_targets.xlsx", "url.xlsx", "targets.xlsx"]
@@ -25,70 +23,91 @@ def norm(x):
 def valid_url(x):
     return bool(re.match(r"^https?://", str(x or "").strip(), re.I))
 
-def find_existing(names):
-    for n in names:
-        p = Path(n)
+def find_file(candidates):
+    for name in candidates:
+        p = Path(name)
         if p.exists():
             return p
     return None
 
-def headers(ws):
-    return {norm(c.value): i for i, c in enumerate(ws[1], start=1)}
+def get_headers(ws):
+    return {
+        norm(cell.value): idx
+        for idx, cell in enumerate(next(ws.iter_rows(min_row=1, max_row=1)), start=1)
+    }
 
 def main():
-    base = find_existing(BASE_CANDIDATES)
-    extra = find_existing(EXTRA_CANDIDATES)
+    base = find_file(BASE_CANDIDATES)
+    extra = find_file(EXTRA_CANDIDATES)
 
     if not base:
         raise SystemExit(
             "기존 기관목록 Excel을 찾지 못했습니다. "
-            f"다음 중 하나가 필요합니다: {BASE_CANDIDATES}"
+            f"필요 파일: {BASE_CANDIDATES}"
         )
     if not extra:
         raise SystemExit("유사기관 추가 Excel을 찾지 못했습니다.")
 
-    # 이미 병합된 경우에도 안전하게 재실행 가능
     wb = openpyxl.load_workbook(base)
     ws = wb["355기관"] if "355기관" in wb.sheetnames else wb[wb.sheetnames[0]]
-    hm = headers(ws)
+    hm = get_headers(ws)
 
     if "기관명" not in hm or "홈페이지URL" not in hm:
-        raise SystemExit(f"기존 Excel의 기관명/홈페이지URL 열을 찾지 못했습니다: {list(hm)}")
+        raise SystemExit(
+            f"기존 Excel의 기관명/홈페이지URL 열을 찾지 못했습니다: {list(hm)}"
+        )
 
-    # 필요한 열이 없으면 추가
     for colname in ["공지게시판URL", "기관유형"]:
         if colname not in hm:
             idx = ws.max_column + 1
             ws.cell(1, idx).value = colname
             hm[colname] = idx
 
-    # 기존 기관명 색인
     existing = {}
     for r in range(2, ws.max_row + 1):
         name = norm(ws.cell(r, hm["기관명"]).value)
         if name:
             existing[name] = r
 
+    # 추가 파일은 read_only로 열되 max_row를 사용하지 않고 행 자체를 순회
     ewb = openpyxl.load_workbook(extra, read_only=True, data_only=True)
     ews = ewb["추가후보"] if "추가후보" in ewb.sheetnames else ewb[ewb.sheetnames[0]]
-    eh = headers(ews)
+    rows = ews.iter_rows(values_only=True)
+
+    try:
+        header_row = next(rows)
+    except StopIteration:
+        raise SystemExit("추가 Excel의 '추가후보' 시트가 비어 있습니다.")
+
+    eh = {
+        norm(value): idx
+        for idx, value in enumerate(header_row)
+    }
 
     if "기관명" not in eh or "게시판URL" not in eh:
-        raise SystemExit(f"추가 Excel의 기관명/게시판URL 열을 찾지 못했습니다: {list(eh)}")
+        raise SystemExit(
+            f"추가 Excel의 기관명/게시판URL 열을 찾지 못했습니다: {list(eh)}"
+        )
 
     added = 0
     supplemented = 0
     skipped = 0
+    valid_board_urls = 0
 
-    for r in range(2, ews.max_row + 1):
-        name = norm(ews.cell(r, eh["기관명"]).value)
-        board = str(ews.cell(r, eh["게시판URL"]).value or "").strip()
-        home = str(ews.cell(r, eh["홈페이지URL"]).value or "").strip() if "홈페이지URL" in eh else ""
-        org_type = str(ews.cell(r, eh["기관유형"]).value or "").strip() if "기관유형" in eh else ""
+    for values in rows:
+        def val(col):
+            idx = eh.get(col)
+            return values[idx] if idx is not None and idx < len(values) else ""
 
-        # 게시판 URL을 실제로 수동 입력한 기관만 편입
+        name = norm(val("기관명"))
+        board = str(val("게시판URL") or "").strip()
+        home = str(val("홈페이지URL") or "").strip()
+        org_type = str(val("기관유형") or "").strip()
+
         if not name or not valid_url(board):
             continue
+
+        valid_board_urls += 1
 
         if name in existing:
             rr = existing[name]
@@ -99,7 +118,7 @@ def main():
                 ws.cell(rr, hm["공지게시판URL"]).value = board
                 changed = True
 
-            if "홈페이지URL" in hm and not str(ws.cell(rr, hm["홈페이지URL"]).value or "").strip() and home:
+            if not str(ws.cell(rr, hm["홈페이지URL"]).value or "").strip() and home:
                 ws.cell(rr, hm["홈페이지URL"]).value = home
                 changed = True
 
@@ -114,13 +133,16 @@ def main():
         ws.cell(rr, hm["홈페이지URL"]).value = home or board
         ws.cell(rr, hm["공지게시판URL"]).value = board
         ws.cell(rr, hm["기관유형"]).value = org_type
+
         existing[name] = rr
         added += 1
 
+    ewb.close()
     wb.save(base)
 
-    print("=== V8.23 유사기관 URL 병합 ===")
+    print("=== V8.23.1 유사기관 URL 병합 완료 ===")
     print(f"기존 대상 파일: {base}")
+    print(f"수동 게시판 URL 확인 건수: {valid_board_urls}")
     print(f"신규 기관 추가: {added}")
     print(f"기존 기관 URL 보완: {supplemented}")
     print(f"기존값 유지: {skipped}")
