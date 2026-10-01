@@ -1,0 +1,156 @@
+name: V8.27 723기관 정밀 일일 모니터링
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 0 * * *"   # 매일 09:20 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-institution-monitor-main
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 openpyxl
+
+      - name: Verify integrated target workbook
+        run: |
+          python - <<'PY'
+          import openpyxl, os
+          FILE = "monitor_targets_통합.xlsx"
+          MINIMUM_TARGET_COUNT = 723
+
+          if not os.path.exists(FILE):
+              raise SystemExit(f"{FILE} 없음")
+
+          wb = openpyxl.load_workbook(FILE, read_only=True, data_only=True)
+          ws = wb["355기관"] if "355기관" in wb.sheetnames else wb[wb.sheetnames[0]]
+
+          headers = [c.value for c in ws[1]]
+          required = ["기관명", "홈페이지URL", "공지게시판URL", "기관유형"]
+          missing = [x for x in required if x not in headers]
+          if missing:
+              raise SystemExit(f"필수 열 없음: {missing}")
+
+          idx = {v:i for i,v in enumerate(headers)}
+          rows = list(ws.iter_rows(min_row=2, values_only=True))
+          total = len(rows)
+          board_count = sum(
+              1 for r in rows
+              if r[idx["공지게시판URL"]] and str(r[idx["공지게시판URL"]]).strip()
+          )
+          print(f"통합 대상: {total}개")
+          print(f"수동 입력 공지게시판 URL: {board_count}개")
+
+          if total < MINIMUM_TARGET_COUNT:
+              raise SystemExit(f"대상 기관이 {MINIMUM_TARGET_COUNT}개 미만입니다: {total}개")
+          if board_count < 400:
+              raise SystemExit(f"공지게시판 URL이 예상보다 적습니다: {board_count}개")
+
+          print("통합 대상/게시판 URL 검증 성공")
+          PY
+
+      - name: Apply V8.27 patch
+        run: |
+          python V8.27_patch.py
+          python -m py_compile monitor.py
+
+      - name: Verify monitor configuration
+        run: |
+          python - <<'PY'
+          import monitor
+          expected = [
+              "설문", "의견수렴", "시민참여", "국민참여",
+              "공모전", "퀴즈 이벤트", "평가단 모집", "만족도 조사"
+          ]
+          if monitor.KEYWORDS != expected:
+              raise SystemExit(f"키워드 검증 실패: {monitor.KEYWORDS}")
+
+          if "monitor_targets_통합.xlsx" not in monitor.TARGET_FILE_CANDIDATES:
+              raise SystemExit("통합 Excel이 최우선 대상 파일로 설정되지 않았습니다.")
+
+          # 실제 V8.26 Telegram 오탐 사례 회귀 테스트
+          assert monitor.is_result_or_announcement_title("2026 서울교통공사 유튜브 영상 공모전 수상 후보작 공개 검증 안내")
+          assert monitor.is_result_or_announcement_title("비짓서울 API 활용 아이디어 공모전 최종 결과 발표")
+          assert monitor.is_probably_site_title("한국농어촌공사 메인", "한국농어촌공사 메인")
+          assert monitor.is_probably_site_title("대학생활 : 한국기술교육대학교", "대학생활 : 한국기술교육대학교")
+          print("V8.27 설정/회귀 테스트 성공")
+          print("KEYWORDS =", monitor.KEYWORDS)
+          print("TARGET_FILE_CANDIDATES =", monitor.TARGET_FILE_CANDIDATES)
+          PY
+
+      - name: Run daily monitor
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python monitor.py
+
+      - name: Upload daily results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V8.27-results
+          path: |
+            기관별_상태.csv
+            진단_후보.csv
+            daily_summary.json
+            diagnostics.json
+            state.json
+            pending.json
+            retry_queue.json
+            checked_posts.json
+            board_cache.json
+            monitor_targets_통합.xlsx
+          if-no-files-found: warn
+
+      - name: Commit state and diagnostics
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            monitor.py \
+            V8.27_patch.py \
+            .github/workflows/V8.27_723기관_정밀_일일모니터링.yml \
+            monitor_targets_통합.xlsx \
+            기관별_상태.csv \
+            진단_후보.csv \
+            daily_summary.json \
+            diagnostics.json \
+            state.json \
+            pending.json \
+            retry_queue.json \
+            checked_posts.json \
+            board_cache.json \
+            || true
+
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit"
+            exit 0
+          fi
+
+          git commit -m "V8.27: precision filtering and false-positive reduction"
+          git push origin HEAD:main
