@@ -50,3 +50,28 @@ s=s.replace('("/index.do","/index.jsp","/main.do","/main.jsp")','("/index.do","/
 
 p.write_text(s,encoding='utf-8')
 print('V8.27.1 patch applied')
+
+# --- V8.27.1 user-requested Telegram summary: TODAY ONLY ---
+
+summary_start = s.find("def build_monitoring_summary(")
+summary_end = s.find("def telegram_send(item):", summary_start)
+if summary_start < 0 or summary_end < 0:
+    raise SystemExit("build_monitoring_summary/telegram_send 구간을 찾지 못했습니다.")
+compact_summary = """def build_monitoring_summary(targets, results, posts_checked, new_matches,
+                             sent, pending_after, errors, aggregate,
+                             status_counts, sent_url_ledger):
+    """ + '"""Telegram 요약은 사용자가 요청한 오늘 모니터링만 표시한다."""' + r"""
+    return "\n".join([
+        "📊 티끌 모니터링",
+        "━━━━━━━━━━━━━━",
+        f"📅 {datetime.now(KST).strftime('%Y-%m-%d')}",
+        "",
+        "🔎 오늘 모니터링",
+        f"• 게시물 확인 {posts_checked:,}건",
+        f"• 실제 최근 게시물 {aggregate.get('recent_posts',0):,}건",
+        f"• 신규 키워드 매칭 {new_matches}건",
+        f"• Telegram 참여정보 발송 {sent}건",
+        f"• 대기 {pending_after}건",
+    ])
+"""
+s = s[:summary_start] + compact_summary + s[summary_end:]
