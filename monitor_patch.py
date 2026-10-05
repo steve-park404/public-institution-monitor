@@ -14,7 +14,7 @@ s,n=re.subn(r'(?m)^KEYWORDS\s*=\s*\[[^\n]*\]', 'KEYWORDS = '+repr(keywords), s, 
 if n!=1: raise SystemExit('KEYWORDS 패치를 찾지 못했습니다.')
 
 # Use the manually maintained integrated workbook first.
-s,n=re.subn(r'(?m)^TARGET_FILE_CANDIDATES\s*=\s*\[[^\n]*\]', 'TARGET_FILE_CANDIDATES = ["monitor_targets.xlsx", "monitor_targets_통합.xlsx", "monitor_targets_통합_지자체243추가.xlsx", "monitor_targets_통합_지자체243추가 (4).xlsx", "monitor_targets.xlsx", "url.xlsx", "targets.xlsx"]', s, count=1)
+s,n=re.subn(r'(?m)^TARGET_FILE_CANDIDATES\s*=\s*\[[^\n]*\]', 'TARGET_FILE_CANDIDATES = ["monitor_targets.xlsx"]', s, count=1)
 if n!=1: raise SystemExit('TARGET_FILE_CANDIDATES 패치를 찾지 못했습니다.')
 
 result_patterns=[
