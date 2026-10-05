@@ -34,7 +34,7 @@ jobs:
         run: |
           python - <<'PY'
           import openpyxl, os
-          FILE='monitor_targets_통합.xlsx'; MINIMUM=747
+          FILE='monitor_targets.xlsx'; MINIMUM=747
           if not os.path.exists(FILE): raise SystemExit(f'{FILE} 없음')
           wb=openpyxl.load_workbook(FILE,read_only=True,data_only=True)
           ws=wb['355기관'] if '355기관' in wb.sheetnames else wb[wb.sheetnames[0]]
@@ -51,7 +51,7 @@ jobs:
           PY
       - name: Apply V8.27.1 patch
         run: |
-          python V8.27.1_patch.py
+          python monitor_patch.py
           python -m py_compile monitor.py
       - name: Verify monitor configuration and regression tests
         run: |
@@ -59,7 +59,7 @@ jobs:
           import monitor
           expected=['설문','의견수렴','시민참여','국민참여','공모전','퀴즈 이벤트','평가단 모집','만족도 조사']
           if monitor.KEYWORDS!=expected: raise SystemExit(f'키워드 검증 실패: {monitor.KEYWORDS}')
-          if 'monitor_targets_통합.xlsx' not in monitor.TARGET_FILE_CANDIDATES: raise SystemExit('통합 Excel 우선 설정 실패')
+          if 'monitor_targets.xlsx' not in monitor.TARGET_FILE_CANDIDATES: raise SystemExit('통합 Excel 우선 설정 실패')
           assert monitor.is_result_or_announcement_title('2026 서울교통공사 유튜브 영상 공모전 수상 후보작 공개 검증 안내')
           assert monitor.is_result_or_announcement_title('비짓서울 API 활용 아이디어 공모전 최종 결과 발표')
           assert monitor.is_probably_site_title('한국농어촌공사 메인','한국농어촌공사 메인')
@@ -77,7 +77,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: V8.27.1-results
+          name: tikkle-results
           path: |
             기관별_상태.csv
             진단_후보.csv
@@ -88,14 +88,14 @@ jobs:
             retry_queue.json
             checked_posts.json
             board_cache.json
-            monitor_targets_통합.xlsx
+            monitor_targets.xlsx
           if-no-files-found: warn
       - name: Commit state and diagnostics
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add monitor.py V8.27.1_patch.py .github/workflows/V8.27.1_747기관_정밀_일일모니터링.yml monitor_targets_통합.xlsx 기관별_상태.csv 진단_후보.csv daily_summary.json diagnostics.json state.json pending.json retry_queue.json checked_posts.json board_cache.json || true
+          git add monitor.py monitor_patch.py .github/workflows/monitor.yml monitor_targets.xlsx 기관별_상태.csv 진단_후보.csv daily_summary.json diagnostics.json state.json pending.json retry_queue.json checked_posts.json board_cache.json || true
           if git diff --cached --quiet; then echo 'No generated changes to commit'; exit 0; fi
           git commit -m 'V8.27.1: fix keyword verification and precision filtering'
           git push origin HEAD:main
