@@ -52,6 +52,21 @@ jobs:
           if board < 700: raise SystemExit(f'공지게시판 URL이 예상보다 적습니다: {board}개')
           print('747기관/수동 게시판 URL 검증 성공')
           PY
+      - name: Preflight KOFPI board check
+        run: |
+          python - <<'PY'
+          import requests
+          from bs4 import BeautifulSoup
+          url='https://www.kofpi.or.kr/notice/notice_01.do'
+          r=requests.get(url,timeout=20,headers={'User-Agent':'Mozilla/5.0 Tikkle/8.27.1'})
+          r.raise_for_status()
+          text=BeautifulSoup(r.text,'html.parser').get_text(' ',strip=True)
+          target='2026 우리 임산물 숲푸드 콘텐츠 공모전 개최'
+          print(f'한국임업진흥원 게시판 HTTP: {r.status_code}')
+          print(f'한국임업진흥원 공모전 제목 발견: {target in text}')
+          if target not in text:
+              raise SystemExit('KOFPI 게시판에서 테스트 공모전 제목을 찾지 못했습니다.')
+          PY
       - name: Apply Tikkle precision patch
         run: |
           python monitor_patch.py
@@ -67,6 +82,9 @@ jobs:
           assert monitor.is_result_or_announcement_title('비짓서울 API 활용 아이디어 공모전 최종 결과 발표')
           assert monitor.is_probably_site_title('한국농어촌공사 메인','한국농어촌공사 메인')
           assert monitor.is_probably_site_title('대학생활 : 한국기술교육대학교','대학생활 : 한국기술교육대학교')
+          assert monitor.direct_title_opportunity_match('[공모] 2026 우리 임산물 숲푸드 콘텐츠 공모전 개최(~10.25)', '공모전')
+          assert not monitor.direct_title_opportunity_match('2026 서울교통공사 유튜브 영상 공모전 수상 후보작 공개 검증 안내', '공모전')
+          assert not monitor.direct_title_opportunity_match('비짓서울 API 활용 아이디어 공모전 최종 결과 발표', '공모전')
           print('티끌 설정/회귀 테스트 성공')
           PY
       - name: Run Tikkle daily monitor
