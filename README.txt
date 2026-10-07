@@ -1,25 +1,21 @@
-Tikkle V8.27.1 – 747 targets / missed-opportunity precision update
+Tikkle Alert Bot V8.28 - 747 targets / TITLE-ONLY keyword matching
 
-Files
-- monitor_targets.xlsx : 747 monitoring targets; manually maintained notice-board URLs preserved.
-- monitor_patch.py      : applies V8.27.1 keyword/result filtering, direct title opportunity guard, and compact Telegram summary.
-- .github/workflows/tikkle_monitor.yml : single daily workflow.
+Files in this package:
+- .github/workflows/tikkle_monitor.yml
+- monitor_targets.xlsx
+- monitor_patch.py
+- README.txt
 
-Important
-- The repository must retain the existing monitor.py. This package intentionally does not replace the crawler/state engine.
-- The workflow reads ONLY monitor_targets.xlsx.
-- Education support offices (176) are not active monitoring targets.
+Important:
+1. Keep the repository's existing monitor.py. This package patches that file; it does not replace it.
+2. The active target workbook is monitor_targets.xlsx (747 targets).
+3. Education support offices are kept only in the separate candidate sheet and are NOT active monitoring targets.
+4. Keyword matching is TITLE ONLY. BODY keyword matching is disabled completely.
+5. This prevents false positives such as a page body containing '공모전' or '설문' even when the actual post title is unrelated.
+6. Generic page titles such as '이전글', '주요누리집 닫기', '메인', '뉴스/소식 : ... 시민참여 ...' are rejected.
+7. Result-stage titles remain excluded: 당첨자, 결과발표, 수상작, 수상 후보, 최종 결과, 선정자 발표, etc.
+8. Real opportunity titles such as '[공모] 2026 우리 임산물 숲푸드 콘텐츠 공모전 개최(~10.25)' are accepted by the title regression test.
+9. Use this workflow only: .github/workflows/tikkle_monitor.yml
+10. Do not run old V8.26/V8.27/V8.27.1 workflows in parallel.
 
-Missed-opportunity fix
-- A title such as "[공모] 2026 우리 임산물 숲푸드 콘텐츠 공모전 개최(~10.25)" is accepted directly when it is not a result-stage announcement.
-- Result-stage titles such as 수상작/수상 후보/최종 결과 발표 remain excluded.
-- A KOFPI preflight check confirms that the official board is reachable and that the known test title is present before the monitor runs.
-
-Telegram summary
-Only the following are shown:
-- 오늘 모니터링
-- 게시물 확인
-- 실제 최근 게시물
-- 신규 키워드 매칭
-- Telegram 참여정보 발송
-- 대기
+Telegram summary is kept compact and shows only today's monitoring counts.

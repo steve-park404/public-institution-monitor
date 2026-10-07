@@ -36,60 +36,20 @@ if n != 1:
     raise SystemExit('RESULT_TITLE_PATTERNS 패치를 찾지 못했습니다.')
 
 # Extra generic-shell title patterns.
-shell_patterns = ["메인","메인페이지","홈페이지","사이트맵","사이트 맵","대학생활","SEOUL TOURISM ORGANIZATION"]
+shell_patterns = ["메인","메인페이지","홈페이지","사이트맵","사이트 맵","대학생활","SEOUL TOURISM ORGANIZATION",
+    "이전글","다음글","주요누리집 닫기","뉴스/소식 :","뉴스/소식:","전자민원, 정보공개, 뉴스소식",
+    "주요 행정서비스를 제공합니다."]
 if 'GENERIC_SHELL_TITLE_PATTERNS' not in s:
     marker = 'GENERIC_URL_HINTS = ['
     if marker in s:
         s = s.replace(marker, 'GENERIC_SHELL_TITLE_PATTERNS = ' + repr(shell_patterns) + '\n' + marker, 1)
 
-# Replace the strict body matcher from V8.27.1.
-start = s.find('def meaningful_body_match(body,keyword):')
-end = s.find('def is_result_or_announcement_title(title):', start)
+# Body keyword matching is intentionally disabled.
+start = s.find("def meaningful_body_match(body,keyword):")
+end = s.find("def is_result_or_announcement_title(title):", start)
 if start < 0 or end < 0:
     raise SystemExit('meaningful_body_match 구간을 찾지 못했습니다.')
-new_body = '''def meaningful_body_match(body,keyword):
-    """V8.27.1: 본문 키워드는 실제 참여행동 문맥이 있을 때만 통과."""
-    body=norm(body)
-    if len(body)<120: return False
-    context_map={
-        "공모전": CONTEST_ACTION_CONTEXT,
-        "퀴즈 이벤트": QUIZ_EVENT_ACTION_CONTEXT,
-        "평가단 모집": EVALUATOR_ACTION_CONTEXT,
-    }
-    survey_keywords={"설문","설문조사","만족도 조사","의견수렴"}
-    for m in re.finditer(re.escape(keyword), body, re.I):
-        idx=m.start(); ctx=body[max(0,idx-500):min(len(body),idx+750)]
-        if any(x in ctx for x in RESULT_TITLE_PATTERNS): continue
-        if keyword in ("국민참여","시민참여"):
-            action=[x for x in PARTICIPATION_ACTION_SIGNALS if x in ctx]
-            strong=[x for x in PARTICIPATION_CONTEXT if x in ctx]
-            if not action: continue
-            if len(set(strong))<2 and not any(x in ctx for x in ["설문","의견","응답","모집","신청","제안","조사"]): continue
-            if sum(1 for x in GENERIC_BODY_NOISE if x in ctx)>=3 and len(set(action))<2: continue
-            return True
-        elif keyword in survey_keywords:
-            action=[x for x in SURVEY_ACTION_CONTEXT + PARTICIPATION_CONTEXT if x in ctx]
-            if not action: continue
-            if not any(x in ctx for x in ["참여","응답","기간","대상","방법","설문지","링크","의견"]): continue
-            if sum(1 for x in GENERIC_BODY_NOISE if x in ctx)>=3 and len(set(action))<2: continue
-            return True
-        else:
-            signals=context_map.get(keyword,[])
-            hits=[x for x in signals if x in ctx]
-            if not hits: continue
-            if keyword=="공모전":
-                strong=["공모전 개최","공모전 참가","공모전 접수","공모전 응모","공모전 신청","공모전 모집","공모전 참여","공모전 출품","아이디어 공모","작품 공모","참가 신청","작품 제출"]
-                if any(x in ctx for x in strong): return True
-                if len(set(x for x in ["접수","응모","출품","신청","모집","참가","참여","제출","기간","방법"] if x in ctx))<2: continue
-            elif keyword=="퀴즈 이벤트":
-                if not any(x in ctx for x in ["참여","응모","정답","문제","기간","방법"]): continue
-            elif keyword=="평가단 모집":
-                if not any(x in ctx for x in ["신청","모집","지원","기간","방법","선정"]): continue
-            if sum(1 for x in GENERIC_BODY_NOISE if x in ctx)>=3 and len(set(hits))<2: continue
-            return True
-    return False
-
-'''
+new_body = 'def meaningful_body_match(body,keyword):\n    """V8.28: 본문 키워드 매칭은 사용하지 않는다. 제목 매칭만 허용한다."""\n    return False\n\n'
 s = s[:start] + new_body + s[end:]
 
 # Site-title false positives: keep result filtering, but don't classify real opportunity titles as shell pages.
@@ -122,25 +82,41 @@ TITLE_DIRECT_OPPORTUNITY_KEYWORDS = ["공모전", "설문", "설문조사", "의
 TITLE_RESULT_EXCLUSIONS = RESULT_TITLE_PATTERNS
 
 def direct_title_opportunity_match(title, keyword=None):
-    """Accept a real opportunity title directly, while preserving result-stage exclusions."""
+    """제목만으로 실제 참여기회를 판별한다. 본문은 절대 참조하지 않는다."""
     t = norm(title or "")
     if not t:
         return False
     if any(x in t for x in TITLE_RESULT_EXCLUSIONS):
         return False
+    # 명백한 사이트/페이지 고정 제목 차단
+    shell = [
+        "메인", "메인페이지", "홈페이지", "사이트맵", "사이트 맵", "대학생활",
+        "이전글", "다음글", "주요누리집 닫기", "뉴스/소식 :", "뉴스/소식:",
+        "전자민원, 정보공개, 뉴스소식", "주요 행정서비스를 제공합니다."
+    ]
+    if any(x.lower() in t.lower() for x in shell):
+        return False
     keys = [keyword] if keyword else TITLE_DIRECT_OPPORTUNITY_KEYWORDS
     keys = [k for k in keys if k]
-    if not any(k in t for k in keys):
+    matched = [k for k in keys if k in t]
+    if not matched:
         return False
-    # For contest/survey titles, action or recruitment language is preferred.
-    if any(k in t for k in ["공모전", "설문", "설문조사", "의견수렴", "시민참여", "국민참여", "만족도 조사"]):
-        return any(x in t for x in ["개최","모집","공고","안내","신청","접수","참여","응모","기간","조사","설문","의견","수렴","실시","진행"])
-    return any(x in t for x in ["모집","신청","참여","응모","개최","안내","접수","기간"])
+    k = matched[0]
+    # 공모전은 제목 자체에 실제 모집/개최/접수 등의 행동 문맥이 있어야 한다.
+    if k == "공모전":
+        return any(x in t for x in ["개최","모집","공고","안내","신청","접수","참여","응모","출품","기간","실시","진행"])
+    # 설문/의견수렴/만족도 조사는 제목에 조사·응답·참여 등의 명확한 문맥이 있어야 한다.
+    if k in ["설문","설문조사","의견수렴","만족도 조사"]:
+        return any(x in t for x in ["조사","응답","참여","모집","실시","안내","의견","수요"])
+    # 시민참여/국민참여는 고정 메뉴명 오탐을 막기 위해 참여행동 문맥을 요구한다.
+    if k in ["시민참여","국민참여"]:
+        return any(x in t for x in ["모집","신청","참여자","참여단","설문","조사","의견","제안","공모","캠페인","이벤트"])
+    return any(x in t for x in ["모집","신청","참여","응모","개최","안내","접수","기간","실시"])
 '''
 if 'def direct_title_opportunity_match(' not in s:
     s += helper
 
-# Telegram summary: TODAY ONLY. Replace if the function exists.
+# Telegram summary: TODAY ONLY.
 summary_start = s.find('def build_monitoring_summary(')
 summary_end = s.find('def telegram_send(item):', summary_start)
 if summary_start >= 0 and summary_end >= 0:
@@ -165,4 +141,4 @@ if summary_start >= 0 and summary_end >= 0:
     s = s[:summary_start] + compact_summary + s[summary_end:]
 
 p.write_text(s, encoding='utf-8')
-print('Tikkle precision patch written')
+print('Tikkle title-only patch written')
