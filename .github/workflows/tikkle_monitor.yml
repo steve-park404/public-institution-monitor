@@ -1,4 +1,4 @@
-name: Tikkle Daily Monitoring - 747 Targets
+name: Tikkle Daily Monitoring - 747 Targets / Title Only
 
 on:
   workflow_dispatch:
@@ -85,6 +85,10 @@ jobs:
           assert monitor.direct_title_opportunity_match('[공모] 2026 우리 임산물 숲푸드 콘텐츠 공모전 개최(~10.25)', '공모전')
           assert not monitor.direct_title_opportunity_match('2026 서울교통공사 유튜브 영상 공모전 수상 후보작 공개 검증 안내', '공모전')
           assert not monitor.direct_title_opportunity_match('비짓서울 API 활용 아이디어 공모전 최종 결과 발표', '공모전')
+          assert not monitor.direct_title_opportunity_match('뉴스/소식 : 대한민국 산업수도 광양, 전남광주통합특별시 광양시 소개, 전자민원, 정보공개, 뉴스소식, 시민참여, 분야별정보', '시민참여')
+          assert not monitor.direct_title_opportunity_match('이전글', '공모전')
+          assert not monitor.direct_title_opportunity_match('주요누리집 닫기', '공모전')
+          assert not monitor.meaningful_body_match('본문에 공모전이라는 단어가 있고 참여 신청 기간이 있습니다.', '공모전')
           print('티끌 설정/회귀 테스트 성공')
           PY
       - name: Run Tikkle daily monitor
