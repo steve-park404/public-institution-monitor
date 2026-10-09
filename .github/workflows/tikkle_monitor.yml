@@ -75,7 +75,7 @@ jobs:
         run: |
           python - <<'PY'
           import monitor
-          expected=['설문','의견수렴','시민참여','국민참여','공모전','퀴즈 이벤트','평가단 모집','만족도 조사']
+          expected=['설문','의견수렴','시민참여','국민참여','공모전','퀴즈 이벤트','평가단 모집','만족도 조사','이벤트','슬로건','표어']
           if monitor.KEYWORDS != expected: raise SystemExit(f'키워드 검증 실패: {monitor.KEYWORDS}')
           if monitor.TARGET_FILE_CANDIDATES != ['monitor_targets.xlsx']: raise SystemExit(f'대상파일 설정 오류: {monitor.TARGET_FILE_CANDIDATES}')
           assert monitor.is_result_or_announcement_title('2026 서울교통공사 유튜브 영상 공모전 수상 후보작 공개 검증 안내')
