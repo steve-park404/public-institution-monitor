@@ -14,8 +14,8 @@ if not p.exists():
 s = p.read_text(encoding='utf-8')
 
 # Version / fixed target workbook / keywords
-s = re.sub(r'(?m)^VERSION\s*=\s*"V[^"]+"', 'VERSION = "V8.27.1"', s, count=1)
-keywords = ["설문","의견수렴","시민참여","국민참여","공모전","퀴즈 이벤트","평가단 모집","만족도 조사"]
+s = re.sub(r'(?m)^VERSION\s*=\s*"V[^"]+"', 'VERSION = "V8.28"', s, count=1)
+keywords = ["설문","의견수렴","시민참여","국민참여","공모전","퀴즈 이벤트","평가단 모집","만족도 조사","이벤트","슬로건","표어"]
 s, n = re.subn(r'(?m)^KEYWORDS\s*=\s*\[[^\n]*\]', 'KEYWORDS = ' + repr(keywords), s, count=1)
 if n != 1:
     raise SystemExit('KEYWORDS 패치를 찾지 못했습니다.')
@@ -78,7 +78,7 @@ s = s.replace('("/index.do","/index.jsp","/main.do","/main.jsp")', '("/index.do"
 helper = r'''
 
 # --- Tikkle missed-opportunity guard ---
-TITLE_DIRECT_OPPORTUNITY_KEYWORDS = ["공모전", "설문", "설문조사", "의견수렴", "시민참여", "국민참여", "퀴즈 이벤트", "평가단 모집", "만족도 조사"]
+TITLE_DIRECT_OPPORTUNITY_KEYWORDS = ["공모전", "설문", "설문조사", "의견수렴", "시민참여", "국민참여", "퀴즈 이벤트", "평가단 모집", "만족도 조사", "이벤트", "슬로건", "표어"]
 TITLE_RESULT_EXCLUSIONS = RESULT_TITLE_PATTERNS
 
 def direct_title_opportunity_match(title, keyword=None):
@@ -111,6 +111,9 @@ def direct_title_opportunity_match(title, keyword=None):
     # 시민참여/국민참여는 고정 메뉴명 오탐을 막기 위해 참여행동 문맥을 요구한다.
     if k in ["시민참여","국민참여"]:
         return any(x in t for x in ["모집","신청","참여자","참여단","설문","조사","의견","제안","공모","캠페인","이벤트"])
+    # 이벤트/슬로건/표어는 제목에 키워드가 직접 들어간 경우만 허용한다.
+    if k in ["이벤트","슬로건","표어"]:
+        return True
     return any(x in t for x in ["모집","신청","참여","응모","개최","안내","접수","기간","실시"])
 '''
 if 'def direct_title_opportunity_match(' not in s:
