@@ -1,4 +1,4 @@
-name: Tikkle Daily Monitoring - 747 Targets / Title Only
+name: Tikkle Daily Monitoring - 747 Targets / Missed-Post Recovery
 
 on:
   workflow_dispatch:
@@ -83,6 +83,9 @@ jobs:
           assert monitor.is_probably_site_title('한국농어촌공사 메인','한국농어촌공사 메인')
           assert monitor.is_probably_site_title('대학생활 : 한국기술교육대학교','대학생활 : 한국기술교육대학교')
           assert monitor.direct_title_opportunity_match('[공모] 2026 우리 임산물 숲푸드 콘텐츠 공모전 개최(~10.25)', '공모전')
+          assert monitor.direct_title_opportunity_match('2026년 공무원연금공단 소통지수 설문조사 안내', '설문')
+          assert monitor.direct_title_opportunity_match('2026년 직장 내 장애인 인식개선 교육 효과 설문조사 실시 안내(10.12.~10.23.)', '설문')
+          assert monitor.RECENT_POSTS >= 30
           assert not monitor.direct_title_opportunity_match('2026 서울교통공사 유튜브 영상 공모전 수상 후보작 공개 검증 안내', '공모전')
           assert not monitor.direct_title_opportunity_match('비짓서울 API 활용 아이디어 공모전 최종 결과 발표', '공모전')
           assert not monitor.direct_title_opportunity_match('뉴스/소식 : 대한민국 산업수도 광양, 전남광주통합특별시 광양시 소개, 전자민원, 정보공개, 뉴스소식, 시민참여, 분야별정보', '시민참여')
