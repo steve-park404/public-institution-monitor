@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tikkle V8.27.1 precision patch + missed-opportunity diagnostics.
+"""Tikkle V8.29 missed-opportunity recovery patch.
 
 This patch is designed to run against the existing monitor.py in the repository.
 It keeps the existing crawler/state logic and only tightens the classification and
@@ -14,7 +14,7 @@ if not p.exists():
 s = p.read_text(encoding='utf-8')
 
 # Version / fixed target workbook / keywords
-s = re.sub(r'(?m)^VERSION\s*=\s*"V[^"]+"', 'VERSION = "V8.28"', s, count=1)
+s = re.sub(r'(?m)^VERSION\s*=\s*"V[^"]+"', 'VERSION = "V8.29"', s, count=1)
 keywords = ["설문","의견수렴","시민참여","국민참여","공모전","퀴즈 이벤트","평가단 모집","만족도 조사","이벤트","슬로건","표어"]
 s, n = re.subn(r'(?m)^KEYWORDS\s*=\s*\[[^\n]*\]', 'KEYWORDS = ' + repr(keywords), s, count=1)
 if n != 1:
@@ -118,6 +118,52 @@ def direct_title_opportunity_match(title, keyword=None):
 '''
 if 'def direct_title_opportunity_match(' not in s:
     s += helper
+
+# --- V8.29 missed-post recovery improvements ---
+# 1) A missing detail-page date must not automatically suppress an otherwise valid
+#    title opportunity. If a date exists and is old, it is still rejected.
+s, date_n = re.subn(
+    r'if\s+not\s+dt\s+or\s+not\s+is_recent_date\(dt\)\s*:',
+    'if dt and not is_recent_date(dt):', s, count=1)
+if date_n != 1:
+    raise SystemExit('날짜 차단 조건을 찾지 못했습니다. monitor.py 버전이 달라 자동 패치를 중단합니다.')
+
+# 2) Wire title-only opportunity guard into the real matching loop, not just smoke tests.
+#    Do this only when the original loop is present to avoid a false-success package.
+loop_patterns = [
+    (r'if\s+kw\s+in\s+title\s*:', 'if kw in title and direct_title_opportunity_match(title, kw):'),
+    (r'if\s+kw\s+in\s+title\s*\.lower\(\)\s*:', 'if kw.lower() in title.lower() and direct_title_opportunity_match(title, kw):'),
+]
+loop_n = 0
+for pat, repl in loop_patterns:
+    s, n = re.subn(pat, repl, s, count=1)
+    loop_n += n
+    if n: break
+if loop_n != 1:
+    raise SystemExit('제목 키워드 매칭 구간을 찾지 못했습니다. 자동 패치를 중단합니다.')
+
+# 3) Failed/transient checks must not be permanently written to checked_posts.
+#    Keep terminal outcomes cached; retry fetch/parse/date failures on a future run.
+if 'RETRYABLE_CHECK_REASONS' not in s:
+    s = s.replace('VERSION = "V8.29"',
+        'VERSION = "V8.29"\nRETRYABLE_CHECK_REASONS = {"DETAIL_FETCH_ERROR", "OLD_OR_NO_DATE", "NO_TITLE", "LIST_PAGE", "NOT_POST_STRUCTURE", "HTTP_ERROR", "PARSE_ERROR"}', 1)
+append_patterns = [
+    r'(?m)^(\s*)checked_ids\.append\(pid\)\s*$',
+    r'(?m)^(\s*)checked_ids\.append\(pid\)\s*#.*$',
+]
+append_n = 0
+for pat in append_patterns:
+    s, n = re.subn(pat, lambda m: m.group(1) + 'if locals().get("reason", "DETAIL_FETCH_ERROR") not in RETRYABLE_CHECK_REASONS:\n' + m.group(1) + '    checked_ids.append(pid)', s, count=1)
+    append_n += n
+    if n: break
+if append_n != 1:
+    raise SystemExit('checked_ids.append(pid) 구간을 찾지 못했습니다. 자동 패치를 중단합니다.')
+
+# 4) Expand the per-board candidate ceiling from 10 to 30 to reduce misses on busy boards.
+s, cap_n = re.subn(r'(?m)^RECENT_POSTS\s*=\s*10\s*$', 'RECENT_POSTS = 30', s, count=1)
+if cap_n != 1:
+    raise SystemExit('RECENT_POSTS=10 설정을 찾지 못했습니다.')
+
 
 # Telegram summary: TODAY ONLY.
 summary_start = s.find('def build_monitoring_summary(')
