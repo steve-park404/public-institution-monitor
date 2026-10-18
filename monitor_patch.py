@@ -152,12 +152,24 @@ append_patterns = [
     r'(?m)^(\s*)checked_ids\.append\(pid\)\s*#.*$',
 ]
 append_n = 0
+# Try the exact known variable first, then support variants used by older/newer monitor.py.
 for pat in append_patterns:
     s, n = re.subn(pat, lambda m: m.group(1) + 'if locals().get("reason", "DETAIL_FETCH_ERROR") not in RETRYABLE_CHECK_REASONS:\n' + m.group(1) + '    checked_ids.append(pid)', s, count=1)
     append_n += n
     if n: break
 if append_n != 1:
-    raise SystemExit('checked_ids.append(pid) 구간을 찾지 못했습니다. 자동 패치를 중단합니다.')
+    # The repository's current monitor.py may use a different identity variable or
+    # a different state-persistence design. Do not fail the entire monitoring run
+    # over an optional cache optimization; leave the source unchanged and continue.
+    generic = r'(?m)^(\s*)checked_ids\.append\(([^)]+)\)\s*$'
+    def wrap_append(m):
+        indent, expr = m.group(1), m.group(2)
+        return indent + 'if locals().get("reason", "DETAIL_FETCH_ERROR") not in RETRYABLE_CHECK_REASONS:\n' + indent + '    checked_ids.append(' + expr + ')'
+    s, generic_n = re.subn(generic, wrap_append, s, count=1)
+    if generic_n:
+        append_n = generic_n
+    else:
+        print('경고: checked_ids.append(...) 구간이 없어 재시도 캐시 개선은 건너뜁니다. 나머지 개선은 계속 적용합니다.')
 
 # 4) Expand the per-board candidate ceiling from 10 to 30 to reduce misses on busy boards.
 s, cap_n = re.subn(r'(?m)^RECENT_POSTS\s*=\s*10\s*$', 'RECENT_POSTS = 30', s, count=1)
