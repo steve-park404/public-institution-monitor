@@ -11,15 +11,14 @@ Operational keywords:
 - 설문조사
 - 시민참여
 - 국민참여
+
+Title exclusion:
 - 공모전
-- 퀴즈 이벤트
-- 평가단 모집
 """
 
-VERSION = "V8.29"
-RETRYABLE_CHECK_REASONS = {"DETAIL_FETCH_ERROR", "OLD_OR_NO_DATE", "NO_TITLE", "LIST_PAGE", "NOT_POST_STRUCTURE", "HTTP_ERROR", "PARSE_ERROR"}
+VERSION = "V8.30-GROUP7"
 
-import os, re, json, time, html, warnings, hashlib, csv
+import os, re, json, time, html, warnings, hashlib
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,25 +30,26 @@ import openpyxl
 
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
-KEYWORDS = ['설문', '의견수렴', '시민참여', '국민참여', '공모전', '퀴즈 이벤트', '평가단 모집', '만족도 조사', '이벤트', '슬로건', '표어']
-EXCLUDE_TITLE = []
+KEYWORDS = ["설문조사", "시민참여", "국민참여"]
+EXCLUDE_TITLE = ["공모전"]
 
 MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
-RECENT_POSTS = 30
+HOME_RECOVERY_MAX_TRIES = 6
+RECENT_POSTS = 10
 RECENT_DAYS = 30
-MAX_TOTAL_SECONDS = 1080
+MAX_TOTAL_SECONDS = 2400
+MONITOR_GROUPS = 7
 TELEGRAM_MAX_SEND = 20
 MAX_PENDING = 10000
 
 BOARD_DISCOVERY_MAX_LINKS = 100
 BOARD_DISCOVERY_MAX_FETCH = 12
-BOARD_DISCOVERY_MAX_SECONDARY = 6
+BOARD_DISCOVERY_MAX_SECONDARY = 8
 BOARD_CACHE_FILE = "board_cache.json"
 MAX_FINGERPRINTS = 100000
 DAILY_SUMMARY_FILE = "daily_summary.json"
-DIAGNOSTIC_CSV_FILE = "진단_후보.csv"
 RETRY_QUEUE_FILE = "retry_queue.json"
 MAX_RETRY_QUEUE = 120
 CHECKED_POSTS_FILE = "checked_posts.json"
@@ -60,7 +60,7 @@ KST = ZoneInfo("Asia/Seoul")
 
 STATE_FILE = "state.json"
 PENDING_FILE = "pending.json"
-TARGET_FILE_CANDIDATES = ["monitor_targets.xlsx"]
+TARGET_FILE_CANDIDATES = ["monitor_targets.xlsx", "url.xlsx", "targets.xlsx"]
 
 NOISE = ["script","style","noscript","svg","header","footer","nav","aside",
          "form","iframe","canvas","template"]
@@ -87,59 +87,28 @@ GENERIC_PAGE_TITLES = {
     "참여마당","개인정보처리방침","개인정보 처리방침","이용약관",
     "로그인","회원가입","참여소통","기관소개","홈"
 }
-GENERIC_SHELL_TITLE_PATTERNS = ['메인', '메인페이지', '홈페이지', '사이트맵', '사이트 맵', '대학생활', 'SEOUL TOURISM ORGANIZATION', '이전글', '다음글', '주요누리집 닫기', '뉴스/소식 :', '뉴스/소식:', '전자민원, 정보공개, 뉴스소식', '주요 행정서비스를 제공합니다.']
 GENERIC_URL_HINTS = [
     "sitemap","privacy","terms","login","programproposal","consulting",
     "issuedata","homepage"
 ]
 
 PARTICIPATION_CONTEXT = [
-    "설문", "의견수렴", "의견조사", "만족도 조사", "조사", "응답",
-    "설문지", "참여단", "시민의견", "국민의견", "의견 제출", "의견을 제출",
-    "의견을 남겨", "참여기간", "응답기간", "조사기간", "참여방법", "응답방법",
-    "참여해 주세요", "참여해주시기 바랍니다", "응답해 주세요", "응답해주시기 바랍니다",
-    "설문에 참여", "조사에 참여", "설문링크", "설문 링크", "조사대상", "응답자",
-    "참여자 모집", "모집합니다", "모집 안내", "국민 의견", "시민 의견"
+    "설문","의견수렴","의견조사","만족도","조사","응답","설문지",
+    "참여단","시민의견","국민의견","의견","참여기간","응답기간",
+    "조사기간","참여방법","응답방법","참여해 주세요","응답해 주세요",
+    "설문에 참여","조사에 참여","의견을 제출","의견을 남겨",
+    "설문링크","조사대상","응답자","참여자"
 ]
 SURVEY_ACTION_CONTEXT = [
-    "설문 참여", "설문에 참여", "설문조사 참여", "조사 참여", "조사에 참여",
-    "응답기간", "참여기간", "조사기간", "설문기간", "설문대상", "조사대상",
-    "응답방법", "참여방법", "응답자", "설문지", "설문 링크", "설문링크",
-    "온라인 설문", "온라인 설문조사", "만족도 조사 참여", "의견조사 참여",
-    "설문에 응답", "조사에 응답", "응답해 주세요", "응답해주시기 바랍니다",
-    "참여해 주세요", "참여해주시기 바랍니다"
+    "설문","조사","응답","만족도","의견수렴","의견조사","설문지",
+    "참여기간","응답기간","조사기간","참여방법","응답방법",
+    "참여해 주세요","응답해 주세요","설문에 참여","조사에 참여",
+    "의견을 제출","의견을 남겨","설문링크","조사대상","응답자","참여자"
 ]
-# 메뉴/푸터의 '참여'를 실제 참여기회로 오인하지 않기 위한 강한 행동 신호
-PARTICIPATION_ACTION_SIGNALS = [
-    "참여해 주세요", "참여해주시기 바랍니다", "참여 바랍니다", "참여 바랍니다.",
-    "의견을 제출", "의견을 남겨", "의견 제출", "의견수렴", "의견조사",
-    "설문에 참여", "설문 참여", "조사에 참여", "조사 참여", "응답해 주세요",
-    "응답해주시기 바랍니다", "응답 바랍니다", "참여기간", "응답기간", "조사기간",
-    "참여방법", "응답방법", "설문기간", "설문대상", "조사대상", "온라인 설문",
-    "설문 링크", "설문링크", "참여자 모집", "모집합니다", "모집 안내", "신청기간",
-    "신청방법", "제안 접수", "의견 접수"
+SENTENCE_MARKERS = [
+    "안내","참여","신청","설문","의견","조사","응답","만족도",
+    "기간","대상","방법","모집","제출","온라인","링크"
 ]
-GENERIC_BODY_NOISE = [
-    "국민참여", "시민참여", "참여마당", "국민소통", "소통마당", "홈페이지",
-    "사이트맵", "개인정보처리방침", "이용약관", "만족도", "오류신고", "고객센터"
-]
-CONTEST_ACTION_CONTEXT = [
-    "공모 접수", "공모전 접수", "참가 신청", "참가접수", "응모", "출품",
-    "신청기간", "접수기간", "모집기간", "참여기간", "신청방법", "접수방법",
-    "참가방법", "작품 제출", "작품접수", "시상", "참가자 모집", "모집합니다"
-]
-QUIZ_EVENT_ACTION_CONTEXT = [
-    "퀴즈 참여", "퀴즈에 참여", "정답을 맞혀", "정답을 맞춰", "정답 제출",
-    "응모", "참여방법", "참여기간", "이벤트 기간", "이벤트기간", "응모기간",
-    "응모방법", "참여해 주세요", "참여해주시기 바랍니다", "문제", "정답"
-]
-EVALUATOR_ACTION_CONTEXT = [
-    "평가단 모집", "평가단 신청", "평가단에 신청", "평가단을 모집",
-    "신청기간", "모집기간", "신청방법", "모집방법", "지원방법", "지원기간",
-    "평가단 활동", "평가단 참여", "선정인원", "모집인원", "지원자", "신청자"
-]
-
-RESULT_TITLE_PATTERNS = ['당첨자', '결과발표', '결과 발표', '조사결과', '조사 결과', '설문결과', '설문 결과', '선정결과', '선정 결과', '참여자 발표', '수상자', '수상작', '수상자 발표', '수상작 발표', '당선자', '당선작', '입상자', '입상작', '결과 안내', '결과안내', '최종 결과', '최종결과', '심사 결과', '심사결과', '결과보고', '결과 보고', '후보작', '수상 후보', '공개 검증', '검증 결과', '선정자 발표', '선정자', '선정작 발표']
 
 DATE_PATTERNS = [
     r"(20\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})",
@@ -388,27 +357,16 @@ def looks_like_list_dom(soup):
     return False
 
 def meaningful_body_match(body,keyword):
-    """V8.28: 본문 키워드 매칭은 사용하지 않는다. 제목 매칭만 허용한다."""
-    return False
-
-def is_result_or_announcement_title(title):
-    t=norm(title)
-    return any(x in t for x in RESULT_TITLE_PATTERNS)
-
-def is_probably_site_title(title, page_title=""):
-    """기관명/사이트명 같은 짧은 제목이 상세 게시물로 오인되는 것을 차단."""
-    t=norm(title)
-    p=norm(page_title)
-    tc=re.sub(r"[^0-9A-Za-z가-힣]","",t).lower()
-    pc=re.sub(r"[^0-9A-Za-z가-힣]","",p).lower()
-    if not tc: return True
-    if len(tc)<=10 and pc and (pc.startswith(tc) or pc.endswith(tc) or tc in pc):
-        return True
-    if any(x.lower() in t.lower() for x in GENERIC_SHELL_TITLE_PATTERNS):
-        return True
-    if pc and (tc == pc or tc in pc) and len(tc) <= 100:
-        # Opportunity-like titles should not be discarded merely because the page title repeats itself.
-        if not any(k in t for k in ["공모전","설문","의견수렴","시민참여","국민참여","퀴즈","평가단","만족도"]):
+    body=norm(body)
+    if len(body)<120: return False
+    for m in re.finditer(re.escape(keyword),body,re.I):
+        idx=m.start()
+        ctx=body[max(0,idx-350):min(len(body),idx+500)]
+        if keyword in ("국민참여","시민참여"):
+            if not any(x in ctx for x in PARTICIPATION_CONTEXT): continue
+        if keyword=="설문조사":
+            if not any(x in ctx for x in SURVEY_ACTION_CONTEXT): continue
+        if sum(x in ctx for x in SENTENCE_MARKERS)>=1:
             return True
     return False
 
@@ -526,11 +484,104 @@ def secondary_discovery(home):
     candidates.sort(reverse=True)
     return candidates[:BOARD_DISCOVERY_MAX_SECONDARY]
 
+
+def homepage_variants(home):
+    """오래된/오타/리다이렉트 URL을 복구하기 위한 제한된 URL 변형."""
+    out=[]; seen=set()
+    try:
+        raw=clean_url(home)
+        p=urlparse(raw)
+        host=p.netloc.split(":")[0].lower()
+        # 명백한 wwww 오타 보정
+        host=re.sub(r"^w{4,}\.", "www.", host)
+        host=re.sub(r"^wwwwww\.", "www.", host)
+        bare=host.removeprefix("www.")
+        hosts=[host, "www."+bare, bare]
+        schemes=[p.scheme or "https", "https", "http"]
+        for scheme in schemes:
+            for h in hosts:
+                if not h: continue
+                u=urlparse(raw)._replace(scheme=scheme,netloc=h).geturl()
+                u=clean_url(u)
+                if u not in seen:
+                    seen.add(u); out.append(u)
+    except Exception:
+        return [home] if home else []
+    return out[:6]
+
+def recover_homepage(home):
+    attempts=[]
+    for u in homepage_variants(home):
+        attempts.append(u)
+        r=get(u)
+        if r:
+            return r,attempts
+    return None,attempts
+
+def relaxed_post_candidates(base,soup):
+    """엄격한 detail-link 판정에 실패한 국내 기관 게시판용 보조 추출기."""
+    out=[]; seen=set()
+    if not soup: return out
+    for row in soup.find_all("tr"):
+        row_text=text_of(row)
+        row_date=parse_date_text(row_text)
+        links=row.find_all("a",href=True)
+        for a in links:
+            title=norm(" ".join([text_of(a),a.get("title",""),a.get("aria-label","")]))
+            u=clean_url(absolute(base,a.get("href","")))
+            if not u or not same_domain(base,u) or u in seen or len(title)<2: continue
+            full=(lower_url(u)+" "+title).lower()
+            if any(x in full for x in ["login","logout","sitemap","privacy","terms","javascript:"]): continue
+            # 목록/메뉴 링크는 제외하되, 행에 날짜가 있거나 게시물 식별자가 있으면 허용
+            identifiable=bool(row_date) or bool(re.search(r"(?:seq|ntt|idx|article|view|read|no=|board|bbs)",full))
+            if not identifiable: continue
+            seen.add(u); out.append({"url":u,"title":title,"date":row_date})
+    # 카드형 게시판
+    for a in soup.find_all("a",href=True):
+        title=norm(" ".join([text_of(a),a.get("title",""),a.get("aria-label","")]))
+        u=clean_url(absolute(base,a.get("href","")))
+        if not u or not same_domain(base,u) or u in seen or len(title)<3: continue
+        full=(lower_url(u)+" "+title).lower()
+        if any(x in full for x in ["login","logout","sitemap","privacy","terms","javascript:"]): continue
+        parent=text_of(a.parent)
+        dt=parse_date_text(parent)
+        identifiable=bool(dt) or bool(re.search(r"(?:seq|ntt|idx|article|view|read|no=|board|bbs)",full))
+        if not identifiable: continue
+        seen.add(u); out.append({"url":u,"title":title,"date":dt})
+        if len(out)>=RECENT_POSTS: break
+    return out[:RECENT_POSTS]
+
+def inspect_board_relaxed(board_url):
+    r=get(board_url)
+    if not r:
+        return None,[],{"status":"BOARD_FETCH_ERROR","url":board_url,"candidate_posts":0}
+    soup=BeautifulSoup(r.text,"html.parser")
+    c=relaxed_post_candidates(r.url,soup)
+    if c:
+        return r.url,c,{"status":"PROBABLE_BOARD","url":r.url,"candidate_posts":len(c),
+                        "recent_titles":" ".join(x.get("title","") for x in c[:10])[:1000]}
+    return r.url,[],{"status":"NO_RECENT_CANDIDATE","url":r.url,"candidate_posts":0}
+
 def discover_board(home):
     diag={"home":home,"status":"START","candidate_count":0,"fetched_count":0,"verified_count":0,"selected":"","selected_score":None,"candidates":[],"secondary_candidate_count":0}
     r=get(home)
+    recovery_attempts=[]
+    recovered_url=""
     if not r:
-        diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
+        r,recovery_attempts=recover_homepage(home)
+        if r:
+            recovered_url=r.url
+            diag["homepage_recovery_attempted"]=True
+            diag["homepage_recovery_success"]=True
+            diag["recovered_home"]=r.url
+        else:
+            diag["homepage_recovery_attempted"]=True
+            diag["homepage_recovery_success"]=False
+            diag["recovery_attempts"]=recovery_attempts
+            diag["status"]="HOME_ERROR"; return None,[],"HOME_ERROR",diag
+    else:
+        diag["homepage_recovery_attempted"]=False
+        diag["homepage_recovery_success"]=False
     soup=BeautifulSoup(r.text,"html.parser")
     links=extract_links(r.url,soup)
     scored=sorted([(board_score(u,t),u,t) for u,t in links],reverse=True)
@@ -563,7 +614,30 @@ def discover_board(home):
             if best is None or combined>best["score"]: best={"score":combined,"url":bu,"details":details}
     if best:
         diag["status"]="VERIFIED"; diag["selected"]=best["url"]; diag["selected_score"]=best["score"]
+        if recovered_url: diag["recovered_home"]=r.url
         return best["url"],best["details"][:RECENT_POSTS],"DISCOVERED",diag
+
+    # V8.14.17: 엄격 검증 실패 시 상위 후보에 대해 보조 추출을 수행한다.
+    relaxed_best=None
+    relaxed_pool=[]
+    for score,u,t in scored[:min(12,BOARD_DISCOVERY_MAX_FETCH)]:
+        if score < -8: continue
+        relaxed_pool.append((score,u,t))
+    for score,u,t in relaxed_pool:
+        try:
+            bu,details,info=inspect_board_relaxed(u)
+        except Exception as e:
+            diag["candidates"].append({"score":score,"url":u,"title":t[:120],"status":"RELAXED_INSPECT_ERROR","source":"relaxed","error_type":type(e).__name__})
+            continue
+        if info.get("status")!="PROBABLE_BOARD": continue
+        diag["verified_count"]+=1
+        combined=score+min(len(details),10)
+        if relaxed_best is None or combined>relaxed_best["score"]:
+            relaxed_best={"score":combined,"url":bu,"details":details}
+    if relaxed_best:
+        diag["status"]="PROBABLE_BOARD"; diag["selected"]=relaxed_best["url"]; diag["selected_score"]=relaxed_best["score"]; diag["verification_mode"]="RELAXED"
+        return relaxed_best["url"],relaxed_best["details"][:RECENT_POSTS],"PROBABLE_BOARD",diag
+
     if not scored and not diag["secondary_candidate_count"]:
         diag["status"]="NO_CANDIDATE"; return None,[],"NO_CANDIDATE",diag
     diag["status"]="CANDIDATE_NOT_VERIFIED"; return None,[],"CANDIDATE_NOT_VERIFIED",diag
@@ -585,13 +659,11 @@ def match_post_detailed(u):
     if looks_like_list_dom(soup): return None,"LIST_PAGE",""
 
     path=(urlparse(r.url).path or "").lower().rstrip("/")
-    # 대표 홈페이지 자체를 게시물로 오인하지 않는다.
-    if generic_url(r.url) or path in ("","/main","/home","/homepage","/index.do","/index.jsp","/main.do","/main.jsp") \
-       or path.endswith(("/index.do","/index.jsp","/index.krc","/main.do","/main.jsp","/main.krc")):
+    if generic_url(r.url) or path in ("","/main","/home","/homepage"):
         return None,"GENERIC_PAGE",""
 
     dt=extract_detail_date(soup)
-    if dt and not is_recent_date(dt): return None,"OLD_OR_NO_DATE",""
+    if not dt or not is_recent_date(dt): return None,"OLD_OR_NO_DATE",""
 
     title=extract_title(soup)
     if not title: return None,"NO_TITLE",""
@@ -603,13 +675,8 @@ def match_post_detailed(u):
     pc=re.sub(r"[^0-9A-Za-z가-힣]","",page_title).lower()
     if tc and pc and tc==pc and len(tc)>=6:
         return None,"GENERIC_TITLE",""
-    if is_probably_site_title(title,page_title):
-        return None,"GENERIC_TITLE",""
 
-    # 공모전은 이제 검색 대상이므로 기존 제외 규칙을 적용하지 않는다.
-    # 당첨자/결과발표 등은 신규 참여기회가 아니므로 알림에서 제외한다.
-    if is_result_or_announcement_title(title):
-        return None,"RESULT_ANNOUNCEMENT_TITLE",""
+    if any(x in title for x in EXCLUDE_TITLE): return None,"CONTEST_TITLE",""
 
     body=visible_main_text(soup)
     # 게시물 검증은 기존보다 완화한다. 상세 URL + 날짜 + 제목 + 내용이 있으면 통과시키고,
@@ -618,7 +685,7 @@ def match_post_detailed(u):
         if not has_post_structure(soup,title): return None,"NOT_POST_STRUCTURE",""
 
     for kw in KEYWORDS:
-        if kw in title and direct_title_opportunity_match(title, kw):
+        if kw in title:
             item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
                   "keyword":kw,"match_type":"TITLE","body":body}
             item["fingerprint"]=make_fingerprint(item,body)
@@ -752,40 +819,6 @@ def find_target_file():
         if os.path.exists(f): return f
     return None
 
-def load_manual_board_overrides():
-    """
-    V8.14.20:
-    사용자가 직접 확인한 기관별_상태.csv의 게시판URL을
-    기존 355기관 원본 목록에 병합한다.
-    검색 알고리즘은 변경하지 않는다.
-    """
-    candidates = [
-        "기관별_상태.csv",
-        "기관별_상태 (2).csv",
-        "manual_board_urls.csv",
-    ]
-    path = next((p for p in candidates if os.path.exists(p)), None)
-    if not path:
-        return {}
-
-    overrides = {}
-    try:
-        import csv
-        with open(path, "r", encoding="utf-8-sig", newline="") as f:
-            rows = list(csv.DictReader(f))
-        for row in rows:
-            name = norm(row.get("기관명", ""))
-            board = norm(row.get("게시판URL", ""))
-            if not name or not board:
-                continue
-            if not re.match(r"^https?://", board, re.I):
-                continue
-            overrides[name] = board
-    except Exception:
-        return {}
-    return overrides
-
-
 def load_targets():
     path=find_target_file()
     if not path: raise FileNotFoundError(f"기관 목록 파일이 없습니다: {TARGET_FILE_CANDIDATES}")
@@ -803,9 +836,6 @@ def load_targets():
     idx_board=col("공지게시판URL","공지사항URL","게시판URL")
     idx_type=col("기관유형","기관 유형","유형","기관구분","구분")
     if idx_name is None or idx_home is None: raise ValueError(f"기관명/홈페이지URL 열 없음: {headers}")
-
-    manual_boards = load_manual_board_overrides()
-
     out=[]
     for row in rows[1:]:
         if not row: continue
@@ -813,17 +843,9 @@ def load_targets():
         home=norm(row[idx_home]) if idx_home<len(row) else ""
         board=norm(row[idx_board]) if idx_board is not None and idx_board<len(row) else ""
         org_type=norm(row[idx_type]) if idx_type is not None and idx_type<len(row) else ""
-
-        # 수동 확인 URL이 있으면 기존 자동발견/기존 엑셀 URL보다 우선한다.
-        manual_board = manual_boards.get(name, "")
-        if manual_board:
-            board = manual_board
-
         if name and home:
             out.append({
-                "기관명":name,
-                "홈페이지URL":home,
-                "공지게시판URL":board,
+                "기관명":name,"홈페이지URL":home,"공지게시판URL":board,
                 "기관유형":org_type
             })
     return out
@@ -892,10 +914,9 @@ def process(target,state,board_cache,checked_posts):
             "error":"","error_type":"","diag":{},"post_candidates":0,"detail_checked":0,"recent_posts":0,
             "title_matches":0,"body_matches":0,"excluded_list_pages":0,
             "excluded_generic_pages":0,"excluded_contest_titles":0,"detail_errors":0,
-            "excluded_not_post_structure":0,"excluded_no_body":0,
-            "diagnostic_rows":[],"reason_counts":{}}
+            "excluded_not_post_structure":0,"excluded_no_body":0}
     try:
-        board=seed or board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"")
+        board=board_from_cache(board_cache,home) or state.get("boards",{}).get(home,"") or seed
         details=[]
         if board:
             try: bu,details,info=inspect_board(board)
@@ -908,7 +929,8 @@ def process(target,state,board_cache,checked_posts):
             bu,details,status,diag=discover_board(home)
             result["diag"]=diag or {}
             if bu and details:
-                board=bu; result["board"]=bu; result["status"]="DISCOVERED"; cache_board(board_cache,name,home,bu,"VERIFIED")
+                board=bu; result["board"]=bu; result["status"]=status if status in ("PROBABLE_BOARD","USABLE_LIST") else "DISCOVERED"
+                cache_board(board_cache,name,home,bu,"PROBABLE_BOARD" if status=="PROBABLE_BOARD" else "VERIFIED")
             else:
                 result["status"]=status; return result
 
@@ -936,19 +958,6 @@ def process(target,state,board_cache,checked_posts):
             u=item.get("url") if isinstance(item,dict) else item
             try:
                 m,reason,kw=match_post_detailed(u)
-                result["reason_counts"][reason]=result["reason_counts"].get(reason,0)+1
-                # 상세페이지 판정 결과를 진단용으로 보존한다.
-                # 특히 NO_KEYWORD / RESULT_ANNOUNCEMENT_TITLE / GENERIC_PAGE를
-                # 확인하면 실제 미탐·오탐 원인을 추적할 수 있다.
-                if reason not in ("BODY_MATCH","TITLE_MATCH") or m:
-                    result["diagnostic_rows"].append({
-                        "기관명": name,
-                        "기관유형": target.get("기관유형",""),
-                        "제목": str(item.get("title",""))[:300],
-                        "URL": u,
-                        "판정": reason,
-                        "키워드": kw,
-                    })
                 if reason=="LIST_PAGE": result["excluded_list_pages"]+=1
                 elif reason in ("GENERIC_PAGE","GENERIC_TITLE"): result["excluded_generic_pages"]+=1
                 elif reason=="CONTEST_TITLE": result["excluded_contest_titles"]+=1
@@ -1013,11 +1022,50 @@ def telegram_send_text(text):
 def build_monitoring_summary(targets, results, posts_checked, new_matches,
                              sent, pending_after, errors, aggregate,
                              status_counts, sent_url_ledger):
-    """Telegram에는 오늘 모니터링 핵심 수치만 표시한다."""
-    return "\n".join([
-        "📊 티끌 모니터링",
+    groups={
+        "공기업": [r for r in results if classify_institution_type(r.get("기관유형",""))=="공기업"],
+        "준정부기관": [r for r in results if classify_institution_type(r.get("기관유형",""))=="준정부기관"],
+        "공기업·준정부기관": [
+            r for r in results
+            if classify_institution_type(r.get("기관유형","")) in ("공기업","준정부기관")
+        ],
+        "기타공공기관": [
+            r for r in results if classify_institution_type(r.get("기관유형",""))=="기타공공기관"
+        ],
+    }
+
+    total=len(targets)
+    processed=len(results)
+    ok=sum(1 for r in results if r.get("status") in ("CACHED_OR_SEED","DISCOVERED"))
+    unconfirmed=[r for r in results if r.get("status") not in ("CACHED_OR_SEED","DISCOVERED")]
+    unprocessed=max(0,total-processed)
+
+    def fmt(g):
+        x=summarize_group(g)
+        return f"• 대상 {x['대상']} / 정상 {x['정상확인']} / 미확인 {x['미확인']} / 확인율 {x['확인율']}%"
+
+    no_candidate=sum(1 for r in results if r.get("status")=="NO_CANDIDATE")
+    home_error=sum(1 for r in results if r.get("status")=="HOME_ERROR")
+    candidate_not_verified=sum(1 for r in results if r.get("status")=="CANDIDATE_NOT_VERIFIED")
+
+    fail_names=[r.get("기관명","") for r in unconfirmed if r.get("기관명")]
+    fail_preview=fail_names[:10]
+
+    lines=[
+        "📊 티끌 모니터링 요약",
         "━━━━━━━━━━━━━━",
         f"📅 {datetime.now(KST).strftime('%Y-%m-%d')}",
+        "",
+        "🏢 전체 기관",
+        f"• 대상 {total} / 정상 확인 {ok} / 미확인 {len(unconfirmed)} / 확인율 {(ok/processed*100 if processed else 0):.1f}%",
+        f"• 미처리 {unprocessed}",
+        f"• 전체 처리 완료 {processed}/{total}" + (" ⚠️" if unprocessed else ""),
+        "",
+        "🏛 공기업·준정부기관",
+        fmt(groups["공기업·준정부기관"]),
+        "",
+        "🏢 기타공공기관",
+        fmt(groups["기타공공기관"]),
         "",
         "🔎 오늘 모니터링",
         f"• 게시물 확인 {posts_checked:,}건",
@@ -1025,7 +1073,22 @@ def build_monitoring_summary(targets, results, posts_checked, new_matches,
         f"• 신규 키워드 매칭 {new_matches}건",
         f"• Telegram 참여정보 발송 {sent}건",
         f"• 대기 {pending_after}건",
-    ])
+        "",
+        "⚠️ 게시판 미확인",
+        f"• 후보 없음(NO_CANDIDATE) {no_candidate}개",
+        f"• 홈페이지 오류(HOME_ERROR) {home_error}개",
+        f"• 후보 검증 실패 {candidate_not_verified}개",
+        f"• 기타 오류/미처리 {max(0,len(unconfirmed)-no_candidate-home_error-candidate_not_verified)}개",
+        "",
+        f"💾 누적 발송 URL {sent_url_ledger:,}개",
+        f"• 실행 오류 {errors}건",
+    ]
+
+    if fail_preview:
+        lines += ["", "📌 미확인 기관 예시(최대 10개)"]
+        lines += [f"• {x}" for x in fail_preview]
+
+    return "\n".join(lines)
 
 def telegram_send(item):
     token=os.environ.get("TELEGRAM_BOT_TOKEN","").strip()
@@ -1066,8 +1129,6 @@ def save_daily_summary_state(x):
 def main():
     started=time.time()
     targets=load_targets()
-    manual_url_count=sum(1 for x in targets if x.get("공지게시판URL"))
-    print(f"V8.14.22 manual board URL targets: {manual_url_count}", flush=True)
     state=load_json(
         STATE_FILE,
         {"seen":[],"sent_urls":{},"boards":{},"updated_at":"","version":VERSION}
@@ -1110,69 +1171,98 @@ def main():
                "excluded_contest_titles":0,"excluded_not_post_structure":0,
                "excluded_no_body":0,"detail_errors":0,"skipped_previously_checked":0}
 
+    # V8.30: 747개 기관을 7개 그룹으로 나누어 순차 처리한다.
+    # 상태/캐시/중복방지 장부는 한 프로세스에서 공유하고, 알림 및 요약은
+    # 모든 그룹의 결과를 합산한 뒤 기존 흐름에서 한 번만 수행한다.
     deadline=started+MAX_TOTAL_SECONDS
-    executor=ThreadPoolExecutor(max_workers=MAX_CONCURRENCY)
-    fmap={executor.submit(process,t,state,board_cache,checked_posts):t for t in targets}
     timed_out=False
-    try:
-        pending_futures=set(fmap)
-        while pending_futures:
-            remaining=max(0,deadline-time.time())
-            if remaining <= 0:
-                timed_out=True
-                break
-            done_now=set()
-            for fut in list(pending_futures):
-                if fut.done(): done_now.add(fut)
-            if not done_now:
-                time.sleep(0.15)
+    group_size=(len(targets)+MONITOR_GROUPS-1)//MONITOR_GROUPS if targets else 0
+    target_groups=[targets[i:i+group_size] for i in range(0,len(targets),group_size)] if group_size else []
+    group_progress=[]
+
+    def collect_result(fut):
+        nonlocal completed, no_board, errors, posts_checked, new_matches
+        try:
+            result=fut.result()
+        except Exception as e:
+            errors+=1
+            et=classify_exception(e)
+            error_type_counts[et]=error_type_counts.get(et,0)+1
+            status_counts["FUTURE_EXCEPTION"]=status_counts.get("FUTURE_EXCEPTION",0)+1
+            return
+
+        results.append(result)
+        st=result.get("status") or "UNKNOWN"
+        status_counts[st]=status_counts.get(st,0)+1
+        if result.get("board"):
+            completed+=1
+            state.setdefault("boards",{})[result["home"]]=result["board"]
+            cache_board(board_cache,result.get("기관명",""),result["home"],result["board"],"VERIFIED")
+        else:
+            no_board+=1
+
+        posts_checked+=result.get("posts_checked",0)
+        for pid in result.get("checked_post_identities",[]):
+            checked_posts[pid]=datetime.now(KST).isoformat()
+        aggregate["skipped_previously_checked"]+=result.get("skipped_previously_checked",0)
+        for k in aggregate:
+            if k=="skipped_previously_checked":
                 continue
-            for fut in done_now:
-                pending_futures.discard(fut)
-                try:
-                    result=fut.result(); results.append(result)
-                except Exception as e:
-                    errors+=1; et=classify_exception(e)
-                    error_type_counts[et]=error_type_counts.get(et,0)+1
-                    status_counts["FUTURE_EXCEPTION"]=status_counts.get("FUTURE_EXCEPTION",0)+1
-                    continue
+            v=result.get(k,0)
+            if isinstance(v,(int,float)):
+                aggregate[k]+=v
+        d=result.get("diag") or {}
+        aggregate["board_candidates"]+=d.get("candidate_count",0) or 0
+        et=result.get("error_type","")
+        if et:
+            errors+=1
+            error_type_counts[et]=error_type_counts.get(et,0)+1
+        for m in result.get("matches",[]):
+            u=m.get("url",""); key=alert_key(m); fp=m.get("fingerprint","")
+            if (not u or not key or key in seen or key in sent_keys
+                or (fp and (fp in seen_fingerprints or fp in sent_fingerprints))
+                or any(alert_key(x)==key or (fp and x.get("fingerprint")==fp) for x in pending)):
+                continue
+            m["url"]=canonical_url(u)
+            m["added_at"]=datetime.now(KST).isoformat()
+            pending.append(m)
+            new_matches+=1
 
-                st=result.get("status") or "UNKNOWN"
-                status_counts[st]=status_counts.get(st,0)+1
-                if result.get("board"):
-                    completed+=1; state.setdefault("boards",{})[result["home"]]=result["board"]; cache_board(board_cache,result.get("기관명",""),result["home"],result["board"],"VERIFIED")
-                else: no_board+=1
-
-                posts_checked+=result.get("posts_checked",0)
-                for pid in result.get("checked_post_identities",[]):
-                    checked_posts[pid]=datetime.now(KST).isoformat()
-                aggregate.setdefault("skipped_previously_checked",0)
-                aggregate["skipped_previously_checked"]+=result.get("skipped_previously_checked",0)
-                for k in aggregate:
-                    if k=="skipped_previously_checked": continue
-                    v=result.get(k,0)
-                    # aggregate에는 숫자형 지표만 누적한다.
-                    # checked_post_identities 같은 리스트형 결과가 섞여도
-                    # int + list TypeError가 발생하지 않도록 방어한다.
-                    if isinstance(v,(int,float)):
-                        aggregate[k]+=v
-                d=result.get("diag") or {}
-                aggregate["board_candidates"]+=d.get("candidate_count",0) or 0
-                et=result.get("error_type","")
-                if et:
-                    errors+=1; error_type_counts[et]=error_type_counts.get(et,0)+1
-                for m in result.get("matches",[]):
-                    u=m.get("url",""); key=alert_key(m); fp=m.get("fingerprint","")
-                    if (not u or not key or key in seen or key in sent_keys
-                        or (fp and (fp in seen_fingerprints or fp in sent_fingerprints))
-                        or any(alert_key(x)==key or (fp and x.get("fingerprint")==fp) for x in pending)):
-                        continue
-                    m["url"]=canonical_url(u); m["added_at"]=datetime.now(KST).isoformat(); pending.append(m); new_matches+=1
-    finally:
-        if 'pending_futures' in locals() and pending_futures:
+    for group_index, group_targets in enumerate(target_groups, start=1):
+        if time.time() >= deadline:
             timed_out=True
-            for fut in pending_futures: fut.cancel()
-        executor.shutdown(wait=False, cancel_futures=True)
+            group_progress.append({"group":group_index,"targets":len(group_targets),"processed":0,"status":"NOT_STARTED_TIMEOUT"})
+            break
+        before=len(results)
+        print(f"[GROUP {group_index}/{len(target_groups)}] start: {len(group_targets)} institutions")
+        executor=ThreadPoolExecutor(max_workers=MAX_CONCURRENCY)
+        fmap={executor.submit(process,t,state,board_cache,checked_posts):t for t in group_targets}
+        pending_futures=set(fmap)
+        try:
+            while pending_futures:
+                remaining=max(0,deadline-time.time())
+                if remaining<=0:
+                    timed_out=True
+                    break
+                done_now={fut for fut in pending_futures if fut.done()}
+                if not done_now:
+                    time.sleep(0.15)
+                    continue
+                for fut in done_now:
+                    pending_futures.discard(fut)
+                    collect_result(fut)
+        finally:
+            if pending_futures:
+                timed_out=True
+                for fut in pending_futures:
+                    fut.cancel()
+            executor.shutdown(wait=False,cancel_futures=True)
+        group_done=len(results)-before
+        group_progress.append({"group":group_index,"targets":len(group_targets),"processed":group_done,
+                               "status":"TIMEOUT" if timed_out else "DONE"})
+        print(f"[GROUP {group_index}/{len(target_groups)}] processed: {group_done}/{len(group_targets)}")
+        if timed_out:
+            break
 
     retry_queue=load_retry_queue()
     for r in results:
@@ -1224,23 +1314,6 @@ def main():
     state["version"]=VERSION
     save_json(STATE_FILE,state); save_json(PENDING_FILE,pending)
 
-    # 상세 판정 진단 CSV 생성: Telegram 발송에는 영향을 주지 않는다.
-    diagnostic_rows=[]
-    reason_counts={}
-    for rr in results:
-        for row in rr.get("diagnostic_rows",[]):
-            diagnostic_rows.append(row)
-        for k,v in rr.get("reason_counts",{}).items():
-            reason_counts[k]=reason_counts.get(k,0)+v
-    diagnostic_rows.sort(key=lambda x:(x.get("판정",""),x.get("기관명",""),x.get("제목","")))
-    try:
-        with open(DIAGNOSTIC_CSV_FILE,"w",encoding="utf-8-sig",newline="") as f:
-            w=csv.DictWriter(f,fieldnames=["기관명","기관유형","제목","URL","판정","키워드"])
-            w.writeheader()
-            w.writerows(diagnostic_rows)
-    except Exception as e:
-        print("진단 CSV 저장 실패:",type(e).__name__,str(e)[:200])
-
     elapsed=time.time()-started
     diag_counts={}
     for r in results:
@@ -1269,18 +1342,24 @@ def main():
     today_key=datetime.now(KST).strftime("%Y-%m-%d")
     daily_summary=load_daily_summary_state()
     complete_run=(len(results)==len(targets) and not timed_out)
-    if daily_summary.get("last_sent_date")==today_key and complete_run:
+    if not complete_run:
+        # 7개 그룹 전체가 완료되지 않았다면 부분 결과를 최종 요약으로 발송하지 않는다.
+        summary_sent=False
+        summary_skipped_duplicate=False
+        print("[SUMMARY] skipped: group aggregation incomplete; remaining targets stay eligible for next run")
+    elif daily_summary.get("last_sent_date")==today_key:
         summary_sent=False
         summary_skipped_duplicate=True
     else:
         summary_sent=telegram_send_text(summary_text)
         summary_skipped_duplicate=not summary_sent
-        if summary_sent and complete_run:
+        if summary_sent:
             daily_summary={"last_sent_date":today_key,"updated_at":datetime.now(KST).isoformat(),"version":VERSION}
             save_daily_summary_state(daily_summary)
 
     diagnostics={
         "version":VERSION,"updated_at":datetime.now(KST).isoformat(),
+        "group_count":MONITOR_GROUPS,"group_progress":group_progress,
         "targets":len(targets),"completed":completed,"no_board":no_board,
         "posts_checked":posts_checked,"new_matches":new_matches,
         "pending_before":pending_before_send,"pending_removed_invalid":pending_removed_invalid,
@@ -1291,9 +1370,7 @@ def main():
         "migrated_fingerprint_count":migrated_fingerprint_count,
         "summary_skipped_duplicate":summary_skipped_duplicate,
         "board_cache_total":len(board_cache),
-        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,
-        "diagnostic_csv":DIAGNOSTIC_CSV_FILE,"diagnostic_rows":len(diagnostic_rows),
-        "reason_counts":reason_counts,"errors":errors,
+        "board_cache_verified":sum(1 for x in board_cache.values() if isinstance(x,dict) and x.get("게시판URL")),"migrated_from_previous":migrated_from_previous,"errors":errors,
         "elapsed_seconds":round(elapsed,1),"timed_out":bool(timed_out or len(results)<len(targets)),
         "recent_days":RECENT_DAYS,"telegram_max_send":TELEGRAM_MAX_SEND,
         "board_discovery_status":diag_counts,"status_counts":status_counts,
@@ -1337,43 +1414,3 @@ def main():
 
 if __name__=="__main__":
     main()
-
-
-# --- Tikkle missed-opportunity guard ---
-TITLE_DIRECT_OPPORTUNITY_KEYWORDS = ["공모전", "설문", "설문조사", "의견수렴", "시민참여", "국민참여", "퀴즈 이벤트", "평가단 모집", "만족도 조사", "이벤트", "슬로건", "표어"]
-TITLE_RESULT_EXCLUSIONS = RESULT_TITLE_PATTERNS
-
-def direct_title_opportunity_match(title, keyword=None):
-    """제목만으로 실제 참여기회를 판별한다. 본문은 절대 참조하지 않는다."""
-    t = norm(title or "")
-    if not t:
-        return False
-    if any(x in t for x in TITLE_RESULT_EXCLUSIONS):
-        return False
-    # 명백한 사이트/페이지 고정 제목 차단
-    shell = [
-        "메인", "메인페이지", "홈페이지", "사이트맵", "사이트 맵", "대학생활",
-        "이전글", "다음글", "주요누리집 닫기", "뉴스/소식 :", "뉴스/소식:",
-        "전자민원, 정보공개, 뉴스소식", "주요 행정서비스를 제공합니다."
-    ]
-    if any(x.lower() in t.lower() for x in shell):
-        return False
-    keys = [keyword] if keyword else TITLE_DIRECT_OPPORTUNITY_KEYWORDS
-    keys = [k for k in keys if k]
-    matched = [k for k in keys if k in t]
-    if not matched:
-        return False
-    k = matched[0]
-    # 공모전은 제목 자체에 실제 모집/개최/접수 등의 행동 문맥이 있어야 한다.
-    if k == "공모전":
-        return any(x in t for x in ["개최","모집","공고","안내","신청","접수","참여","응모","출품","기간","실시","진행"])
-    # 설문/의견수렴/만족도 조사는 제목에 조사·응답·참여 등의 명확한 문맥이 있어야 한다.
-    if k in ["설문","설문조사","의견수렴","만족도 조사"]:
-        return any(x in t for x in ["조사","응답","참여","모집","실시","안내","의견","수요"])
-    # 시민참여/국민참여는 고정 메뉴명 오탐을 막기 위해 참여행동 문맥을 요구한다.
-    if k in ["시민참여","국민참여"]:
-        return any(x in t for x in ["모집","신청","참여자","참여단","설문","조사","의견","제안","공모","캠페인","이벤트"])
-    # 이벤트/슬로건/표어는 제목에 키워드가 직접 들어간 경우만 허용한다.
-    if k in ["이벤트","슬로건","표어"]:
-        return True
-    return any(x in t for x in ["모집","신청","참여","응모","개최","안내","접수","기간","실시"])
