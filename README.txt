@@ -1,32 +1,16 @@
-티끌 알림봇 V8.29.1 — 패치 오류 수정판
+티끌 알림봇 V8.30 통합 수정본
 
-구성 파일
-- .github/workflows/tikkle_monitor.yml : 일일 실행 워크플로
-- monitor_targets.xlsx : 2026-10-18 사용자가 업로드한 최신 모니터 주소 통합본(747개 활성 대상)
-- monitor_patch.py : 기존 저장소 monitor.py를 보강하는 패치
-- README.txt : 적용 안내
+포함 파일:
+- monitor.py
+- .github/workflows/tikkle_monitor.yml
 
-이번 개선
-1. 최신 업로드 monitor_targets_1018.xlsx를 monitor_targets.xlsx로 사용합니다. 활성 대상 747개와 각 기관의 공지게시판 URL을 그대로 보존했습니다.
-2. 키워드 매칭을 실제 제목 판정 경로에 연결합니다. 본문에 단어가 있다는 이유만으로 알림을 만들지 않습니다.
-3. 상세 페이지 날짜를 읽지 못했다는 이유만으로 제목 판정 전에 게시물을 바로 버리지 않도록 수정합니다. 날짜를 읽었고 최근 기간보다 오래된 경우는 계속 제외합니다.
-4. 게시판 후보 상한을 10개에서 30개로 늘려 게시물이 많은 게시판에서의 누락 가능성을 줄입니다.
-5. 일시적 상세페이지/파싱 오류 등은 checked_posts에 영구 저장하지 않아 다음 실행에서 다시 확인하도록 합니다.
-6. 공무원연금공단과 한국장애인고용공단의 두 누락 제목을 회귀 테스트에 추가했습니다.
+GitHub 저장소에서 반드시 같은 경로의 기존 파일을 교체하세요.
+1. 저장소 루트의 monitor.py 교체
+2. .github/workflows/tikkle_monitor.yml 교체
+3. monitor_patch.py는 더 이상 워크플로에서 실행하지 않습니다. 기존 파일은 남겨둬도 됩니다.
+4. 두 파일을 커밋한 후 Actions에서 수동 실행하여 로그를 확인하세요.
 
-적용 방법
-1. ZIP을 기존 GitHub 저장소 루트에 덮어씁니다.
-2. 저장소에 기존 monitor.py가 있어야 합니다. 이 패키지는 monitor.py를 새로 대체하지 않고 패치합니다.
-3. GitHub Actions에서 `Tikkle Daily Monitoring - 747 Targets / Missed-Post Recovery` 워크플로를 수동 실행합니다.
-4. Actions 로그에서 `Apply Tikkle precision patch`, `Verify Tikkle configuration`, `Run Tikkle daily monitor`가 성공했는지 확인합니다.
-5. 실패 시 `진단_후보.csv`와 `diagnostics.json`을 확인합니다.
-
-주의
-- 워크플로는 저장소의 기존 monitor.py 함수/변수 이름에 맞춰 패치합니다. 예상한 코드 구간을 찾지 못하면 필수 설정 패치가 맞지 않으면 중단하지만, checked_ids 캐시 최적화 구간이 없는 경우에는 경고 후 나머지 개선을 계속 적용합니다. 해당 경우 재시도 캐시 최적화는 자동 적용되지 않을 수 있습니다.
-- 공무원연금공단/한국장애인고용공단의 게시판 주소는 업로드한 최신 엑셀에 있던 값을 그대로 사용했습니다. 주소를 임의로 바꾸지 않았습니다.
-- 실행 환경에서 실제 사이트별 수집 성공 여부까지 검증한 것은 아니므로, 첫 실행 결과의 진단 CSV를 확인해야 합니다.
-
-
-V8.29.1 수정사항
-- `checked_ids.append(pid)` 문구가 현재 monitor.py에 없다는 이유만으로 전체 실행이 중단되던 문제를 수정했습니다.
-- 대체 변수명을 사용하는 코드도 탐색하고, 해당 구간이 없는 경우 경고만 출력하고 진행합니다.
+사전 확인:
+- Python 컴파일 통과
+- 워크플로 설정 검증에 해당하는 15개 assertion 통과
+- 실제 GitHub Actions 실행은 아직 확인되지 않았습니다.

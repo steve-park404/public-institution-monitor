@@ -30,14 +30,14 @@ import openpyxl
 
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
-KEYWORDS = ["설문조사", "시민참여", "국민참여"]
+KEYWORDS = ["설문", "의견수렴", "시민참여", "국민참여", "공모전", "퀴즈 이벤트", "평가단 모집", "만족도 조사", "이벤트", "슬로건", "표어"]
 EXCLUDE_TITLE = ["공모전"]
 
 MAX_CONCURRENCY = 25
 TIMEOUT_SECONDS = 8
 HTTP_RETRIES = 1
 HOME_RECOVERY_MAX_TRIES = 6
-RECENT_POSTS = 10
+RECENT_POSTS = 30
 RECENT_DAYS = 30
 MAX_TOTAL_SECONDS = 2400
 MONITOR_GROUPS = 7
@@ -60,7 +60,7 @@ KST = ZoneInfo("Asia/Seoul")
 
 STATE_FILE = "state.json"
 PENDING_FILE = "pending.json"
-TARGET_FILE_CANDIDATES = ["monitor_targets.xlsx", "url.xlsx", "targets.xlsx"]
+TARGET_FILE_CANDIDATES = ["monitor_targets.xlsx"]
 
 NOISE = ["script","style","noscript","svg","header","footer","nav","aside",
          "form","iframe","canvas","template"]
@@ -87,6 +87,9 @@ GENERIC_PAGE_TITLES = {
     "참여마당","개인정보처리방침","개인정보 처리방침","이용약관",
     "로그인","회원가입","참여소통","기관소개","홈"
 }
+RESULT_TITLE_PATTERNS = ['당첨자', '결과발표', '결과 발표', '조사결과', '조사 결과', '설문결과', '설문 결과', '선정결과', '선정 결과', '참여자 발표', '수상자', '수상작', '수상자 발표', '수상작 발표', '당선자', '당선작', '입상자', '입상작', '결과 안내', '결과안내', '최종 결과', '최종결과', '심사 결과', '심사결과', '결과보고', '결과 보고', '후보작', '수상 후보', '공개 검증', '검증 결과', '선정자 발표', '선정자', '선정작 발표']
+GENERIC_SHELL_TITLE_PATTERNS = ['메인', '메인페이지', '홈페이지', '사이트맵', '사이트 맵', '대학생활', 'SEOUL TOURISM ORGANIZATION', '이전글', '다음글', '주요누리집 닫기', '뉴스/소식 :', '뉴스/소식:', '전자민원, 정보공개, 뉴스소식', '주요 행정서비스를 제공합니다.']
+
 GENERIC_URL_HINTS = [
     "sitemap","privacy","terms","login","programproposal","consulting",
     "issuedata","homepage"
@@ -357,18 +360,59 @@ def looks_like_list_dom(soup):
     return False
 
 def meaningful_body_match(body,keyword):
-    body=norm(body)
-    if len(body)<120: return False
-    for m in re.finditer(re.escape(keyword),body,re.I):
-        idx=m.start()
-        ctx=body[max(0,idx-350):min(len(body),idx+500)]
-        if keyword in ("국민참여","시민참여"):
-            if not any(x in ctx for x in PARTICIPATION_CONTEXT): continue
-        if keyword=="설문조사":
-            if not any(x in ctx for x in SURVEY_ACTION_CONTEXT): continue
-        if sum(x in ctx for x in SENTENCE_MARKERS)>=1:
+    """본문 키워드 매칭은 사용하지 않고 제목 매칭만 허용한다."""
+    return False
+
+
+def is_result_or_announcement_title(title):
+    """당첨·선정·수상 등 결과 발표 성격의 제목인지 판별한다."""
+    t=norm(title or "")
+    return bool(t) and any(x in t for x in RESULT_TITLE_PATTERNS)
+
+
+def is_probably_site_title(title, page_title=""):
+    """사이트 메뉴/페이지 제목 및 페이지 제목 반복으로 인한 오탐을 차단한다."""
+    t=norm(title or "")
+    p=norm(page_title or "")
+    if not t:
+        return True
+    if any(x.lower() in t.lower() for x in GENERIC_SHELL_TITLE_PATTERNS):
+        return True
+    tc=re.sub(r"[^0-9A-Za-z가-힣]", "", t).lower()
+    pc=re.sub(r"[^0-9A-Za-z가-힣]", "", p).lower()
+    if tc and pc and (tc == pc or tc in pc) and len(tc) <= 100:
+        opportunity_terms=["공모전","설문","의견수렴","시민참여","국민참여","퀴즈","평가단","만족도","이벤트","슬로건","표어"]
+        if not any(k in t for k in opportunity_terms):
             return True
     return False
+
+
+TITLE_DIRECT_OPPORTUNITY_KEYWORDS = ["공모전", "설문", "설문조사", "의견수렴", "시민참여", "국민참여", "퀴즈 이벤트", "평가단 모집", "만족도 조사", "이벤트", "슬로건", "표어"]
+TITLE_RESULT_EXCLUSIONS = RESULT_TITLE_PATTERNS
+
+def direct_title_opportunity_match(title, keyword=None):
+    """제목만으로 실제 참여기회를 판별한다. 본문은 참조하지 않는다."""
+    t=norm(title or "")
+    if not t or is_result_or_announcement_title(t):
+        return False
+    if any(x.lower() in t.lower() for x in GENERIC_SHELL_TITLE_PATTERNS):
+        return False
+    keys=[keyword] if keyword else TITLE_DIRECT_OPPORTUNITY_KEYWORDS
+    matched=[k for k in keys if k and k in t]
+    if not matched:
+        return False
+    k=matched[0]
+    if k == "공모전":
+        return any(x in t for x in ["개최","모집","공고","안내","신청","접수","참여","응모","출품","기간","실시","진행"])
+    if k in ["설문", "설문조사", "의견수렴", "만족도 조사"]:
+        return any(x in t for x in ["조사","응답","참여","모집","실시","안내","의견","수요"])
+    if k in ["시민참여", "국민참여"]:
+        return any(x in t for x in ["모집","신청","참여자","참여단","설문","조사","의견","제안","공모","캠페인","이벤트"])
+    if k in ["이벤트", "슬로건", "표어"]:
+        return True
+    return any(x in t for x in ["모집","신청","참여","응모","개최","안내","접수","기간","실시"])
+
+
 
 def extract_links(base,soup):
     out=[]; seen=set()
@@ -663,17 +707,18 @@ def match_post_detailed(u):
         return None,"GENERIC_PAGE",""
 
     dt=extract_detail_date(soup)
-    if not dt or not is_recent_date(dt): return None,"OLD_OR_NO_DATE",""
+    if dt and not is_recent_date(dt): return None,"OLD_OR_NO_DATE",""
 
     title=extract_title(soup)
     if not title: return None,"NO_TITLE",""
     if title in GENERIC_PAGE_TITLES: return None,"GENERIC_TITLE",""
+    if is_result_or_announcement_title(title): return None,"RESULT_TITLE",""
 
     # 페이지 전체 title과 동일할 때만 공통 페이지 제목으로 간주.
     page_title=norm(soup.title.get_text(" ",strip=True)) if soup.title else ""
     tc=re.sub(r"[^0-9A-Za-z가-힣]","",title).lower()
     pc=re.sub(r"[^0-9A-Za-z가-힣]","",page_title).lower()
-    if tc and pc and tc==pc and len(tc)>=6:
+    if tc and pc and tc==pc and len(tc)>=6 and is_probably_site_title(title, page_title):
         return None,"GENERIC_TITLE",""
 
     if any(x in title for x in EXCLUDE_TITLE): return None,"CONTEST_TITLE",""
@@ -685,8 +730,8 @@ def match_post_detailed(u):
         if not has_post_structure(soup,title): return None,"NOT_POST_STRUCTURE",""
 
     for kw in KEYWORDS:
-        if kw in title:
-            item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
+        if kw in title and direct_title_opportunity_match(title, kw):
+            item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d") if dt else "",
                   "keyword":kw,"match_type":"TITLE","body":body}
             item["fingerprint"]=make_fingerprint(item,body)
             item.pop("body",None)
@@ -697,7 +742,7 @@ def match_post_detailed(u):
 
     for kw in KEYWORDS:
         if meaningful_body_match(body,kw):
-            item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d"),
+            item={"url":r.url,"title":title[:300],"date":dt.strftime("%Y-%m-%d") if dt else "",
                   "keyword":kw,"match_type":"BODY","body":body}
             item["fingerprint"]=make_fingerprint(item,body)
             item.pop("body",None)
@@ -1022,50 +1067,11 @@ def telegram_send_text(text):
 def build_monitoring_summary(targets, results, posts_checked, new_matches,
                              sent, pending_after, errors, aggregate,
                              status_counts, sent_url_ledger):
-    groups={
-        "공기업": [r for r in results if classify_institution_type(r.get("기관유형",""))=="공기업"],
-        "준정부기관": [r for r in results if classify_institution_type(r.get("기관유형",""))=="준정부기관"],
-        "공기업·준정부기관": [
-            r for r in results
-            if classify_institution_type(r.get("기관유형","")) in ("공기업","준정부기관")
-        ],
-        "기타공공기관": [
-            r for r in results if classify_institution_type(r.get("기관유형",""))=="기타공공기관"
-        ],
-    }
-
-    total=len(targets)
-    processed=len(results)
-    ok=sum(1 for r in results if r.get("status") in ("CACHED_OR_SEED","DISCOVERED"))
-    unconfirmed=[r for r in results if r.get("status") not in ("CACHED_OR_SEED","DISCOVERED")]
-    unprocessed=max(0,total-processed)
-
-    def fmt(g):
-        x=summarize_group(g)
-        return f"• 대상 {x['대상']} / 정상 {x['정상확인']} / 미확인 {x['미확인']} / 확인율 {x['확인율']}%"
-
-    no_candidate=sum(1 for r in results if r.get("status")=="NO_CANDIDATE")
-    home_error=sum(1 for r in results if r.get("status")=="HOME_ERROR")
-    candidate_not_verified=sum(1 for r in results if r.get("status")=="CANDIDATE_NOT_VERIFIED")
-
-    fail_names=[r.get("기관명","") for r in unconfirmed if r.get("기관명")]
-    fail_preview=fail_names[:10]
-
-    lines=[
-        "📊 티끌 모니터링 요약",
+    """Telegram에는 오늘 모니터링 핵심 수치만 표시한다."""
+    return "\n".join([
+        "📊 티끌 모니터링",
         "━━━━━━━━━━━━━━",
         f"📅 {datetime.now(KST).strftime('%Y-%m-%d')}",
-        "",
-        "🏢 전체 기관",
-        f"• 대상 {total} / 정상 확인 {ok} / 미확인 {len(unconfirmed)} / 확인율 {(ok/processed*100 if processed else 0):.1f}%",
-        f"• 미처리 {unprocessed}",
-        f"• 전체 처리 완료 {processed}/{total}" + (" ⚠️" if unprocessed else ""),
-        "",
-        "🏛 공기업·준정부기관",
-        fmt(groups["공기업·준정부기관"]),
-        "",
-        "🏢 기타공공기관",
-        fmt(groups["기타공공기관"]),
         "",
         "🔎 오늘 모니터링",
         f"• 게시물 확인 {posts_checked:,}건",
@@ -1073,22 +1079,7 @@ def build_monitoring_summary(targets, results, posts_checked, new_matches,
         f"• 신규 키워드 매칭 {new_matches}건",
         f"• Telegram 참여정보 발송 {sent}건",
         f"• 대기 {pending_after}건",
-        "",
-        "⚠️ 게시판 미확인",
-        f"• 후보 없음(NO_CANDIDATE) {no_candidate}개",
-        f"• 홈페이지 오류(HOME_ERROR) {home_error}개",
-        f"• 후보 검증 실패 {candidate_not_verified}개",
-        f"• 기타 오류/미처리 {max(0,len(unconfirmed)-no_candidate-home_error-candidate_not_verified)}개",
-        "",
-        f"💾 누적 발송 URL {sent_url_ledger:,}개",
-        f"• 실행 오류 {errors}건",
-    ]
-
-    if fail_preview:
-        lines += ["", "📌 미확인 기관 예시(최대 10개)"]
-        lines += [f"• {x}" for x in fail_preview]
-
-    return "\n".join(lines)
+    ])
 
 def telegram_send(item):
     token=os.environ.get("TELEGRAM_BOT_TOKEN","").strip()
