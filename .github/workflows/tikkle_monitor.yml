@@ -22,17 +22,14 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 openpyxl
-
       - name: Verify 747 target workbook
         run: |
           python - <<'PY'
@@ -55,7 +52,6 @@ jobs:
           if board < 700: raise SystemExit(f'공지게시판 URL이 예상보다 적습니다: {board}개')
           print('747기관/수동 게시판 URL 검증 성공')
           PY
-
       - name: Preflight KOFPI board check
         run: |
           python - <<'PY'
@@ -71,12 +67,8 @@ jobs:
           if target not in text:
               raise SystemExit('KOFPI 게시판에서 테스트 공모전 제목을 찾지 못했습니다.')
           PY
-
-      - name: Apply Tikkle precision patch
-        run: |
-          python monitor_patch.py
-          python -m py_compile monitor.py
-
+      - name: Compile integrated Tikkle monitor
+        run: python -m py_compile monitor.py
       - name: Verify Tikkle configuration
         run: |
           python - <<'PY'
@@ -100,13 +92,11 @@ jobs:
           assert not monitor.meaningful_body_match('본문에 공모전이라는 단어가 있고 참여 신청 기간이 있습니다.', '공모전')
           print('티끌 설정/회귀 테스트 성공')
           PY
-
       - name: Run Tikkle daily monitor
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python monitor.py
-
       - name: Upload daily results
         if: always()
         uses: actions/upload-artifact@v4
@@ -124,41 +114,12 @@ jobs:
             board_cache.json
             monitor_targets.xlsx
           if-no-files-found: warn
-
       - name: Commit state and diagnostics
         if: always()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-
-          FILES=(
-            monitor.py
-            monitor_patch.py
-            .github/workflows/tikkle_monitor.yml
-            monitor_targets.xlsx
-            기관별_상태.csv
-            진단_후보.csv
-            daily_summary.json
-            diagnostics.json
-            state.json
-            pending.json
-            retry_queue.json
-            checked_posts.json
-            board_cache.json
-          )
-
-          for file in "${FILES[@]}"; do
-            if [ -f "$file" ]; then
-              git add -- "$file"
-            else
-              echo "파일 없음, 건너뜀: $file"
-            fi
-          done
-
-          if git diff --cached --quiet; then
-            echo "No generated changes to commit"
-            exit 0
-          fi
-
-          git commit -m 'Tikkle: 747 targets and compact daily summary'
+          git add monitor.py .github/workflows/tikkle_monitor.yml monitor_targets.xlsx 기관별_상태.csv 진단_후보.csv daily_summary.json diagnostics.json state.json pending.json retry_queue.json checked_posts.json board_cache.json || true
+          if git diff --cached --quiet; then echo 'No generated changes to commit'; exit 0; fi
+          git commit -m 'Tikkle V8.30: integrated 7-group monitor'
           git push origin HEAD:main
